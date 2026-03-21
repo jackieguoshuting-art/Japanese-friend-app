@@ -1,7 +1,47 @@
 import { estimateDifficulty } from './difficulty.js';
+import { shouldUseMemory } from '../store/memory.store.js';
+
+// ── Session tracking ──
+export const session = {
+  turnCount: 0,
+  startedAt: Date.now()
+};
+
+// ── Usage limits (enforcement optional via isLimitEnabled) ──
+export const limits = {
+  freeTurns: 20,
+  maxSessionMinutes: 5,
+  isLimitEnabled: false
+};
+
+// ── Fallback replies for API failures ──
+export const fallbackReplies = [
+  { replyJa: "ごめん、ちょっと聞こえなかった！もう一回言って？", replyEn: "Sorry, I didn't catch that! Can you say it again?", memoryCandidate: "" },
+  { replyJa: "あれ、なんかうまく繋がらなかったみたい。もう一度！", replyEn: "Hmm, something went wrong on my end. Try again!", memoryCandidate: "" },
+  { replyJa: "ちょっと待って、今なんか変だった気がする…もう一回！", replyEn: "Wait, something felt off just now… one more time!", memoryCandidate: "" }
+];
+
+export function getRandomFallbackReply() {
+  return fallbackReplies[Math.floor(Math.random() * fallbackReplies.length)];
+}
+
+// ── Trim conversation history to last 5 turns ──
+export function trimHistory(history) {
+  return history.slice(-5);
+}
 
 export function buildPrompt({ character, topic, memory, history, userText }) {
+  session.turnCount += 1;
+  console.log('user_sent_message', { turn: session.turnCount, character: character?.id });
+
   const difficulty = estimateDifficulty(userText);
+  const trimmedHistory = trimHistory(history || []);
+  const useMemory = shouldUseMemory();
+
+  const memoryBlock = useMemory && memory?.length
+    ? memory.map((item) => `- ${item.factJa || item.fact || item}`).join('\n')
+    : 'None';
+
   return `
 You are ${character.name}, a Japanese AI friend.
 Personality: ${character.personality}
@@ -18,10 +58,10 @@ Today's topic:
 ${topic?.openerJa || ''}
 
 Memory:
-${memory?.map((item) => `- ${item.factJa || item.fact || item}`).join('\n') || 'None'}
+${memoryBlock}
 
 History:
-${history?.map((item) => `${item.role}: ${item.text}`).join('\n') || ''}
+${trimmedHistory.map((item) => `${item.role}: ${item.text}`).join('\n') || ''}
 
 User just said:
 ${userText}
@@ -34,4 +74,8 @@ Return JSON with:
 }
 Difficulty: ${difficulty}
 `.trim();
+}
+
+export function endSession() {
+  console.log('session_end', { turnCount: session.turnCount });
 }
