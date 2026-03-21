@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Japanese Friend</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: radial-gradient(ellipse at 30% 20%, #1e1060 0%, #0a0820 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+/* ── Phone shell ── */
+.phone {
+  width: 390px;
+  height: 844px;
+  background: #16143a;
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 40px 100px rgba(0,0,0,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* ── Pages ── */
+.page { display:none; width:100%; height:844px; position:relative; overflow:hidden; }
+.page.active { display:flex; flex-direction:column; }
+
+/* ── Scrollable body inside page ── */
+.page-body {
+  flex:1;
+  overflow-y:auto;
+  overflow-x:hidden;
+  scrollbar-width:none;
+}
+.page-body::-webkit-scrollbar { display:none; }
+
+/* ── Stars layer ── */
+.stars-layer {
+  position:absolute; inset:0; pointer-events:none; z-index:0; overflow:hidden;
+}
+.star {
+  position:absolute;
+  color:rgba(255,255,255,0.55);
+  animation: floatStar 6s ease-in-out infinite;
+}
+.diamond-shape {
+  position:absolute;
+  background:rgba(255,255,255,0.25);
+  transform:rotate(45deg);
+  animation: floatDiamond 8s ease-in-out infinite;
+}
+@keyframes floatStar {
+  0%,100%{ transform:translateY(0) scale(1); opacity:0.3; }
+  50%{ transform:translateY(-14px) scale(1.1); opacity:0.75; }
+}
+@keyframes floatDiamond {
+  0%,100%{ transform:rotate(45deg) translateY(0); opacity:0.2; }
+  50%{ transform:rotate(45deg) translateY(-12px); opacity:0.5; }
+}
+
+/* ─────────────────────────────────
+   SHARED COMPONENTS
+───────────────────────────────── */
+
+/* Glass card */
+.glass-card {
+  background: rgba(255,255,255,0.065);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s;
+  position:relative; z-index:1;
+}
+.glass-card:active { transform:scale(0.97); }
+
+/* Pink button */
+.btn-pink {
+  background: linear-gradient(135deg,#e050a0,#c030a0);
+  border:none; border-radius:16px; color:#fff;
+  font-family:'Noto Sans JP',sans-serif; font-weight:700; font-size:15px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+  transition:transform 0.18s, box-shadow 0.18s;
+  box-shadow: 0 6px 24px rgba(224,80,160,0.4);
+}
+.btn-pink:active { transform:scale(0.97); }
+
+/* Tag chip */
+.tag {
+  display:inline-block; padding:3px 10px; border-radius:10px; font-size:11px;
+  background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.65);
+}
+.tag.pink { background:rgba(224,80,160,0.2); color:#e898c8; }
+
+/* Section label */
+.sec-label {
+  font-size:10.5px; font-weight:500; color:rgba(255,255,255,0.38);
+  letter-spacing:0.16em; text-transform:uppercase;
+}
+
+/* Back button */
+.back-btn {
+  width:36px; height:36px; border-radius:50%; border:none;
+  background:rgba(255,255,255,0.1); color:#fff; font-size:20px; line-height:1;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+
+/* Bottom nav */
+.bottom-nav {
+  height:88px; background:rgba(14,12,40,0.92); backdrop-filter:blur(20px);
+  border-top:1px solid rgba(255,255,255,0.07);
+  display:flex; align-items:center; justify-content:space-around;
+  padding-bottom:18px; flex-shrink:0; position:relative; z-index:10;
+}
+.nav-item {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  cursor:pointer; opacity:0.45; transition:opacity 0.2s;
+}
+.nav-item.active { opacity:1; }
+.nav-icon { font-size:22px; }
+.nav-lbl { font-size:10px; color:#fff; }
+.nav-item.active .nav-lbl { color:#e050a0; }
+
+/* ─────────────────────────────────
+   PAGE 1  HOME
+───────────────────────────────── */
+#pg-home { background:#16143a; }
+
+.home-header { padding:56px 22px 22px; position:relative; z-index:1; }
+.greeting-sub { font-size:12px; color:rgba(255,255,255,0.42); letter-spacing:0.04em; margin-bottom:5px; }
+.greeting-main { font-size:25px; font-weight:700; color:#fff; }
+.greeting-main em { color:#e050a0; font-style:normal; }
+
+.streak-pill {
+  display:inline-flex; align-items:center; gap:7px;
+  background:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px; padding:6px 14px; margin-top:13px;
+  font-size:13px; color:#fff;
+}
+.streak-pill .fire { font-size:17px; }
+
+.home-cards { padding:8px 16px 0; display:flex; flex-direction:column; gap:13px; position:relative; z-index:1; }
+
+.card-bar { height:5px; }
+.card-body { padding:16px 18px 18px; }
+.card-row { display:flex; align-items:flex-start; gap:14px; }
+.card-icon-box {
+  width:48px; height:48px; border-radius:14px;
+  display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0;
+}
+.card-title { font-size:15.5px; font-weight:700; color:#fff; margin-bottom:3px; }
+.card-sub { font-size:11.5px; color:rgba(255,255,255,0.45); line-height:1.55; }
+.card-badge {
+  display:inline-block; margin-top:10px; padding:3px 11px; border-radius:10px; font-size:10.5px; font-weight:600;
+}
+
+/* ─────────────────────────────────
+   PAGE 2  FRIENDS LIST
+───────────────────────────────── */
+#pg-friends { background:#16143a; }
+
+.friends-header {
+  display:flex; align-items:center; gap:14px;
+  padding:56px 20px 18px; position:relative; z-index:1;
+}
+.page-title { flex:1; font-size:20px; font-weight:700; color:#fff; }
+.heart-pill {
+  display:flex; align-items:center; gap:5px;
+  background:rgba(224,80,160,0.15); border:1px solid rgba(224,80,160,0.35);
+  border-radius:20px; padding:6px 13px; font-size:14px; font-weight:700; color:#e060b0;
+}
+
+/* Featured Yuki */
+.yuki-card {
+  margin:0 16px 18px;
+  background:linear-gradient(135deg,rgba(224,80,160,0.13),rgba(100,60,200,0.13));
+  border:1px solid rgba(224,80,160,0.28);
+  border-radius:24px; padding:22px; cursor:pointer; position:relative; z-index:1;
+}
+.yuki-top { display:flex; align-items:center; gap:16px; margin-bottom:16px; }
+.avatar-lg {
+  width:70px; height:70px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:34px;
+  border:2.5px solid rgba(224,80,160,0.45);
+  background:linear-gradient(135deg,#e050a0,#7040c0);
+}
+.friend-name { font-size:22px; font-weight:700; color:#fff; }
+.friend-name-sub { font-size:12px; color:rgba(255,255,255,0.42); margin-top:2px; }
+.yuki-tags { display:flex; gap:7px; flex-wrap:wrap; margin-top:9px; }
+
+.btn-talk-lg { width:100%; padding:13px; }
+
+/* Small cards */
+.friends-list { padding:0 16px; display:flex; flex-direction:column; gap:11px; position:relative; z-index:1; }
+
+.friend-sm {
+  background:rgba(255,255,255,0.065); border:1px solid rgba(255,255,255,0.1);
+  border-radius:18px; padding:14px 16px;
+  display:flex; align-items:center; gap:13px; cursor:pointer;
+}
+.friend-sm.offline { opacity:0.38; pointer-events:none; }
+
+.avatar-sm {
+  width:50px; height:50px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:24px;
+}
+.friend-sm-name { font-size:15px; font-weight:600; color:#fff; }
+.friend-sm-name span { font-size:12px; color:rgba(255,255,255,0.38); font-weight:400; }
+.friend-sm-sub { font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px; }
+.friend-sm-tags { display:flex; gap:6px; margin-top:6px; }
+.lvl-tag { padding:2px 8px; border-radius:8px; font-size:10px; background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.55); }
+
+.btn-talk-sm {
+  padding:8px 17px; background:linear-gradient(135deg,#e050a0,#c030a0);
+  border:none; border-radius:12px; color:#fff;
+  font-size:12.5px; font-weight:700; cursor:pointer;
+  font-family:'Noto Sans JP',sans-serif; flex-shrink:0;
+}
+.offline-lbl {
+  padding:7px 12px; background:rgba(255,255,255,0.07);
+  border-radius:10px; font-size:11px; color:rgba(255,255,255,0.35); flex-shrink:0;
+}
+
+/* ─────────────────────────────────
+   PAGE 3  VIDEO CALL
+───────────────────────────────── */
+#pg-call { background:#13113a; }
+
+.call-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:52px 20px 16px; position:relative; z-index:1;
+}
+.btn-end-top {
+  padding:8px 15px; background:rgba(255,60,60,0.15);
+  border:1px solid rgba(255,60,60,0.32); border-radius:20px;
+  color:#ff7070; font-size:13px; font-weight:500; cursor:pointer;
+  font-family:'Noto Sans JP',sans-serif;
+}
+.timer { font-size:20px; font-weight:700; color:#fff; letter-spacing:0.12em; }
+.caption-btn {
+  padding:7px 13px; background:rgba(224,80,160,0.18);
+  border:1px solid rgba(224,80,160,0.38); border-radius:20px;
+  font-size:12px; color:#e898c8; font-weight:500;
+}
+
+/* Live 2D frame */
+.live2d-wrap { margin:0 18px; position:relative; z-index:1; }
+.live2d-frame {
+  border-radius:24px; overflow:hidden;
+  background:rgba(255,255,255,0.035);
+  border:1px solid rgba(255,255,255,0.09);
+  height:272px; display:flex; align-items:center; justify-content:center;
+  position:relative;
+}
+.live2d-grid {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px);
+  background-size:28px 28px;
+}
+.live2d-badge {
+  position:absolute; top:13px; left:13px; z-index:2;
+  background:linear-gradient(135deg,#e050a0,#c030a0);
+  padding:4px 12px; border-radius:9px; font-size:11px; font-weight:700; color:#fff;
+}
+.char-big {
+  font-size:110px; z-index:2; position:relative;
+  animation:charBob 3.2s ease-in-out infinite;
+}
+@keyframes charBob {
+  0%,100%{ transform:translateY(0) scale(1); }
+  50%{ transform:translateY(-11px) scale(1.03); }
+}
+
+/* Call status */
+.call-status { text-align:center; padding:12px 20px 6px; position:relative; z-index:1; }
+.call-name { font-size:15.5px; font-weight:600; color:#fff; letter-spacing:0.04em; }
+.call-mood { font-size:12px; color:rgba(255,255,255,0.42); margin-top:4px; }
+
+/* Voice waves */
+.wave-viz {
+  display:flex; align-items:center; justify-content:center;
+  gap:5px; height:48px; padding:0 20px; position:relative; z-index:1;
+}
+.wbar {
+  width:5px; border-radius:4px;
+  background:linear-gradient(to top,#6030c0,#e050a0);
+  transition:height 0.18s ease;
+}
+
+/* Dialogue bubble */
+.dialogue {
+  margin:6px 18px 0; position:relative; z-index:1;
+  background:rgba(255,255,255,0.07); backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:15px 17px;
+}
+.dlg-jp { font-size:15px; color:#fff; line-height:1.85; margin-bottom:7px; }
+.word-link { color:#7abcff; text-decoration:underline; text-decoration-color:rgba(120,188,255,0.38); cursor:pointer; }
+.dlg-en { font-size:12px; color:rgba(255,255,255,0.4); line-height:1.5; }
+
+/* Controls */
+.call-controls {
+  display:flex; align-items:center; justify-content:space-around;
+  padding:14px 22px 28px; position:relative; z-index:1;
+}
+.ctrl {
+  display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;
+}
+.ctrl-circle {
+  width:52px; height:52px; border-radius:50%;
+  background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.14);
+  display:flex; align-items:center; justify-content:center; font-size:20px;
+  transition:transform 0.15s;
+}
+.ctrl-circle:active { transform:scale(0.92); }
+.ctrl-circle.main-mic {
+  width:68px; height:68px; font-size:28px;
+  background:linear-gradient(135deg,#e050a0,#c030a0);
+  border:none; box-shadow:0 6px 28px rgba(224,80,160,0.55);
+}
+.ctrl-circle.end-call {
+  background:rgba(255,50,50,0.18); border-color:rgba(255,50,50,0.28);
+}
+.ctrl-lbl { font-size:10px; color:rgba(255,255,255,0.45); }
+
+/* ─────────────────────────────────
+   PAGE 4  SUMMARY
+───────────────────────────────── */
+#pg-summary { background:#16143a; }
+
+.summary-top {
+  display:flex; align-items:flex-start; gap:13px;
+  padding:56px 20px 22px; position:relative; z-index:1;
+}
+.summary-ava {
+  width:54px; height:54px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,#e050a0,#7040c0);
+  display:flex; align-items:center; justify-content:center; font-size:26px;
+}
+.summary-bubble {
+  background:linear-gradient(135deg,rgba(224,80,160,0.18),rgba(150,60,200,0.18));
+  border:1px solid rgba(224,80,160,0.3);
+  border-radius:18px; border-bottom-left-radius:5px;
+  padding:14px 17px; font-size:15px; font-weight:600; color:#fff; line-height:1.5;
+}
+.bubble-en { font-size:11.5px; color:rgba(255,255,255,0.5); font-weight:400; margin-top:3px; display:block; }
+
+/* Stats */
+.stats-row {
+  display:flex; gap:10px; padding:0 16px 20px; position:relative; z-index:1;
+}
+.stat-card {
+  flex:1; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1);
+  border-radius:18px; padding:17px 10px; text-align:center;
+}
+.stat-ico { font-size:20px; margin-bottom:7px; }
+.stat-val { font-size:26px; font-weight:700; color:#fff; }
+.stat-lbl { font-size:10px; color:rgba(255,255,255,0.42); margin-top:4px; }
+
+/* Vocab */
+.vocab-wrap { padding:0 16px 20px; position:relative; z-index:1; }
+.vocab-chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:11px; }
+.chip {
+  padding:7px 15px; border-radius:20px; font-size:13px; font-weight:500;
+}
+.chip.new {
+  background:rgba(90,160,255,0.13); border:1px solid rgba(90,160,255,0.28); color:#7ab8ff;
+}
+.chip.rev {
+  background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.45);
+}
+
+/* Memory card */
+.memory-card {
+  margin:0 16px 22px; position:relative; z-index:1;
+  background:rgba(140,80,255,0.1); border:1px solid rgba(140,80,255,0.22); border-radius:18px; padding:17px;
+}
+.mem-head { display:flex; align-items:center; gap:9px; margin-bottom:10px; }
+.mem-ava {
+  width:30px; height:30px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,#e050a0,#7040c0);
+  display:flex; align-items:center; justify-content:center; font-size:14px;
+}
+.mem-title { font-size:11.5px; color:rgba(255,255,255,0.42); }
+.mem-text { font-size:15px; color:#fff; line-height:1.65; }
+.mem-en { font-size:11.5px; color:rgba(255,255,255,0.38); margin-top:5px; line-height:1.5; }
+
+.btn-return {
+  display:block; margin:0 16px; padding:15px;
+  width:calc(100% - 32px); position:relative; z-index:1;
+}
+</style>
+</head>
+<body>
+<div class="phone">
+
+<!-- ══════════════════════════════
+     PAGE 1 — HOME
+══════════════════════════════ -->
+<div id="pg-home" class="page active">
+  <div class="stars-layer" id="sl-home"></div>
+
+  <div class="page-body">
+    <div class="home-header">
+      <div class="greeting-sub">Good morning · 今日も頑張ろう ✦</div>
+      <div class="greeting-main">おはよう · <em>Jackie</em> さん</div>
+      <div class="streak-pill">
+        <span class="fire">🔥</span>
+        連続 <strong>12</strong> 日達成！
+      </div>
+    </div>
+
+    <div style="padding:0 22px 12px;position:relative;z-index:1;">
+      <div class="sec-label">TODAY'S ACTIVITIES</div>
+    </div>
+
+    <div class="home-cards">
+      <!-- Talk with Friends -->
+      <div class="glass-card" onclick="go('friends')">
+        <div class="card-bar" style="background:linear-gradient(90deg,#e050a0,#ff80d0);"></div>
+        <div class="card-body">
+          <div class="card-row">
+            <div class="card-icon-box" style="background:rgba(224,80,160,0.13);">💬</div>
+            <div style="flex:1;">
+              <div class="card-title">Talk with Your Friends</div>
+              <div class="card-sub">友達と話す · AI との自然な会話練習</div>
+              <div class="card-badge" style="background:rgba(224,80,160,0.18);color:#e898c8;">✦ 4 友達オンライン</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Shadowing -->
+      <div class="glass-card">
+        <div class="card-bar" style="background:linear-gradient(90deg,#6050e0,#a060f0);"></div>
+        <div class="card-body">
+          <div class="card-row">
+            <div class="card-icon-box" style="background:rgba(96,80,224,0.13);">🎭</div>
+            <div style="flex:1;">
+              <div class="card-title">Live Shadowing</div>
+              <div class="card-sub">ライブシャドーイング · 発音＆イントネーション</div>
+              <div class="card-badge" style="background:rgba(100,80,220,0.18);color:#a898ff;">New · 3 sessions</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Immersive Listening -->
+      <div class="glass-card" style="margin-bottom:20px;">
+        <div class="card-bar" style="background:linear-gradient(90deg,#20b0a0,#40d8c0);"></div>
+        <div class="card-body">
+          <div class="card-row">
+            <div class="card-icon-box" style="background:rgba(32,176,160,0.13);">🎧</div>
+            <div style="flex:1;">
+              <div class="card-title">Immersive Listening</div>
+              <div class="card-sub">没入型リスニング · ストーリーで自然習得</div>
+              <div class="card-badge" style="background:rgba(32,176,160,0.18);color:#50d8c8;">8 エピソード</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-item active">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-lbl" style="color:#e050a0;">ホーム</div>
+    </div>
+    <div class="nav-item" onclick="go('friends')">
+      <div class="nav-icon">👥</div>
+      <div class="nav-lbl">友達</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">📚</div>
+      <div class="nav-lbl">学習</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">👤</div>
+      <div class="nav-lbl">プロフィール</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE 2 — FRIENDS LIST
+══════════════════════════════ -->
+<div id="pg-friends" class="page">
+  <div class="stars-layer" id="sl-friends"></div>
+
+  <div class="page-body">
+    <div class="friends-header">
+      <button class="back-btn" onclick="go('home')">‹</button>
+      <div class="page-title">友達リスト</div>
+      <div class="heart-pill">♥ 850</div>
+    </div>
+
+    <!-- Yuki featured -->
+    <div class="yuki-card" onclick="go('call')">
+      <div class="yuki-top">
+        <div class="avatar-lg">🌸</div>
+        <div>
+          <div class="friend-name">Yuki</div>
+          <div class="friend-name-sub">雪 · あなたの親友</div>
+          <div class="yuki-tags">
+            <span class="tag pink">✦ Best Friend</span>
+            <span class="tag">明るい</span>
+            <span class="tag">東京女子</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn-pink btn-talk-lg">💬 話す · Start Talking</button>
+    </div>
+
+    <!-- Small friends -->
+    <div class="friends-list">
+
+      <div class="friend-sm" onclick="go('call')">
+        <div class="avatar-sm" style="background:linear-gradient(135deg,#3a50e0,#6030a0);">⚡</div>
+        <div style="flex:1;">
+          <div class="friend-sm-name">Ren <span>蓮</span></div>
+          <div class="friend-sm-sub">クール · 落ち着いてる · 音楽好き</div>
+          <div class="friend-sm-tags"><span class="lvl-tag">N3</span></div>
+        </div>
+        <button class="btn-talk-sm">話す</button>
+      </div>
+
+      <div class="friend-sm" onclick="go('call')">
+        <div class="avatar-sm" style="background:linear-gradient(135deg,#e06080,#e0a0c0);">🌺</div>
+        <div style="flex:1;">
+          <div class="friend-sm-name">Hana <span>花</span></div>
+          <div class="friend-sm-sub">元気いっぱい · アニメオタク</div>
+          <div class="friend-sm-tags"><span class="lvl-tag">N4</span></div>
+        </div>
+        <button class="btn-talk-sm">話す</button>
+      </div>
+
+      <div class="friend-sm" onclick="go('call')">
+        <div class="avatar-sm" style="background:linear-gradient(135deg,#30b890,#1a9070);">🌙</div>
+        <div style="flex:1;">
+          <div class="friend-sm-name">Mio <span>美緒</span></div>
+          <div class="friend-sm-sub">知的 · 文学少女 · 穏やか</div>
+          <div class="friend-sm-tags"><span class="lvl-tag">N2</span></div>
+        </div>
+        <button class="btn-talk-sm">話す</button>
+      </div>
+
+      <div class="friend-sm offline" style="margin-bottom:24px;">
+        <div class="avatar-sm" style="background:linear-gradient(135deg,#606080,#404060);">☁️</div>
+        <div style="flex:1;">
+          <div class="friend-sm-name">Sora <span>空</span></div>
+          <div class="friend-sm-sub">神秘的 · 哲学的 · 宇宙好き</div>
+          <div class="friend-sm-tags"><span class="lvl-tag">N1</span></div>
+        </div>
+        <span class="offline-lbl">オフライン</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE 3 — VIDEO CALL
+══════════════════════════════ -->
+<div id="pg-call" class="page">
+  <div class="stars-layer" id="sl-call"></div>
+
+  <!-- Header -->
+  <div class="call-header">
+    <button class="btn-end-top" onclick="go('friends')">✕ 終了</button>
+    <div class="timer">07:23</div>
+    <div class="caption-btn">字幕 ON</div>
+  </div>
+
+  <!-- Live 2D -->
+  <div class="live2d-wrap">
+    <div class="live2d-frame">
+      <div class="live2d-grid"></div>
+      <div class="live2d-badge">✦ Live 2D</div>
+      <div class="char-big">🌸</div>
+    </div>
+  </div>
+
+  <!-- Call status -->
+  <div class="call-status">
+    <div class="call-name">✦ Yuki と通話中 ✦</div>
+    <div class="call-mood">😊 楽しい気分 · Happy mood</div>
+  </div>
+
+  <!-- Wave visualizer -->
+  <div class="wave-viz" id="wave-viz">
+    <div class="wbar" style="height:18px;"></div>
+    <div class="wbar" style="height:32px;"></div>
+    <div class="wbar" style="height:24px;"></div>
+    <div class="wbar" style="height:40px;"></div>
+    <div class="wbar" style="height:28px;"></div>
+    <div class="wbar" style="height:44px;"></div>
+    <div class="wbar" style="height:34px;"></div>
+    <div class="wbar" style="height:38px;"></div>
+    <div class="wbar" style="height:20px;"></div>
+  </div>
+
+  <!-- Dialogue bubble -->
+  <div class="dialogue">
+    <div class="dlg-jp">
+      ねえ、<span class="word-link" title="週末 = weekend">週末</span>は何してたの？
+      <span class="word-link" title="映画 = movie">映画</span>とか見た？
+    </div>
+    <div class="dlg-en">"Hey, what did you do this weekend? Did you watch any movies?"</div>
+  </div>
+
+  <!-- Controls -->
+  <div class="call-controls">
+    <div class="ctrl">
+      <div class="ctrl-circle">🔇</div>
+      <div class="ctrl-lbl">ミュート</div>
+    </div>
+    <div class="ctrl">
+      <div class="ctrl-circle main-mic">🎤</div>
+      <div class="ctrl-lbl">話す</div>
+    </div>
+    <div class="ctrl">
+      <div class="ctrl-circle">💬</div>
+      <div class="ctrl-lbl">字幕</div>
+    </div>
+    <div class="ctrl" onclick="go('summary')">
+      <div class="ctrl-circle end-call">📵</div>
+      <div class="ctrl-lbl">終了</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     PAGE 4 — SUMMARY
+══════════════════════════════ -->
+<div id="pg-summary" class="page">
+  <div class="stars-layer" id="sl-summary"></div>
+
+  <div class="page-body">
+    <!-- Header bubble -->
+    <div class="summary-top">
+      <div class="summary-ava">🌸</div>
+      <div class="summary-bubble">
+        また明日話そう！
+        <span class="bubble-en">Let's talk again tomorrow!</span>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-ico">⏱</div>
+        <div class="stat-val">7:23</div>
+        <div class="stat-lbl">通話時間</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-ico">💬</div>
+        <div class="stat-val">84</div>
+        <div class="stat-lbl">流暢スコア</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-ico">✨</div>
+        <div class="stat-val">5</div>
+        <div class="stat-lbl">新しい単語</div>
+      </div>
+    </div>
+
+    <!-- Vocabulary -->
+    <div class="vocab-wrap">
+      <div class="sec-label">今日の単語 · Today's Words</div>
+      <div class="vocab-chips">
+        <div class="chip new">週末</div>
+        <div class="chip new">映画館</div>
+        <div class="chip new">懐かしい</div>
+        <div class="chip rev">楽しい</div>
+        <div class="chip new">おすすめ</div>
+        <div class="chip rev">すごい</div>
+        <div class="chip rev">なるほど</div>
+        <div class="chip new">ドキドキ</div>
+      </div>
+    </div>
+
+    <!-- Yuki memory card -->
+    <div class="memory-card">
+      <div class="mem-head">
+        <div class="mem-ava">🌸</div>
+        <div class="mem-title">Yuki の記憶 · Yuki will remember this</div>
+      </div>
+      <div class="mem-text">「アメリカに住んでるって言ってたね」</div>
+      <div class="mem-en">"You mentioned you live in America" — saved to Yuki's memory ✦</div>
+    </div>
+
+    <!-- Return button -->
+    <button class="btn-pink btn-return" onclick="go('friends')">
+      友達リストに戻る · Back to Friends
+    </button>
+
+    <div style="height:32px;"></div>
+  </div>
+</div>
+
+</div><!-- /phone -->
+
+<script>
+// ── Page navigation ──
+function go(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('pg-' + name).classList.add('active');
+}
+
+// ── Generate star/diamond decorations ──
+function spawnStars(layerId) {
+  const layer = document.getElementById(layerId);
+  if (!layer) return;
+  const glyphs = ['✦','✧','⋆','˚','·','★','✩'];
+  for (let i = 0; i < 22; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
+    s.style.left   = (Math.random() * 96) + '%';
+    s.style.top    = (Math.random() * 96) + '%';
+    s.style.fontSize = (7 + Math.random() * 10) + 'px';
+    s.style.opacity  = (0.15 + Math.random() * 0.45).toFixed(2);
+    s.style.animationDelay    = (Math.random() * 6) + 's';
+    s.style.animationDuration = (4 + Math.random() * 5) + 's';
+    layer.appendChild(s);
+  }
+  for (let i = 0; i < 9; i++) {
+    const d = document.createElement('div');
+    d.className = 'diamond-shape';
+    const sz = 4 + Math.random() * 6;
+    d.style.width  = sz + 'px';
+    d.style.height = sz + 'px';
+    d.style.left   = (Math.random() * 96) + '%';
+    d.style.top    = (Math.random() * 96) + '%';
+    d.style.animationDelay    = (Math.random() * 7) + 's';
+    d.style.animationDuration = (5 + Math.random() * 5) + 's';
+    layer.appendChild(d);
+  }
+}
+['sl-home','sl-friends','sl-call','sl-summary'].forEach(spawnStars);
+
+// ── Voice wave animation ──
+const bars = document.querySelectorAll('#wave-viz .wbar');
+setInterval(() => {
+  bars.forEach(b => {
+    const h = 10 + Math.random() * 36;
+    b.style.height = h + 'px';
+  });
+}, 180);
+
+// ── Word tooltip on tap (call page) ──
+document.querySelectorAll('.word-link').forEach(w => {
+  w.addEventListener('click', e => {
+    const tip = e.target.getAttribute('title');
+    if (!tip) return;
+    const el = document.createElement('div');
+    el.textContent = tip;
+    el.style.cssText = `
+      position:fixed; background:rgba(20,18,50,0.95);
+      border:1px solid rgba(122,188,255,0.4); color:#7abcff;
+      padding:6px 14px; border-radius:10px; font-size:13px;
+      z-index:999; pointer-events:none;
+      top:${e.clientY - 44}px; left:${Math.min(e.clientX - 40, 280)}px;
+      font-family:'Noto Sans JP',sans-serif;
+    `;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1800);
+  });
+});
+</script>
+</body>
+</html>
