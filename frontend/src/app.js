@@ -145,7 +145,6 @@ function init() {
   initWordTooltips();
 
   document.querySelector('.btn-return')?.addEventListener('click', () => go('friends'));
-  document.querySelectorAll('[onclick]').forEach((el) => el.removeAttribute('onclick'));
   document.querySelector('.btn-end-top')?.addEventListener('click', () => go('friends'));
   document.querySelector('.ctrl .end-call')?.parentElement?.addEventListener('click', () => go('summary'));
 
