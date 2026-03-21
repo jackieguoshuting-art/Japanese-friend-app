@@ -1,0 +1,22 @@
+[
+  {
+    "season": "spring",
+    "questionJa": "春になるとやりたくなることってある？",
+    "questionEn": "Anything you want to do when spring comes?"
+  },
+  {
+    "season": "summer",
+    "questionJa": "夏といえば何を思い出す？",
+    "questionEn": "What do you think of when summer comes?"
+  },
+  {
+    "season": "autumn",
+    "questionJa": "秋の食べ物で好きなものある？",
+    "questionEn": "Any autumn food you like?"
+  },
+  {
+    "season": "winter",
+    "questionJa": "寒い日にしたくなることって何？",
+    "questionEn": "What do you want to do on a cold day?"
+  }
+]

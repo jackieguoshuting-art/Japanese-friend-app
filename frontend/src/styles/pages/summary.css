@@ -1,0 +1,31 @@
+#pg-summary { background: var(--color-phone); }
+.summary-top { display: flex; align-items: flex-start; gap: 13px; padding: 56px 20px 22px; position: relative; z-index: 1; }
+.summary-bubble {
+  background: linear-gradient(135deg,rgba(224,80,160,0.18),rgba(150,60,200,0.18));
+  border: 1px solid rgba(224,80,160,0.3);
+  border-radius: 18px;
+  border-bottom-left-radius: 5px;
+  padding: 14px 17px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-white);
+  line-height: 1.5;
+}
+.bubble-en { font-size: 11.5px; color: rgba(255,255,255,0.5); font-weight: 400; margin-top: 3px; display: block; }
+.stats-row { display: flex; gap: 10px; padding: 0 16px 20px; position: relative; z-index: 1; }
+.stat-ico { font-size: 20px; margin-bottom: 7px; }
+.stat-val { font-size: 26px; font-weight: 700; color: var(--color-white); }
+.stat-lbl { font-size: 10px; color: rgba(255,255,255,0.42); margin-top: 4px; }
+.vocab-wrap { padding: 0 16px 20px; position: relative; z-index: 1; }
+.vocab-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 11px; }
+.memory-card {
+  margin: 0 16px 22px; position: relative; z-index: 1;
+  background: rgba(140,80,255,0.1);
+  border: 1px solid rgba(140,80,255,0.22);
+  border-radius: 18px;
+  padding: 17px;
+}
+.mem-head { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
+.mem-title { font-size: 11.5px; color: rgba(255,255,255,0.42); }
+.mem-text { font-size: 15px; color: var(--color-white); line-height: 1.65; }
+.mem-en { font-size: 11.5px; color: rgba(255,255,255,0.38); margin-top: 5px; line-height: 1.5; }

@@ -1,0 +1,30 @@
+.avatar-lg,
+.summary-ava,
+.mem-ava,
+.avatar-sm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.avatar-lg {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  font-size: 34px;
+  border: 2.5px solid rgba(224,80,160,0.45);
+  background: var(--gradient-yuki);
+}
+.avatar-sm {
+  width: 50px; height: 50px; border-radius: 50%; flex-shrink: 0; font-size: 24px;
+}
+.summary-ava {
+  width: 54px; height: 54px; border-radius: 50%; flex-shrink: 0;
+  background: var(--gradient-yuki);
+  font-size: 26px;
+}
+.mem-ava {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  background: var(--gradient-yuki);
+  font-size: 14px;
+}

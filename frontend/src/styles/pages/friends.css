@@ -1,0 +1,32 @@
+#pg-friends { background: var(--color-phone); }
+.friends-header { display: flex; align-items: center; gap: 14px; padding: 56px 20px 18px; position: relative; z-index: 1; }
+.yuki-card {
+  margin: 0 16px 18px;
+  background: linear-gradient(135deg,rgba(224,80,160,0.13),rgba(100,60,200,0.13));
+  border: 1px solid rgba(224,80,160,0.28);
+  border-radius: 24px;
+  padding: 22px;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+.yuki-top { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+.friend-name { font-size: 22px; font-weight: 700; color: var(--color-white); }
+.friend-name-sub { font-size: 12px; color: rgba(255,255,255,0.42); margin-top: 2px; }
+.yuki-tags { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 9px; }
+.friends-list { padding: 0 16px; display: flex; flex-direction: column; gap: 11px; position: relative; z-index: 1; }
+.friend-sm {
+  background: rgba(255,255,255,0.065);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 18px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  cursor: pointer;
+}
+.friend-sm.offline { opacity: 0.38; pointer-events: none; }
+.friend-sm-name { font-size: 15px; font-weight: 600; color: var(--color-white); }
+.friend-sm-name span { font-size: 12px; color: rgba(255,255,255,0.38); font-weight: 400; }
+.friend-sm-sub { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+.friend-sm-tags { display: flex; gap: 6px; margin-top: 6px; }

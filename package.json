@@ -1,0 +1,13 @@
+{
+  "name": "japanese-friend-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "AI Japanese friend prototype with modular frontend structure.",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve .",
+    "lint": "echo 'Add ESLint in next iteration'",
+    "test": "echo 'Tests planned for next phase'"
+  }
+}

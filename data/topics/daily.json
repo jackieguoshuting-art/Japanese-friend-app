@@ -1,0 +1,782 @@
+[
+  {
+    "id": "topic_01_weekend",
+    "questionJa": "最近の週末ってどう過ごした？",
+    "questionEn": "How did you spend your recent weekend?",
+    "tags": [
+      "weekend"
+    ],
+    "openers": {
+      "default": {
+        "ja": "最近の週末ってどう過ごした？",
+        "en": "How did you spend your recent weekend?"
+      },
+      "yuki": {
+        "ja": "最近の週末ってどう過ごした？",
+        "en": "How did you spend your recent weekend?"
+      },
+      "ren": {
+        "ja": "最近の週末ってどう過ごした？",
+        "en": "How did you spend your recent weekend?"
+      },
+      "hana": {
+        "ja": "最近の週末ってどう過ごした？",
+        "en": "How did you spend your recent weekend?"
+      }
+    }
+  },
+  {
+    "id": "topic_02_movie",
+    "questionJa": "最近見た映画やドラマで印象に残ってるものある？",
+    "questionEn": "Any movie or drama that stayed with you recently?",
+    "tags": [
+      "movie"
+    ],
+    "openers": {
+      "default": {
+        "ja": "最近見た映画やドラマで印象に残ってるものある？",
+        "en": "Any movie or drama that stayed with you recently?"
+      },
+      "yuki": {
+        "ja": "最近見た映画やドラマで印象に残ってるものある？",
+        "en": "Any movie or drama that stayed with you recently?"
+      },
+      "ren": {
+        "ja": "最近見た映画やドラマで印象に残ってるものある？",
+        "en": "Any movie or drama that stayed with you recently?"
+      },
+      "hana": {
+        "ja": "最近見た映画やドラマで印象に残ってるものある？",
+        "en": "Any movie or drama that stayed with you recently?"
+      }
+    }
+  },
+  {
+    "id": "topic_03_food",
+    "questionJa": "今いちばん食べたいものって何？",
+    "questionEn": "What do you want to eat most right now?",
+    "tags": [
+      "food"
+    ],
+    "openers": {
+      "default": {
+        "ja": "今いちばん食べたいものって何？",
+        "en": "What do you want to eat most right now?"
+      },
+      "yuki": {
+        "ja": "今いちばん食べたいものって何？",
+        "en": "What do you want to eat most right now?"
+      },
+      "ren": {
+        "ja": "今いちばん食べたいものって何？",
+        "en": "What do you want to eat most right now?"
+      },
+      "hana": {
+        "ja": "今いちばん食べたいものって何？",
+        "en": "What do you want to eat most right now?"
+      }
+    }
+  },
+  {
+    "id": "topic_04_childhood",
+    "questionJa": "子どもの頃の思い出で一番好きなのは？",
+    "questionEn": "What is your favorite childhood memory?",
+    "tags": [
+      "childhood"
+    ],
+    "openers": {
+      "default": {
+        "ja": "子どもの頃の思い出で一番好きなのは？",
+        "en": "What is your favorite childhood memory?"
+      },
+      "yuki": {
+        "ja": "子どもの頃の思い出で一番好きなのは？",
+        "en": "What is your favorite childhood memory?"
+      },
+      "ren": {
+        "ja": "子どもの頃の思い出で一番好きなのは？",
+        "en": "What is your favorite childhood memory?"
+      },
+      "hana": {
+        "ja": "子どもの頃の思い出で一番好きなのは？",
+        "en": "What is your favorite childhood memory?"
+      }
+    }
+  },
+  {
+    "id": "topic_05_weather",
+    "questionJa": "今日の天気で気分変わった？",
+    "questionEn": "Did today's weather affect your mood?",
+    "tags": [
+      "weather"
+    ],
+    "openers": {
+      "default": {
+        "ja": "今日の天気で気分変わった？",
+        "en": "Did today's weather affect your mood?"
+      },
+      "yuki": {
+        "ja": "今日の天気で気分変わった？",
+        "en": "Did today's weather affect your mood?"
+      },
+      "ren": {
+        "ja": "今日の天気で気分変わった？",
+        "en": "Did today's weather affect your mood?"
+      },
+      "hana": {
+        "ja": "今日の天気で気分変わった？",
+        "en": "Did today's weather affect your mood?"
+      }
+    }
+  },
+  {
+    "id": "topic_06_music",
+    "questionJa": "最近よく聴く曲ある？",
+    "questionEn": "Any song you've been listening to a lot lately?",
+    "tags": [
+      "music"
+    ],
+    "openers": {
+      "default": {
+        "ja": "最近よく聴く曲ある？",
+        "en": "Any song you've been listening to a lot lately?"
+      },
+      "yuki": {
+        "ja": "最近よく聴く曲ある？",
+        "en": "Any song you've been listening to a lot lately?"
+      },
+      "ren": {
+        "ja": "最近よく聴く曲ある？",
+        "en": "Any song you've been listening to a lot lately?"
+      },
+      "hana": {
+        "ja": "最近よく聴く曲ある？",
+        "en": "Any song you've been listening to a lot lately?"
+      }
+    }
+  },
+  {
+    "id": "topic_07_travel",
+    "questionJa": "今すぐ行けるならどこに旅行したい？",
+    "questionEn": "If you could travel right now, where would you go?",
+    "tags": [
+      "travel"
+    ],
+    "openers": {
+      "default": {
+        "ja": "今すぐ行けるならどこに旅行したい？",
+        "en": "If you could travel right now, where would you go?"
+      },
+      "yuki": {
+        "ja": "今すぐ行けるならどこに旅行したい？",
+        "en": "If you could travel right now, where would you go?"
+      },
+      "ren": {
+        "ja": "今すぐ行けるならどこに旅行したい？",
+        "en": "If you could travel right now, where would you go?"
+      },
+      "hana": {
+        "ja": "今すぐ行けるならどこに旅行したい？",
+        "en": "If you could travel right now, where would you go?"
+      }
+    }
+  },
+  {
+    "id": "topic_08_study",
+    "questionJa": "最近の勉強でいちばん大変なのは何？",
+    "questionEn": "What's the hardest part of studying lately?",
+    "tags": [
+      "study"
+    ],
+    "openers": {
+      "default": {
+        "ja": "最近の勉強でいちばん大変なのは何？",
+        "en": "What's the hardest part of studying lately?"
+      },
+      "yuki": {
+        "ja": "最近の勉強でいちばん大変なのは何？",
+        "en": "What's the hardest part of studying lately?"
+      },
+      "ren": {
+        "ja": "最近の勉強でいちばん大変なのは何？",
+        "en": "What's the hardest part of studying lately?"
+      },
+      "hana": {
+        "ja": "最近の勉強でいちばん大変なのは何？",
+        "en": "What's the hardest part of studying lately?"
+      }
+    }
+  },
+  {
+    "id": "topic_09_coffee",
+    "questionJa": "コーヒー派？お茶派？",
+    "questionEn": "Are you more of a coffee person or tea person?",
+    "tags": [
+      "coffee"
+    ],
+    "openers": {
+      "default": {
+        "ja": "コーヒー派？お茶派？",
+        "en": "Are you more of a coffee person or tea person?"
+      },
+      "yuki": {
+        "ja": "コーヒー派？お茶派？",
+        "en": "Are you more of a coffee person or tea person?"
+      },
+      "ren": {
+        "ja": "コーヒー派？お茶派？",
+        "en": "Are you more of a coffee person or tea person?"
+      },
+      "hana": {
+        "ja": "コーヒー派？お茶派？",
+        "en": "Are you more of a coffee person or tea person?"
+      }
+    }
+  },
+  {
+    "id": "topic_10_anime",
+    "questionJa": "最近見たアニメでおすすめある？",
+    "questionEn": "Any anime you'd recommend from recently?",
+    "tags": [
+      "anime"
+    ],
+    "openers": {
+      "default": {
+        "ja": "最近見たアニメでおすすめある？",
+        "en": "Any anime you'd recommend from recently?"
+      },
+      "yuki": {
+        "ja": "最近見たアニメでおすすめある？",
+        "en": "Any anime you'd recommend from recently?"
+      },
+      "ren": {
+        "ja": "最近見たアニメでおすすめある？",
+        "en": "Any anime you'd recommend from recently?"
+      },
+      "hana": {
+        "ja": "最近見たアニメでおすすめある？",
+        "en": "Any anime you'd recommend from recently?"
+      }
+    }
+  },
+  {
+    "id": "topic_11_friends",
+    "questionJa": "友達と会うとき、何して過ごすことが多い？",
+    "questionEn": "What do you usually do when you hang out with friends?",
+    "tags": [
+      "friends"
+    ],
+    "openers": {
+      "default": {
+        "ja": "友達と会うとき、何して過ごすことが多い？",
+        "en": "What do you usually do when you hang out with friends?"
+      },
+      "yuki": {
+        "ja": "友達と会うとき、何して過ごすことが多い？",
+        "en": "What do you usually do when you hang out with friends?"
+      },
+      "ren": {
+        "ja": "友達と会うとき、何して過ごすことが多い？",
+        "en": "What do you usually do when you hang out with friends?"
+      },
+      "hana": {
+        "ja": "友達と会うとき、何して過ごすことが多い？",
+        "en": "What do you usually do when you hang out with friends?"
+      }
+    }
+  },
+  {
+    "id": "topic_12_shopping",
+    "questionJa": "最近買ってよかったものある？",
+    "questionEn": "Did you buy anything good lately?",
+    "tags": [
+      "shopping"
+    ],
+    "openers": {
+      "default": {
+        "ja": "最近買ってよかったものある？",
+        "en": "Did you buy anything good lately?"
+      },
+      "yuki": {
+        "ja": "最近買ってよかったものある？",
+        "en": "Did you buy anything good lately?"
+      },
+      "ren": {
+        "ja": "最近買ってよかったものある？",
+        "en": "Did you buy anything good lately?"
+      },
+      "hana": {
+        "ja": "最近買ってよかったものある？",
+        "en": "Did you buy anything good lately?"
+      }
+    }
+  },
+  {
+    "id": "topic_13_night",
+    "questionJa": "夜になると考えちゃうことってある？",
+    "questionEn": "Is there anything you tend to think about at night?",
+    "tags": [
+      "night"
+    ],
+    "openers": {
+      "default": {
+        "ja": "夜になると考えちゃうことってある？",
+        "en": "Is there anything you tend to think about at night?"
+      },
+      "yuki": {
+        "ja": "夜になると考えちゃうことってある？",
+        "en": "Is there anything you tend to think about at night?"
+      },
+      "ren": {
+        "ja": "夜になると考えちゃうことってある？",
+        "en": "Is there anything you tend to think about at night?"
+      },
+      "hana": {
+        "ja": "夜になると考えちゃうことってある？",
+        "en": "Is there anything you tend to think about at night?"
+      }
+    }
+  },
+  {
+    "id": "topic_14_school",
+    "questionJa": "学生時代の好きな授業って何だった？",
+    "questionEn": "What was your favorite subject in school?",
+    "tags": [
+      "school"
+    ],
+    "openers": {
+      "default": {
+        "ja": "学生時代の好きな授業って何だった？",
+        "en": "What was your favorite subject in school?"
+      },
+      "yuki": {
+        "ja": "学生時代の好きな授業って何だった？",
+        "en": "What was your favorite subject in school?"
+      },
+      "ren": {
+        "ja": "学生時代の好きな授業って何だった？",
+        "en": "What was your favorite subject in school?"
+      },
+      "hana": {
+        "ja": "学生時代の好きな授業って何だった？",
+        "en": "What was your favorite subject in school?"
+      }
+    }
+  },
+  {
+    "id": "topic_15_snacks",
+    "questionJa": "日本のお菓子で気になるものある？",
+    "questionEn": "Any Japanese snacks you're curious about?",
+    "tags": [
+      "snacks"
+    ],
+    "openers": {
+      "default": {
+        "ja": "日本のお菓子で気になるものある？",
+        "en": "Any Japanese snacks you're curious about?"
+      },
+      "yuki": {
+        "ja": "日本のお菓子で気になるものある？",
+        "en": "Any Japanese snacks you're curious about?"
+      },
+      "ren": {
+        "ja": "日本のお菓子で気になるものある？",
+        "en": "Any Japanese snacks you're curious about?"
+      },
+      "hana": {
+        "ja": "日本のお菓子で気になるものある？",
+        "en": "Any Japanese snacks you're curious about?"
+      }
+    }
+  },
+  {
+    "id": "topic_16_routine",
+    "questionJa": "朝起きて最初にすることって何？",
+    "questionEn": "What's the first thing you do when you wake up?",
+    "tags": [
+      "routine"
+    ],
+    "openers": {
+      "default": {
+        "ja": "朝起きて最初にすることって何？",
+        "en": "What's the first thing you do when you wake up?"
+      },
+      "yuki": {
+        "ja": "朝起きて最初にすることって何？",
+        "en": "What's the first thing you do when you wake up?"
+      },
+      "ren": {
+        "ja": "朝起きて最初にすることって何？",
+        "en": "What's the first thing you do when you wake up?"
+      },
+      "hana": {
+        "ja": "朝起きて最初にすることって何？",
+        "en": "What's the first thing you do when you wake up?"
+      }
+    }
+  },
+  {
+    "id": "topic_17_pets",
+    "questionJa": "犬派？猫派？それとも別の動物？",
+    "questionEn": "Are you a dog person, cat person, or something else?",
+    "tags": [
+      "pets"
+    ],
+    "openers": {
+      "default": {
+        "ja": "犬派？猫派？それとも別の動物？",
+        "en": "Are you a dog person, cat person, or something else?"
+      },
+      "yuki": {
+        "ja": "犬派？猫派？それとも別の動物？",
+        "en": "Are you a dog person, cat person, or something else?"
+      },
+      "ren": {
+        "ja": "犬派？猫派？それとも別の動物？",
+        "en": "Are you a dog person, cat person, or something else?"
+      },
+      "hana": {
+        "ja": "犬派？猫派？それとも別の動物？",
+        "en": "Are you a dog person, cat person, or something else?"
+      }
+    }
+  },
+  {
+    "id": "topic_18_city",
+    "questionJa": "住んでる街の好きなところってどこ？",
+    "questionEn": "What do you like about the city you live in?",
+    "tags": [
+      "city"
+    ],
+    "openers": {
+      "default": {
+        "ja": "住んでる街の好きなところってどこ？",
+        "en": "What do you like about the city you live in?"
+      },
+      "yuki": {
+        "ja": "住んでる街の好きなところってどこ？",
+        "en": "What do you like about the city you live in?"
+      },
+      "ren": {
+        "ja": "住んでる街の好きなところってどこ？",
+        "en": "What do you like about the city you live in?"
+      },
+      "hana": {
+        "ja": "住んでる街の好きなところってどこ？",
+        "en": "What do you like about the city you live in?"
+      }
+    }
+  },
+  {
+    "id": "topic_19_family",
+    "questionJa": "家族と話すとき、よくどんな話題になる？",
+    "questionEn": "What do you usually talk about with your family?",
+    "tags": [
+      "family"
+    ],
+    "openers": {
+      "default": {
+        "ja": "家族と話すとき、よくどんな話題になる？",
+        "en": "What do you usually talk about with your family?"
+      },
+      "yuki": {
+        "ja": "家族と話すとき、よくどんな話題になる？",
+        "en": "What do you usually talk about with your family?"
+      },
+      "ren": {
+        "ja": "家族と話すとき、よくどんな話題になる？",
+        "en": "What do you usually talk about with your family?"
+      },
+      "hana": {
+        "ja": "家族と話すとき、よくどんな話題になる？",
+        "en": "What do you usually talk about with your family?"
+      }
+    }
+  },
+  {
+    "id": "topic_20_phone",
+    "questionJa": "スマホで一番よく使うアプリって何？",
+    "questionEn": "What's the app you use most on your phone?",
+    "tags": [
+      "phone"
+    ],
+    "openers": {
+      "default": {
+        "ja": "スマホで一番よく使うアプリって何？",
+        "en": "What's the app you use most on your phone?"
+      },
+      "yuki": {
+        "ja": "スマホで一番よく使うアプリって何？",
+        "en": "What's the app you use most on your phone?"
+      },
+      "ren": {
+        "ja": "スマホで一番よく使うアプリって何？",
+        "en": "What's the app you use most on your phone?"
+      },
+      "hana": {
+        "ja": "スマホで一番よく使うアプリって何？",
+        "en": "What's the app you use most on your phone?"
+      }
+    }
+  },
+  {
+    "id": "topic_21_fashion",
+    "questionJa": "服を選ぶときって何を一番重視する？",
+    "questionEn": "What matters most to you when choosing clothes?",
+    "tags": [
+      "fashion"
+    ],
+    "openers": {
+      "default": {
+        "ja": "服を選ぶときって何を一番重視する？",
+        "en": "What matters most to you when choosing clothes?"
+      },
+      "yuki": {
+        "ja": "服を選ぶときって何を一番重視する？",
+        "en": "What matters most to you when choosing clothes?"
+      },
+      "ren": {
+        "ja": "服を選ぶときって何を一番重視する？",
+        "en": "What matters most to you when choosing clothes?"
+      },
+      "hana": {
+        "ja": "服を選ぶときって何を一番重視する？",
+        "en": "What matters most to you when choosing clothes?"
+      }
+    }
+  },
+  {
+    "id": "topic_22_language",
+    "questionJa": "日本語を話していて楽しい瞬間ってどんな時？",
+    "questionEn": "When does speaking Japanese feel fun to you?",
+    "tags": [
+      "language"
+    ],
+    "openers": {
+      "default": {
+        "ja": "日本語を話していて楽しい瞬間ってどんな時？",
+        "en": "When does speaking Japanese feel fun to you?"
+      },
+      "yuki": {
+        "ja": "日本語を話していて楽しい瞬間ってどんな時？",
+        "en": "When does speaking Japanese feel fun to you?"
+      },
+      "ren": {
+        "ja": "日本語を話していて楽しい瞬間ってどんな時？",
+        "en": "When does speaking Japanese feel fun to you?"
+      },
+      "hana": {
+        "ja": "日本語を話していて楽しい瞬間ってどんな時？",
+        "en": "When does speaking Japanese feel fun to you?"
+      }
+    }
+  },
+  {
+    "id": "topic_23_season",
+    "questionJa": "一番好きな季節っていつ？",
+    "questionEn": "What's your favorite season?",
+    "tags": [
+      "season"
+    ],
+    "openers": {
+      "default": {
+        "ja": "一番好きな季節っていつ？",
+        "en": "What's your favorite season?"
+      },
+      "yuki": {
+        "ja": "一番好きな季節っていつ？",
+        "en": "What's your favorite season?"
+      },
+      "ren": {
+        "ja": "一番好きな季節っていつ？",
+        "en": "What's your favorite season?"
+      },
+      "hana": {
+        "ja": "一番好きな季節っていつ？",
+        "en": "What's your favorite season?"
+      }
+    }
+  },
+  {
+    "id": "topic_24_memory",
+    "questionJa": "最近ふと思い出した懐かしいことある？",
+    "questionEn": "Anything nostalgic came back to you recently?",
+    "tags": [
+      "memory"
+    ],
+    "openers": {
+      "default": {
+        "ja": "最近ふと思い出した懐かしいことある？",
+        "en": "Anything nostalgic came back to you recently?"
+      },
+      "yuki": {
+        "ja": "最近ふと思い出した懐かしいことある？",
+        "en": "Anything nostalgic came back to you recently?"
+      },
+      "ren": {
+        "ja": "最近ふと思い出した懐かしいことある？",
+        "en": "Anything nostalgic came back to you recently?"
+      },
+      "hana": {
+        "ja": "最近ふと思い出した懐かしいことある？",
+        "en": "Anything nostalgic came back to you recently?"
+      }
+    }
+  },
+  {
+    "id": "topic_25_festival",
+    "questionJa": "日本のお祭りに行けるなら何をしてみたい？",
+    "questionEn": "If you could go to a Japanese festival, what would you want to do?",
+    "tags": [
+      "festival"
+    ],
+    "openers": {
+      "default": {
+        "ja": "日本のお祭りに行けるなら何をしてみたい？",
+        "en": "If you could go to a Japanese festival, what would you want to do?"
+      },
+      "yuki": {
+        "ja": "日本のお祭りに行けるなら何をしてみたい？",
+        "en": "If you could go to a Japanese festival, what would you want to do?"
+      },
+      "ren": {
+        "ja": "日本のお祭りに行けるなら何をしてみたい？",
+        "en": "If you could go to a Japanese festival, what would you want to do?"
+      },
+      "hana": {
+        "ja": "日本のお祭りに行けるなら何をしてみたい？",
+        "en": "If you could go to a Japanese festival, what would you want to do?"
+      }
+    }
+  },
+  {
+    "id": "topic_26_commute",
+    "questionJa": "通学や通勤の時間ってどう過ごす？",
+    "questionEn": "How do you spend commuting time?",
+    "tags": [
+      "commute"
+    ],
+    "openers": {
+      "default": {
+        "ja": "通学や通勤の時間ってどう過ごす？",
+        "en": "How do you spend commuting time?"
+      },
+      "yuki": {
+        "ja": "通学や通勤の時間ってどう過ごす？",
+        "en": "How do you spend commuting time?"
+      },
+      "ren": {
+        "ja": "通学や通勤の時間ってどう過ごす？",
+        "en": "How do you spend commuting time?"
+      },
+      "hana": {
+        "ja": "通学や通勤の時間ってどう過ごす？",
+        "en": "How do you spend commuting time?"
+      }
+    }
+  },
+  {
+    "id": "topic_27_book",
+    "questionJa": "最近読んだ本や記事で面白かったものある？",
+    "questionEn": "Did you read anything interesting recently?",
+    "tags": [
+      "book"
+    ],
+    "openers": {
+      "default": {
+        "ja": "最近読んだ本や記事で面白かったものある？",
+        "en": "Did you read anything interesting recently?"
+      },
+      "yuki": {
+        "ja": "最近読んだ本や記事で面白かったものある？",
+        "en": "Did you read anything interesting recently?"
+      },
+      "ren": {
+        "ja": "最近読んだ本や記事で面白かったものある？",
+        "en": "Did you read anything interesting recently?"
+      },
+      "hana": {
+        "ja": "最近読んだ本や記事で面白かったものある？",
+        "en": "Did you read anything interesting recently?"
+      }
+    }
+  },
+  {
+    "id": "topic_28_dream",
+    "questionJa": "今ちょっと頑張りたいことって何？",
+    "questionEn": "What's something you want to put effort into right now?",
+    "tags": [
+      "dream"
+    ],
+    "openers": {
+      "default": {
+        "ja": "今ちょっと頑張りたいことって何？",
+        "en": "What's something you want to put effort into right now?"
+      },
+      "yuki": {
+        "ja": "今ちょっと頑張りたいことって何？",
+        "en": "What's something you want to put effort into right now?"
+      },
+      "ren": {
+        "ja": "今ちょっと頑張りたいことって何？",
+        "en": "What's something you want to put effort into right now?"
+      },
+      "hana": {
+        "ja": "今ちょっと頑張りたいことって何？",
+        "en": "What's something you want to put effort into right now?"
+      }
+    }
+  },
+  {
+    "id": "topic_29_restaurant",
+    "questionJa": "初めてのレストランに行くとき何を頼みがち？",
+    "questionEn": "What do you usually order at a restaurant you've never tried before?",
+    "tags": [
+      "restaurant"
+    ],
+    "openers": {
+      "default": {
+        "ja": "初めてのレストランに行くとき何を頼みがち？",
+        "en": "What do you usually order at a restaurant you've never tried before?"
+      },
+      "yuki": {
+        "ja": "初めてのレストランに行くとき何を頼みがち？",
+        "en": "What do you usually order at a restaurant you've never tried before?"
+      },
+      "ren": {
+        "ja": "初めてのレストランに行くとき何を頼みがち？",
+        "en": "What do you usually order at a restaurant you've never tried before?"
+      },
+      "hana": {
+        "ja": "初めてのレストランに行くとき何を頼みがち？",
+        "en": "What do you usually order at a restaurant you've never tried before?"
+      }
+    }
+  },
+  {
+    "id": "topic_30_late-night",
+    "questionJa": "夜遅くに急に食べたくなるものある？",
+    "questionEn": "What do you suddenly crave late at night?",
+    "tags": [
+      "late-night"
+    ],
+    "openers": {
+      "default": {
+        "ja": "夜遅くに急に食べたくなるものある？",
+        "en": "What do you suddenly crave late at night?"
+      },
+      "yuki": {
+        "ja": "夜遅くに急に食べたくなるものある？",
+        "en": "What do you suddenly crave late at night?"
+      },
+      "ren": {
+        "ja": "夜遅くに急に食べたくなるものある？",
+        "en": "What do you suddenly crave late at night?"
+      },
+      "hana": {
+        "ja": "夜遅くに急に食べたくなるものある？",
+        "en": "What do you suddenly crave late at night?"
+      }
+    }
+  }
+]

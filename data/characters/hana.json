@@ -1,0 +1,27 @@
+{
+  "id": "hana",
+  "name": "Hana",
+  "jpName": "花",
+  "role": "energetic friend",
+  "city": "Kyoto",
+  "age": 21,
+  "personality": [
+    "bright",
+    "talkative",
+    "anime-loving",
+    "encouraging"
+  ],
+  "speakingStyle": "bubbly, slightly fast, playful casual Japanese",
+  "favoriteTopics": [
+    "anime",
+    "desserts",
+    "cafes",
+    "travel",
+    "shopping"
+  ],
+  "uiTheme": {
+    "primary": "#e06080",
+    "secondary": "#e0a0c0",
+    "emoji": "🌺"
+  }
+}

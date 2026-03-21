@@ -1,0 +1,56 @@
+:root {
+  --font-jp: 'Noto Sans JP', sans-serif;
+
+  --color-bg-deep: #0a0820;
+  --color-bg-radial: #1e1060;
+  --color-phone: #16143a;
+  --color-phone-alt: #13113a;
+  --color-surface: rgba(255,255,255,0.065);
+  --color-surface-strong: rgba(255,255,255,0.10);
+  --color-surface-soft: rgba(255,255,255,0.07);
+  --color-border: rgba(255,255,255,0.10);
+  --color-border-soft: rgba(255,255,255,0.07);
+  --color-white: #ffffff;
+  --color-text-muted: rgba(255,255,255,0.45);
+  --color-text-soft: rgba(255,255,255,0.38);
+  --color-text-faint: rgba(255,255,255,0.30);
+
+  --color-pink-1: #e050a0;
+  --color-pink-2: #c030a0;
+  --color-pink-3: #e898c8;
+  --color-purple-1: #7040c0;
+  --color-purple-2: #6030c0;
+  --color-blue-1: #7abcff;
+  --color-teal-1: #20b0a0;
+  --color-teal-2: #40d8c0;
+  --color-danger: #ff7070;
+
+  --gradient-app-bg: radial-gradient(ellipse at 30% 20%, var(--color-bg-radial) 0%, var(--color-bg-deep) 100%);
+  --gradient-pink: linear-gradient(135deg, var(--color-pink-1), var(--color-pink-2));
+  --gradient-yuki: linear-gradient(135deg, var(--color-pink-1), var(--color-purple-1));
+
+  --shadow-phone:
+    0 0 0 1px rgba(255,255,255,0.06),
+    0 40px 100px rgba(0,0,0,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+
+  --shadow-button: 0 6px 24px rgba(224,80,160,0.4);
+
+  --radius-phone: 44px;
+  --radius-card: 20px;
+  --radius-card-lg: 24px;
+  --radius-pill: 20px;
+  --radius-round: 999px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+
+  --phone-width: 390px;
+  --phone-height: 844px;
+}

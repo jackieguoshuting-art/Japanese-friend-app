@@ -1,0 +1,10 @@
+{
+  "name": "Japanese Friend App",
+  "short_name": "JFriend",
+  "start_url": "../../index.html",
+  "display": "standalone",
+  "background_color": "#16143a",
+  "theme_color": "#16143a",
+  "description": "An immersive AI Japanese friend app for speaking, shadowing, and listening.",
+  "icons": []
+}
