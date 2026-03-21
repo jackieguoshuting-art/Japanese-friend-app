@@ -317,7 +317,12 @@
     </div>
 
     <!-- Conversation recap (populated by JS) -->
-    <div id="conv-recap" hidden></div>
+    <div id="conv-recap" hidden>
+      <div style="padding:0 16px 10px;position:relative;z-index:1;">
+        <button class="conv-toggle-btn" id="conv-toggle-btn" onclick="toggleConvRecap()">今日の会話を見る 📖</button>
+      </div>
+      <div id="conv-recap-content" class="conv-recap-collapsed"></div>
+    </div>
 
     <!-- Yuki memory card -->
     <div class="memory-card">

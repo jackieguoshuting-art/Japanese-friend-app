@@ -185,17 +185,22 @@ function renderConversationSummary() {
   const charName = (characterMap[characterId] || yukiConfig).name;
 
   recap.hidden = false;
-  recap.innerHTML = `
-    <div class="conv-recap-inner">
-      <div class="sec-label conv-recap-title">今日の会話 · Today's Conversation</div>
-      ${history.map((m) => `
-        <div class="conv-msg ${m.role === 'user' ? 'conv-msg-user' : 'conv-msg-yuki'}">
-          <div class="conv-speaker">${m.role === 'user' ? 'あなた' : charName}</div>
-          <div class="conv-text">${m.text}</div>
-        </div>
-      `).join('')}
-    </div>
-  `;
+  const content = document.getElementById('conv-recap-content');
+  if (content) {
+    content.innerHTML = `
+      <div class="conv-recap-inner">
+        ${history.map((m) => `
+          <div class="conv-msg ${m.role === 'user' ? 'conv-msg-user' : 'conv-msg-yuki'}">
+            <div class="conv-speaker">${m.role === 'user' ? 'あなた' : charName}</div>
+            <div class="conv-text">${m.text}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+  // Reset toggle state each time
+  const btn = document.getElementById('conv-toggle-btn');
+  if (btn) btn.textContent = '今日の会話を見る 📖';
 }
 
 function renderMemoryCard() {
@@ -226,6 +231,15 @@ function initBottomNav() {
     });
   });
 }
+
+window.toggleConvRecap = function () {
+  const content = document.getElementById('conv-recap-content');
+  const btn     = document.getElementById('conv-toggle-btn');
+  if (!content || !btn) return;
+  const isOpen = !content.classList.contains('conv-recap-collapsed');
+  content.classList.toggle('conv-recap-collapsed', isOpen);
+  btn.textContent = isOpen ? '今日の会話を見る 📖' : '閉じる ✕';
+};
 
 function init() {
   ['sl-home', 'sl-friends', 'sl-call', 'sl-summary'].forEach(spawnStars);

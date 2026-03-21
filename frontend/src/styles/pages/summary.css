@@ -32,8 +32,24 @@
 
 /* ── Conversation recap ── */
 #conv-recap { position: relative; z-index: 1; }
+.conv-recap-collapsed { display: none; }
 .conv-recap-inner { padding: 0 16px 20px; }
 .conv-recap-title { margin-bottom: 14px; }
+.conv-toggle-btn {
+  width: 100%;
+  padding: 11px 16px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.13);
+  border-radius: 14px;
+  color: #fff;
+  font-size: 13px;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.18s;
+}
+.conv-toggle-btn:active { background: rgba(255,255,255,0.13); }
 .conv-msg { display: flex; flex-direction: column; margin-bottom: 10px; max-width: 80%; }
 .conv-msg-user { align-self: flex-end; margin-left: auto; align-items: flex-end; }
 .conv-msg-yuki { align-self: flex-start; align-items: flex-start; }
