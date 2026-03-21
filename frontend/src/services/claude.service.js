@@ -5,7 +5,7 @@ export async function getClaudeReply({ apiUrl = '/api/chat', character, topic, m
   const response = await fetch(apiUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, characterId: character.id, topicId: topic?.id })
+    body: JSON.stringify({ prompt, systemPrompt: character.systemPrompt, characterId: character.id, topicId: topic?.id })
   });
   if (!response.ok) {
     throw new Error(`Claude API request failed: ${response.status}`);

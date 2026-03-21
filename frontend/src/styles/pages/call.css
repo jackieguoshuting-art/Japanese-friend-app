@@ -86,3 +86,43 @@
   border-color: rgba(255,50,50,0.28);
 }
 .ctrl-lbl { font-size: 10px; color: rgba(255,255,255,0.45); }
+
+.call-input-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 18px 14px;
+  position: relative;
+  z-index: 1;
+}
+.call-text-input {
+  flex: 1;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 22px;
+  padding: 10px 16px;
+  color: #fff;
+  font-size: 14px;
+  font-family: 'Noto Sans JP', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.call-text-input::placeholder { color: rgba(255,255,255,0.3); }
+.call-text-input:focus { border-color: rgba(224,80,160,0.55); }
+.call-send-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--gradient-pink);
+  border: none;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+.call-send-btn:active { transform: scale(0.92); }
+.call-send-btn:disabled { opacity: 0.4; cursor: default; }

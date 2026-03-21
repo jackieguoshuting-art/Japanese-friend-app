@@ -5,6 +5,8 @@ import { appendMemory, getCharacterMemory } from './features/memory.js';
 import { yukiConfig } from './characters/yuki/yuki.config.js';
 import { renConfig } from './characters/ren/ren.config.js';
 import { hanaConfig } from './characters/hana/hana.config.js';
+import { getClaudeReply } from './services/claude.service.js';
+import { getRandomFallbackReply } from './features/chat.js';
 
 const characterMap = { yuki: yukiConfig, ren: renConfig, hana: hanaConfig };
 
@@ -126,6 +128,50 @@ function seedInitialMemory() {
   }
 }
 
+function initCallInput() {
+  const input = document.getElementById('call-text-input');
+  const btn   = document.getElementById('call-send-btn');
+  if (!input || !btn) return;
+
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    btn.disabled = true;
+
+    const characterId = appState.activeCharacter || 'yuki';
+    const character   = characterMap[characterId] || yukiConfig;
+
+    document.querySelector('.dlg-jp').textContent = '……';
+    document.querySelector('.dlg-en').textContent = '';
+
+    try {
+      const reply = await getClaudeReply({
+        character,
+        topic:    getDailyTopic(new Date(), characterId),
+        memory:   getCharacterMemory(characterId),
+        history:  [],
+        userText: text,
+      });
+      document.querySelector('.dlg-jp').textContent = reply.replyJa || '……';
+      document.querySelector('.dlg-en').textContent = reply.replyEn || '';
+      if (reply.memoryCandidate) {
+        appendMemory(characterId, { factJa: reply.memoryCandidate, source: 'conversation' });
+      }
+    } catch {
+      const fallback = getRandomFallbackReply();
+      document.querySelector('.dlg-jp').textContent = fallback.replyJa;
+      document.querySelector('.dlg-en').textContent = fallback.replyEn;
+    } finally {
+      btn.disabled = false;
+      input.focus();
+    }
+  }
+
+  btn.addEventListener('click', sendMessage);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
+}
+
 function initBottomNav() {
   document.querySelectorAll('.nav-item').forEach((item) => {
     item.addEventListener('click', () => {
@@ -141,6 +187,7 @@ function init() {
   seedInitialMemory();
   setActiveCharacter('yuki');
   bindCharacterButtons();
+  initCallInput();
   initBottomNav();
   initWordTooltips();
 
