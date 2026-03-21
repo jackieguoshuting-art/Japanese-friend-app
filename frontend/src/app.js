@@ -7,8 +7,12 @@ import { renConfig } from './characters/ren/ren.config.js';
 import { hanaConfig } from './characters/hana/hana.config.js';
 import { getClaudeReply } from './services/claude.service.js';
 import { getRandomFallbackReply } from './features/chat.js';
+import { save, load } from './core/storage.js';
 
 const characterMap = { yuki: yukiConfig, ren: renConfig, hana: hanaConfig };
+
+// Tracks messages for the current call session
+const conversationHistory = [];
 
 function spawnStars(layerId) {
   const layer = document.getElementById(layerId);
@@ -79,6 +83,7 @@ function initWordTooltips() {
 
 function setActiveCharacter(characterId) {
   appState.activeCharacter = characterId;
+  conversationHistory.length = 0;
   const character = characterMap[characterId] || yukiConfig;
   const topic = getDailyTopic(new Date(), characterId);
   const memory = getCharacterMemory(characterId);
@@ -142,6 +147,7 @@ function initCallInput() {
     const characterId = appState.activeCharacter || 'yuki';
     const character   = characterMap[characterId] || yukiConfig;
 
+    conversationHistory.push({ role: 'user', text });
     document.querySelector('.dlg-jp').textContent = '……';
     document.querySelector('.dlg-en').textContent = '';
 
@@ -153,8 +159,10 @@ function initCallInput() {
         history:  [],
         userText: text,
       });
-      document.querySelector('.dlg-jp').textContent = reply.replyJa || '……';
+      const replyJa = reply.replyJa || '……';
+      document.querySelector('.dlg-jp').textContent = replyJa;
       document.querySelector('.dlg-en').textContent = reply.replyEn || '';
+      conversationHistory.push({ role: 'yuki', text: replyJa });
       if (reply.memoryCandidate) {
         appendMemory(characterId, { factJa: reply.memoryCandidate, source: 'conversation' });
       }
@@ -162,6 +170,7 @@ function initCallInput() {
       const fallback = getRandomFallbackReply();
       document.querySelector('.dlg-jp').textContent = fallback.replyJa;
       document.querySelector('.dlg-en').textContent = fallback.replyEn;
+      conversationHistory.push({ role: 'yuki', text: fallback.replyJa });
     } finally {
       btn.disabled = false;
       input.focus();
@@ -170,6 +179,29 @@ function initCallInput() {
 
   btn.addEventListener('click', sendMessage);
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
+}
+
+function renderConversationSummary() {
+  const recap = document.getElementById('conv-recap');
+  if (!recap) return;
+  const history = load('lastConversation', []);
+  if (!history.length) { recap.hidden = true; return; }
+
+  const characterId = appState.activeCharacter || 'yuki';
+  const charName = (characterMap[characterId] || yukiConfig).name;
+
+  recap.hidden = false;
+  recap.innerHTML = `
+    <div class="conv-recap-inner">
+      <div class="sec-label conv-recap-title">今日の会話 · Today's Conversation</div>
+      ${history.map((m) => `
+        <div class="conv-msg ${m.role === 'user' ? 'conv-msg-user' : 'conv-msg-yuki'}">
+          <div class="conv-speaker">${m.role === 'user' ? 'あなた' : charName}</div>
+          <div class="conv-text">${m.text}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
 }
 
 function initBottomNav() {
@@ -193,7 +225,11 @@ function init() {
 
   document.querySelector('.btn-return')?.addEventListener('click', () => go('friends'));
   document.querySelector('.btn-end-top')?.addEventListener('click', () => go('friends'));
-  document.querySelector('.ctrl .end-call')?.parentElement?.addEventListener('click', () => go('summary'));
+  document.querySelector('.ctrl .end-call')?.parentElement?.addEventListener('click', () => {
+    save('lastConversation', conversationHistory);
+    renderConversationSummary();
+    go('summary');
+  });
 
   document.querySelector('.back-btn')?.addEventListener('click', () => go('home'));
   document.querySelector('.nav-item:nth-child(2)')?.setAttribute('data-nav', 'friends');

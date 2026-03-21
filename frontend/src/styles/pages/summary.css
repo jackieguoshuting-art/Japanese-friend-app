@@ -29,3 +29,29 @@
 .mem-title { font-size: 11.5px; color: rgba(255,255,255,0.42); }
 .mem-text { font-size: 15px; color: var(--color-white); line-height: 1.65; }
 .mem-en { font-size: 11.5px; color: rgba(255,255,255,0.38); margin-top: 5px; line-height: 1.5; }
+
+/* ── Conversation recap ── */
+#conv-recap { position: relative; z-index: 1; }
+.conv-recap-inner { padding: 0 16px 20px; }
+.conv-recap-title { margin-bottom: 14px; }
+.conv-msg { display: flex; flex-direction: column; margin-bottom: 10px; max-width: 80%; }
+.conv-msg-user { align-self: flex-end; margin-left: auto; align-items: flex-end; }
+.conv-msg-yuki { align-self: flex-start; align-items: flex-start; }
+.conv-speaker { font-size: 10px; color: rgba(255,255,255,0.38); margin-bottom: 3px; letter-spacing: 0.04em; }
+.conv-text {
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #fff;
+}
+.conv-msg-user .conv-text {
+  background: rgba(224,80,160,0.2);
+  border: 1px solid rgba(224,80,160,0.3);
+  border-bottom-right-radius: 4px;
+}
+.conv-msg-yuki .conv-text {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-bottom-left-radius: 4px;
+}
