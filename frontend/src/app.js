@@ -123,14 +123,7 @@ function bindCharacterButtons() {
 }
 
 function seedInitialMemory() {
-  const existing = getCharacterMemory('yuki');
-  if (!existing.length) {
-    appendMemory('yuki', {
-      factJa: '「アメリカに住んでるって言ってたね」',
-      factEn: '"You mentioned you live in America"',
-      source: 'seed'
-    });
-  }
+  // Seed removed — memory card now shows real AI-generated memories only
 }
 
 function initCallInput() {
@@ -165,6 +158,7 @@ function initCallInput() {
       conversationHistory.push({ role: 'yuki', text: replyJa });
       if (reply.memoryCandidate) {
         appendMemory(characterId, { factJa: reply.memoryCandidate, source: 'conversation' });
+        save('yukiMemory', reply.memoryCandidate);
       }
     } catch {
       const fallback = getRandomFallbackReply();
@@ -204,6 +198,26 @@ function renderConversationSummary() {
   `;
 }
 
+function renderMemoryCard() {
+  const memText  = document.querySelector('.memory-card .mem-text');
+  const memEn    = document.querySelector('.memory-card .mem-en');
+  const memTitle = document.querySelector('.memory-card .mem-title');
+  if (!memText) return;
+
+  const characterId = appState.activeCharacter || 'yuki';
+  const charName    = (characterMap[characterId] || yukiConfig).name;
+  if (memTitle) memTitle.textContent = `${charName} の記憶 · ${charName} will remember this`;
+
+  const yukiMemory = load('yukiMemory', null);
+  if (yukiMemory) {
+    memText.textContent = `「${yukiMemory}」`;
+    if (memEn) memEn.textContent = `Saved to ${charName}'s memory ✦`;
+  } else {
+    memText.textContent = '「まだ何も覚えていないよ」';
+    if (memEn) memEn.textContent = 'No memories yet from this session.';
+  }
+}
+
 function initBottomNav() {
   document.querySelectorAll('.nav-item').forEach((item) => {
     item.addEventListener('click', () => {
@@ -228,6 +242,7 @@ function init() {
   document.querySelector('.ctrl .end-call')?.parentElement?.addEventListener('click', () => {
     save('lastConversation', conversationHistory);
     renderConversationSummary();
+    renderMemoryCard();
     go('summary');
   });
 
