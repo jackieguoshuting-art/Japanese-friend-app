@@ -67,7 +67,7 @@
       </div>
       <!-- Start button -->
       <div class="home-start-area">
-        <button class="home-start-btn" onclick="setActiveCharacter(['yuki','ren','hana','mio'][charIndex] || 'yuki'); openModeModal();">💬 Start Talking</button>
+        <button class="home-start-btn" onclick="openModeModal();">💬 Start Talking</button>
       </div>
     </div>
 
@@ -125,7 +125,7 @@
     </div>
 
     <!-- Yuki featured -->
-    <div class="yuki-card" onclick="setActiveCharacter('yuki'); openModeModal();">
+    <div class="yuki-card" onclick="setActiveCharacter('yuki'); openModeModal(true);">
       <div class="yuki-top">
         <div class="avatar-lg">🌸</div>
         <div>
@@ -144,7 +144,7 @@
     <!-- Small friends -->
     <div class="friends-list">
 
-      <div class="friend-sm" onclick="setActiveCharacter('ren'); openModeModal();">
+      <div class="friend-sm" onclick="setActiveCharacter('ren'); openModeModal(true);">
         <div class="avatar-sm" style="background:linear-gradient(135deg,#3a50e0,#6030a0);">⚡</div>
         <div style="flex:1;">
           <div class="friend-sm-name">Ren <span>蓮</span></div>
@@ -154,7 +154,7 @@
         <button class="btn-talk-sm">話す</button>
       </div>
 
-      <div class="friend-sm" onclick="setActiveCharacter('hana'); openModeModal();">
+      <div class="friend-sm" onclick="setActiveCharacter('hana'); openModeModal(true);">
         <div class="avatar-sm" style="background:linear-gradient(135deg,#e06080,#e0a0c0);">🌺</div>
         <div style="flex:1;">
           <div class="friend-sm-name">Hana <span>花</span></div>
@@ -164,7 +164,7 @@
         <button class="btn-talk-sm">話す</button>
       </div>
 
-      <div class="friend-sm" onclick="setActiveCharacter('mio'); openModeModal();">
+      <div class="friend-sm" onclick="setActiveCharacter('mio'); openModeModal(true);">
         <div class="avatar-sm" style="background:linear-gradient(135deg,#30b890,#1a9070);">🌙</div>
         <div style="flex:1;">
           <div class="friend-sm-name">Mio <span>美緒</span></div>

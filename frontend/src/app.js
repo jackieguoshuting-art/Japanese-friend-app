@@ -112,20 +112,7 @@ function setActiveCharacter(characterId) {
 }
 
 function bindCharacterButtons() {
-  document.querySelector('.yuki-card')?.addEventListener('click', () => {
-    setActiveCharacter('yuki');
-    openModeModal();
-  });
-
-  const friendCards = [...document.querySelectorAll('.friend-sm:not(.offline)')];
-  const ids = ['ren', 'hana', 'mio'];
-  friendCards.forEach((card, index) => {
-    const id = ids[index] || 'yuki';
-    card.addEventListener('click', () => {
-      setActiveCharacter(id);
-      openModeModal();
-    });
-  });
+  // Handled by inline onclick in index.html
 }
 
 function seedInitialMemory() {
@@ -171,7 +158,7 @@ async function triggerOpeningMessage() {
       topic:   getDailyTopic(new Date(), characterId),
       memory:  getCharacterMemory(characterId),
       history: [],
-      userText: '[conversation start] Start the conversation naturally. Open with a topic or question as this character would.',
+      userText: '[conversation start] You are Yuki. Open the conversation casually and warmly, like texting a close friend. Be spontaneous and natural — mention something you are doing, something funny that happened, or just check in. Do NOT ask formal or generic questions like "what is your favorite season". Keep it to 1-2 short casual sentences in Japanese.',
     });
     document.getElementById('chat-loading')?.remove();
     const replyJa = reply.replyJa || 'よ';
@@ -433,7 +420,12 @@ function nextChar() {
   updateCharDisplay();
 }
 
-function openModeModal() {
+function openModeModal(skipCharSelect) {
+  if (!skipCharSelect) {
+    const charIdMap = ['yuki', 'ren', 'hana', 'mio'];
+    const selectedId = charIdMap[charIndex] || 'yuki';
+    setActiveCharacter(selectedId);
+  }
   const m = document.getElementById('mode-modal');
   if (m) m.style.display = 'flex';
 }
@@ -575,7 +567,7 @@ async function initTextPageForChar() {
       topic:   getDailyTopic(new Date(), characterId),
       memory:  getCharacterMemory(characterId),
       history: [],
-      userText: '[conversation start] Start the conversation naturally. Open with a topic or question as this character would.',
+      userText: '[conversation start] You are Yuki. Open the conversation casually and warmly, like texting a close friend. Be spontaneous and natural — mention something you are doing, something funny that happened, or just check in. Do NOT ask formal or generic questions like "what is your favorite season". Keep it to 1-2 short casual sentences in Japanese.',
     });
     document.getElementById('text-typing-open')?.remove();
     const replyJa = reply.replyJa || 'よ';
