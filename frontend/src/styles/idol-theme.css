@@ -15,19 +15,19 @@
   0%{left:-100%} 100%{left:200%}
 }
 @keyframes btn-glow {
-  0%,100%{box-shadow:0 0 8px rgba(30,100,220,.6)}
-  50%{box-shadow:0 0 22px rgba(60,140,255,.95),0 0 44px rgba(120,40,200,.45)}
+  0%,100%{box-shadow:0 0 8px rgba(30,100,220,.5)}
+  50%{box-shadow:0 0 22px rgba(50,130,255,.9),0 0 44px rgba(20,80,200,.4)}
 }
 @keyframes idol-float {
   0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)}
 }
 @keyframes logo-pulse {
-  0%,100%{text-shadow:0 0 20px #2a70ff,0 0 40px #1040aa}
+  0%,100%{text-shadow:0 0 20px #2060cc,0 0 40px #1040aa}
   50%{text-shadow:0 0 30px #4090ff,0 0 60px #2060cc,0 0 80px #102080}
 }
 @keyframes talk-glow {
   0%,100%{box-shadow:0 0 4px rgba(30,90,200,.4)}
-  50%{box-shadow:0 0 14px rgba(50,120,255,.85)}
+  50%{box-shadow:0 0 14px rgba(40,120,240,.8)}
 }
 
 /* ── 装饰元素 helper ── */
