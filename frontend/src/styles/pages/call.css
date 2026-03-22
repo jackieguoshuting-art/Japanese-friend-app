@@ -87,6 +87,54 @@
 }
 .ctrl-lbl { font-size: 10px; color: rgba(255,255,255,0.45); }
 
+.chat-list {
+  margin: 6px 18px 0;
+  position: relative;
+  z-index: 1;
+  height: 160px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
+  scrollbar-width: none;
+}
+.chat-list::-webkit-scrollbar { display: none; }
+.chat-msg {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  max-width: 82%;
+}
+.chat-msg-yuki { align-self: flex-start; }
+.chat-msg-user { align-self: flex-end; flex-direction: row-reverse; }
+.chat-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.22);
+  flex-shrink: 0;
+  margin-bottom: 6px;
+}
+.chat-bubble {
+  padding: 9px 13px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #fff;
+}
+.chat-msg-yuki .chat-bubble {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-bottom-left-radius: 4px;
+}
+.chat-msg-user .chat-bubble {
+  background: rgba(224,80,160,0.2);
+  border: 1px solid rgba(224,80,160,0.3);
+  border-bottom-right-radius: 4px;
+}
+.chat-ja { font-size: 14px; color: #fff; line-height: 1.6; }
+.chat-en { font-size: 11px; color: rgba(255,255,255,0.38); margin-top: 3px; line-height: 1.4; }
+
 .call-input-area {
   display: flex;
   align-items: center;

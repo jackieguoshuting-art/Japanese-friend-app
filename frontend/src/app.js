@@ -85,7 +85,6 @@ function setActiveCharacter(characterId) {
   appState.activeCharacter = characterId;
   conversationHistory.length = 0;
   const character = characterMap[characterId] || yukiConfig;
-  const topic = getDailyTopic(new Date(), characterId);
   const memory = getCharacterMemory(characterId);
   const emoji = {
     yuki: '🌸',
@@ -96,8 +95,8 @@ function setActiveCharacter(characterId) {
   document.querySelector('.char-big').textContent = emoji;
   document.querySelector('.call-name').textContent = `✦ ${character.name} と通話中 ✦`;
   document.querySelector('.call-mood').textContent = `${characterId === 'ren' ? '😌 落ち着いた気分' : characterId === 'hana' ? '🤩 元気いっぱい' : '😊 楽しい気分'} · ${character.name} mood`;
-  document.querySelector('.dlg-jp').innerHTML = `${topic.openerJa.replace('週末', '<span class="word-link" title="週末 = weekend">週末</span>').replace('映画', '<span class="word-link" title="映画 = movie">映画</span>')}`;
-  document.querySelector('.dlg-en').textContent = `"${topic.openerEn}"`;
+  const chatList = document.getElementById('chat-list');
+  if (chatList) chatList.innerHTML = '';
   document.querySelector('.summary-ava').textContent = emoji;
   document.querySelector('.mem-ava').textContent = emoji;
   document.querySelector('.memory-card .mem-text').textContent = memory[0]?.factJa || '「アメリカに住んでるって言ってたね」';
@@ -109,6 +108,7 @@ function bindCharacterButtons() {
   document.querySelector('.yuki-card')?.addEventListener('click', () => {
     setActiveCharacter('yuki');
     go('call');
+    triggerOpeningMessage();
   });
 
   const friendCards = [...document.querySelectorAll('.friend-sm:not(.offline)')];
@@ -118,12 +118,51 @@ function bindCharacterButtons() {
     card.addEventListener('click', () => {
       setActiveCharacter(id === 'mio' ? 'yuki' : id);
       go('call');
+      triggerOpeningMessage();
     });
   });
 }
 
 function seedInitialMemory() {
   // Seed removed — memory card now shows real AI-generated memories only
+}
+
+function appendChatMessage(role, ja, en, id) {
+  const list = document.getElementById('chat-list');
+  if (!list) return;
+  const msg = document.createElement('div');
+  msg.className = `chat-msg chat-msg-${role === 'user' ? 'user' : 'yuki'}`;
+  if (id) msg.id = id;
+  if (role === 'user') {
+    msg.innerHTML = `<div class="chat-bubble"><div class="chat-ja">${ja}</div></div>`;
+  } else {
+    msg.innerHTML = `<div class="chat-dot"></div><div class="chat-bubble"><div class="chat-ja">${ja}</div>${en ? `<div class="chat-en">${en}</div>` : ''}</div>`;
+  }
+  list.appendChild(msg);
+  list.scrollTop = list.scrollHeight;
+}
+
+async function triggerOpeningMessage() {
+  appendChatMessage('yuki', '……', '', 'chat-loading');
+  const characterId = appState.activeCharacter || 'yuki';
+  const character = characterMap[characterId] || yukiConfig;
+  try {
+    const reply = await getClaudeReply({
+      character,
+      topic:   getDailyTopic(new Date(), characterId),
+      memory:  getCharacterMemory(characterId),
+      history: [],
+      userText: '[conversation start] Greet the user naturally as Yuki would when picking up the phone.',
+    });
+    document.getElementById('chat-loading')?.remove();
+    const replyJa = reply.replyJa || 'よ';
+    appendChatMessage('yuki', replyJa, reply.replyEn || '');
+    conversationHistory.push({ role: 'yuki', text: replyJa });
+  } catch {
+    document.getElementById('chat-loading')?.remove();
+    appendChatMessage('yuki', 'よ', 'Hey');
+    conversationHistory.push({ role: 'yuki', text: 'よ' });
+  }
 }
 
 function initCallInput() {
@@ -141,8 +180,8 @@ function initCallInput() {
     const character   = characterMap[characterId] || yukiConfig;
 
     conversationHistory.push({ role: 'user', text });
-    document.querySelector('.dlg-jp').textContent = '……';
-    document.querySelector('.dlg-en').textContent = '';
+    appendChatMessage('user', text, '');
+    appendChatMessage('yuki', '……', '', 'chat-loading');
 
     try {
       const reply = await getClaudeReply({
@@ -152,18 +191,18 @@ function initCallInput() {
         history:  [],
         userText: text,
       });
+      document.getElementById('chat-loading')?.remove();
       const replyJa = reply.replyJa || '……';
-      document.querySelector('.dlg-jp').textContent = replyJa;
-      document.querySelector('.dlg-en').textContent = reply.replyEn || '';
+      appendChatMessage('yuki', replyJa, reply.replyEn || '');
       conversationHistory.push({ role: 'yuki', text: replyJa });
       if (reply.memoryCandidate) {
         appendMemory(characterId, { factJa: reply.memoryCandidate, source: 'conversation' });
         save('yukiMemory', reply.memoryCandidate);
       }
     } catch {
+      document.getElementById('chat-loading')?.remove();
       const fallback = getRandomFallbackReply();
-      document.querySelector('.dlg-jp').textContent = fallback.replyJa;
-      document.querySelector('.dlg-en').textContent = fallback.replyEn;
+      appendChatMessage('yuki', fallback.replyJa, fallback.replyEn);
       conversationHistory.push({ role: 'yuki', text: fallback.replyJa });
     } finally {
       btn.disabled = false;
