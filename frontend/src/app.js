@@ -434,3 +434,73 @@ const _modeOverlay = document.getElementById('mode-modal');
 if (_modeOverlay) _modeOverlay.addEventListener('click', (e) => {
   if (e.target === _modeOverlay) closeModeModal();
 });
+
+window.YUKI_SYSTEM_PROMPT = yukiConfig.systemPrompt;
+
+function initTextPage() {
+  const list = document.getElementById('text-chat-list');
+  const input = document.getElementById('text-input');
+  const btn = document.getElementById('text-send-btn');
+  if (!list || !input || !btn) return;
+
+  function addMsg(role, text, furigana) {
+    const now = new Date();
+    const ts = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+    const row = document.createElement('div');
+    row.className = 'text-msg-row ' + role;
+    if (role === 'yuki') {
+      row.innerHTML = `
+        <div class="text-mini-avatar">悠</div>
+        <div>
+          <div class="text-bubble yuki">${text}${furigana ? '<span class="text-furigana">'+furigana+'</span>' : ''}</div>
+        </div>
+        <span class="text-timestamp">${ts}</span>`;
+    } else {
+      row.innerHTML = `
+        <span class="text-timestamp">${ts}</span>
+        <div class="text-bubble user">${text}</div>`;
+    }
+    list.appendChild(row);
+    list.scrollTop = list.scrollHeight;
+  }
+
+  function addTyping() {
+    const row = document.createElement('div');
+    row.className = 'text-msg-row yuki'; row.id = 'text-typing';
+    row.innerHTML = '<div class="text-mini-avatar">悠</div><div class="text-bubble yuki text-typing"><div class="text-dot"></div><div class="text-dot"></div><div class="text-dot"></div></div>';
+    list.appendChild(row); list.scrollTop = list.scrollHeight;
+  }
+
+  function removeTyping() {
+    const el = document.getElementById('text-typing'); if (el) el.remove();
+  }
+
+  async function send() {
+    const msg = input.value.trim(); if (!msg) return;
+    input.value = '';
+    addMsg('user', msg);
+    addTyping();
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ prompt: msg, systemPrompt: window.YUKI_SYSTEM_PROMPT || 'You are Yuki, a friendly Japanese friend. Reply in Japanese with short casual sentences.' })
+      });
+      const data = await res.json();
+      removeTyping();
+      addMsg('yuki', data.replyJa || data.text || '...', data.replyEn || '');
+    } catch(e) {
+      removeTyping();
+      addMsg('yuki', 'ごめん、ちょっと待って…', 'Sorry, one moment...');
+    }
+  }
+
+  btn.addEventListener('click', send);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+
+  if (list.children.length === 0) {
+    addMsg('yuki', 'あ、来てくれた！元気だった？', 'Ah, you came! How have you been?');
+  }
+}
+
+initTextPage();
