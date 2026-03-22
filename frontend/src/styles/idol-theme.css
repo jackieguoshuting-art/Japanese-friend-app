@@ -536,20 +536,3 @@ body { background:#040810; }
   border-radius: 8px; padding: 2px 8px;
 }
 .text-hint-tag.active { color: #3a70cc; border-color: #1a3a8a; background: #0e1c38; }
-
-/* ── app shell flex layout: bottom-nav always pinned ── */
-#app {
-  display: flex !important;
-  flex-direction: column !important;
-  height: 100% !important;
-}
-
-#app .page {
-  flex: 1 !important;
-  min-height: 0 !important;
-}
-
-#app .bottom-nav {
-  flex-shrink: 0 !important;
-  z-index: 50 !important;
-}
