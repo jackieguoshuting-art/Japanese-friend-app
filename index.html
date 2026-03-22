@@ -67,7 +67,7 @@
       </div>
       <!-- Start button -->
       <div class="home-start-area">
-        <button class="home-start-btn" onclick="openModeModal()">💬 Start Talking</button>
+        <button class="home-start-btn" onclick="setActiveCharacter(['yuki','ren','hana','mio'][charIndex] || 'yuki'); openModeModal();">💬 Start Talking</button>
       </div>
     </div>
 
@@ -211,7 +211,7 @@
 
   <!-- Header -->
   <div class="call-header">
-    <button class="btn-end-top" onclick="go('friends')">✕ 終了</button>
+    <button class="btn-end-top" onclick="save && save('lastConversation', []); go('summary');">✕ 終了</button>
     <div class="timer">07:23</div>
     <div class="caption-btn">字幕 ON</div>
   </div>

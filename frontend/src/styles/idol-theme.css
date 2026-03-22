@@ -536,3 +536,6 @@ body { background:#040810; }
   border-radius: 8px; padding: 2px 8px;
 }
 .text-hint-tag.active { color: #3a70cc; border-color: #1a3a8a; background: #0e1c38; }
+
+#pg-call .bottom-nav { display: none !important; }
+#pg-summary .bottom-nav { display: flex !important; }
