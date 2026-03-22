@@ -107,8 +107,7 @@ function setActiveCharacter(characterId) {
 function bindCharacterButtons() {
   document.querySelector('.yuki-card')?.addEventListener('click', () => {
     setActiveCharacter('yuki');
-    go('call');
-    triggerOpeningMessage();
+    openModeModal();
   });
 
   const friendCards = [...document.querySelectorAll('.friend-sm:not(.offline)')];
@@ -117,8 +116,7 @@ function bindCharacterButtons() {
     const id = ids[index];
     card.addEventListener('click', () => {
       setActiveCharacter(id === 'mio' ? 'yuki' : id);
-      go('call');
-      triggerOpeningMessage();
+      openModeModal();
     });
   });
 }
