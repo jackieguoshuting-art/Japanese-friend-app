@@ -90,15 +90,17 @@ function setActiveCharacter(characterId) {
   appState.activeCharacter = characterId;
   conversationHistory.length = 0;
   const character = characterMap[characterId] || yukiConfig;
+  const displayName = { yuki: 'Yuki', ren: 'Ren', hana: 'Hana', mio: 'Mio' }[characterId] || character.name;
   const memory = getCharacterMemory(characterId);
   const emoji = {
     yuki: '🌸',
     ren: '⚡',
-    hana: '🌺'
+    hana: '🌺',
+    mio: '🌙'
   }[characterId] || '🌸';
 
   document.querySelector('.char-big').textContent = emoji;
-  document.querySelector('.call-name').textContent = `✦ ${character.name} と通話中 ✦`;
+  document.querySelector('.call-name').textContent = `✦ ${displayName} と通話中 ✦`;
   document.querySelector('.call-mood').textContent = `${characterId === 'ren' ? '😌 落ち着いた気分' : characterId === 'hana' ? '🤩 元気いっぱい' : '😊 楽しい気分'} · ${character.name} mood`;
   const chatList = document.getElementById('chat-list');
   if (chatList) chatList.innerHTML = '';
@@ -448,6 +450,7 @@ function closeModeModal() {
 window.prevChar = prevChar;
 window.nextChar = nextChar;
 window.openModeModal = openModeModal;
+window.setActiveCharacter = setActiveCharacter;
 window.closeModeModal = closeModeModal;
 
 updateCharDisplay();
