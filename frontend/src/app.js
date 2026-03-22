@@ -309,3 +309,39 @@ function init() {
 }
 
 init();
+
+function injectIdolDecorations() {
+  const configs = [
+    { id:'sl-home',    items:[{top:'18%',left:'6%'},{top:'28%',right:'8%'},{top:'55%',left:'4%'},{bottom:'35%',right:'8%'}] },
+    { id:'sl-friends', items:[{top:'12%',left:'5%'},{top:'45%',right:'5%'},{bottom:'30%',left:'8%'}] },
+    { id:'sl-call',    items:[{top:'20%',left:'5%'},{top:'40%',right:'6%'}] },
+    { id:'sl-summary', items:[{top:'10%',right:'8%'},{bottom:'40%',left:'6%'}] },
+  ];
+  const chars = ['✦','✧','★','◆','✶'];
+  const beamColors = ['#ff60d0','#60b0ff','#ffe060','#c060ff'];
+  const beamAngles = [-18,-6,8,20];
+
+  configs.forEach(cfg => {
+    const el = document.getElementById(cfg.id);
+    if (!el) return;
+    cfg.items.forEach((pos, i) => {
+      const s = document.createElement('div');
+      s.className = 'sparkle-deco';
+      s.textContent = chars[i % chars.length];
+      s.style.fontSize = (10 + (i%3)*3) + 'px';
+      s.style.animationDelay = (i * 0.4) + 's';
+      Object.assign(s.style, pos);
+      el.appendChild(s);
+    });
+    beamColors.forEach((color, i) => {
+      const b = document.createElement('div');
+      b.className = 'light-beam';
+      b.style.left = (i * 25) + '%';
+      b.style.background = `linear-gradient(180deg,${color},transparent)`;
+      b.style.transform = `rotate(${beamAngles[i]}deg)`;
+      b.style.animationDelay = (i * 0.5) + 's';
+      el.appendChild(b);
+    });
+  });
+}
+document.addEventListener('DOMContentLoaded', injectIdolDecorations);

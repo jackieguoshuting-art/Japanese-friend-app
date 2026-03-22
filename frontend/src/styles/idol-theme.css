@@ -1,0 +1,30 @@
+.sparkle-deco {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  color: rgba(255,255,255,0.55);
+  animation: sparklePulse 3s ease-in-out infinite;
+}
+
+.light-beam {
+  position: absolute;
+  top: -10%;
+  width: 3px;
+  height: 55%;
+  opacity: 0.07;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 0;
+  animation: beamFade 4s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+@keyframes sparklePulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%       { opacity: 0.85; transform: scale(1.25); }
+}
+
+@keyframes beamFade {
+  0%, 100% { opacity: 0.05; }
+  50%       { opacity: 0.13; }
+}
