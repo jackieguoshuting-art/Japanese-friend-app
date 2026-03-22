@@ -138,6 +138,27 @@ async function triggerOpeningMessage() {
   const characterId = appState.activeCharacter || 'yuki';
   const character = characterMap[characterId] || yukiConfig;
 
+  if (characterId === 'yuki') {
+    const yukiOpenings = [
+      { ja: 'よ、ちょうどコーヒー淹れてたとこ。どした？', en: 'Yo, just making coffee. What\'s up?' },
+      { ja: 'おう、今帰ってきたとこ。なんか用？', en: 'Hey, just got back. Need something?' },
+      { ja: 'yo、下北ぶらついてたんだけど。どうした', en: 'Yo, was wandering around Shimokitazawa. What\'s up?' },
+      { ja: 'おー、ちょうど音楽聴いてた。なんか用？', en: 'Oh, was just listening to music. What\'s up?' },
+      { ja: 'どした、急に', en: 'What\'s up, out of nowhere' },
+      { ja: '珍しいね、どうした', en: 'Rare to hear from you. What\'s going on?' },
+      { ja: 'this is Yuki。なに？', en: 'This is Yuki. What?' },
+      { ja: 'yo、なに？', en: 'Yo, what?' },
+      { ja: '……なに？', en: '...what?' },
+      { ja: 'あ、電話か。どした', en: 'Oh, a call. What\'s up?' },
+      { ja: 'おう、生きてるよ。なんか用？', en: 'Yeah, still alive. Need something?' },
+      { ja: 'hey、休憩しようとしてたとこ。どした？', en: 'Hey, was just about to take a break. What\'s up?' },
+    ];
+    const randomOpening = yukiOpenings[Math.floor(Math.random() * yukiOpenings.length)];
+    appendChatMessage('yuki', randomOpening.ja, randomOpening.en);
+    conversationHistory.push({ role: 'yuki', text: randomOpening.ja });
+    return;
+  }
+
   const fixedOpenings = {
     ren: { ja: '1', en: '1' },
     hana: { ja: '2', en: '2' },
