@@ -116,14 +116,14 @@
   <div class="mode-modal" id="mode-modal">
     <div class="mode-sheet">
       <div class="mode-sheet-label">SELECT MODE · モードを選ぶ</div>
-      <div class="mode-choice" onclick="go('call');closeModeModal()">
+      <div class="mode-choice" onclick="closeModeModal(); go('call'); setTimeout(() => triggerOpeningMessage(), 300)">
         <div class="mode-choice-icon" style="background:rgba(48,112,255,.15);">📹</div>
         <div>
           <div class="mode-choice-title">Video Chat</div>
           <div class="mode-choice-sub">ビデオ通話 · Live 2D キャラクター</div>
         </div>
       </div>
-      <div class="mode-choice" onclick="go('text');closeModeModal()">
+      <div class="mode-choice" onclick="closeModeModal(); go('text'); setTimeout(() => initTextPageForChar(), 300)">
         <div class="mode-choice-icon" style="background:rgba(40,100,255,.15);">💬</div>
         <div>
           <div class="mode-choice-title">Text Message</div>

@@ -525,3 +525,69 @@ function initTextPage() {
 }
 
 initTextPage();
+
+async function initTextPageForChar() {
+  const list = document.getElementById('text-chat-list');
+  if (!list) return;
+  list.innerHTML = '';
+  conversationHistory.length = 0;
+
+  const characterId = appState.activeCharacter || 'yuki';
+  const character = characterMap[characterId] || yukiConfig;
+
+  const fixedOpenings = {
+    ren:  { ja: 'よ。', en: 'Hey.' },
+    hana: { ja: 'きたきた！', en: 'You came!' },
+    mio:  { ja: 'あ、来てくれたんだ。', en: 'Oh, you came.' },
+  };
+
+  const now = new Date();
+  const ts = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+
+  function addTextMsg(ja, en) {
+    const row = document.createElement('div');
+    row.className = 'text-msg-row yuki';
+    row.innerHTML = `
+      <div class="text-mini-avatar">悠</div>
+      <div>
+        <div class="text-bubble yuki">${ja}${en ? '<span class="text-furigana">'+en+'</span>' : ''}</div>
+      </div>
+      <span class="text-timestamp">${ts}</span>`;
+    list.appendChild(row);
+    list.scrollTop = list.scrollHeight;
+  }
+
+  if (fixedOpenings[characterId]) {
+    const o = fixedOpenings[characterId];
+    addTextMsg(o.ja, o.en);
+    conversationHistory.push({ role: 'yuki', text: o.ja });
+    return;
+  }
+
+  // yuki (and fallback): call Claude
+  const typingRow = document.createElement('div');
+  typingRow.className = 'text-msg-row yuki'; typingRow.id = 'text-typing-open';
+  typingRow.innerHTML = '<div class="text-mini-avatar">悠</div><div class="text-bubble yuki text-typing"><div class="text-dot"></div><div class="text-dot"></div><div class="text-dot"></div></div>';
+  list.appendChild(typingRow); list.scrollTop = list.scrollHeight;
+
+  try {
+    const reply = await getClaudeReply({
+      character,
+      topic:   getDailyTopic(new Date(), characterId),
+      memory:  getCharacterMemory(characterId),
+      history: [],
+      userText: '[conversation start] Start the conversation naturally. Open with a topic or question as this character would.',
+    });
+    document.getElementById('text-typing-open')?.remove();
+    const replyJa = reply.replyJa || 'よ';
+    addTextMsg(replyJa, reply.replyEn || '');
+    conversationHistory.push({ role: 'yuki', text: replyJa });
+  } catch {
+    document.getElementById('text-typing-open')?.remove();
+    addTextMsg('よ', 'Hey');
+    conversationHistory.push({ role: 'yuki', text: 'よ' });
+  }
+}
+
+window.initTextPageForChar = initTextPageForChar;
+window.triggerOpeningMessage = triggerOpeningMessage;
