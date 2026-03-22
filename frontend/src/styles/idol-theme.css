@@ -1,30 +1,400 @@
+/* ============================================
+   IDOL THEME — AI Japanese Friend App
+   精准覆盖版，基于实际CSS文件
+   ============================================ */
+
+/* ── 动画 ── */
+@keyframes sway {
+  0%,100%{opacity:.12} 50%{opacity:.28}
+}
+@keyframes sparkle-anim {
+  0%,100%{opacity:0;transform:scale(.5) rotate(0deg)}
+  50%{opacity:1;transform:scale(1.2) rotate(20deg)}
+}
+@keyframes shimmer {
+  0%{left:-100%} 100%{left:200%}
+}
+@keyframes btn-glow {
+  0%,100%{box-shadow:0 0 8px rgba(160,60,255,.6)}
+  50%{box-shadow:0 0 22px rgba(200,80,255,.95),0 0 44px rgba(120,40,200,.45)}
+}
+@keyframes idol-float {
+  0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)}
+}
+@keyframes logo-pulse {
+  0%,100%{text-shadow:0 0 20px #a060ff,0 0 40px #6030c0}
+  50%{text-shadow:0 0 30px #d060ff,0 0 60px #8040e0,0 0 80px #4020a0}
+}
+@keyframes talk-glow {
+  0%,100%{box-shadow:0 0 4px rgba(120,60,220,.4)}
+  50%{box-shadow:0 0 14px rgba(160,80,255,.85)}
+}
+
+/* ── 装饰元素 helper ── */
 .sparkle-deco {
-  position: absolute;
-  z-index: 2;
-  pointer-events: none;
-  color: rgba(255,255,255,0.55);
-  animation: sparklePulse 3s ease-in-out infinite;
+  position:absolute;
+  color:#fff;
+  pointer-events:none;
+  z-index:5;
+  animation:sparkle-anim 2s ease-in-out infinite;
 }
-
 .light-beam {
-  position: absolute;
-  top: -10%;
-  width: 3px;
-  height: 55%;
-  opacity: 0.07;
-  border-radius: 2px;
-  pointer-events: none;
-  z-index: 0;
-  animation: beamFade 4s ease-in-out infinite;
-  transform-origin: top center;
+  position:absolute;
+  top:0;
+  width:60px;
+  height:240px;
+  opacity:.13;
+  clip-path:polygon(20px 0,40px 0,100% 100%,0% 100%);
+  animation:sway 3s ease-in-out infinite;
+  pointer-events:none;
+  z-index:2;
 }
 
-@keyframes sparklePulse {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50%       { opacity: 0.85; transform: scale(1.25); }
+/* ══════════════════════════════
+   全局 & phone shell
+══════════════════════════════ */
+body { background:#06041a; }
+
+.phone {
+  background:#0a0820 !important;
+  box-shadow:0 0 60px rgba(120,60,255,.35),0 0 120px rgba(80,40,200,.2) !important;
 }
 
-@keyframes beamFade {
-  0%, 100% { opacity: 0.05; }
-  50%       { opacity: 0.13; }
+.page { background:#0a0820; }
+
+/* ══════════════════════════════
+   HOME PAGE
+══════════════════════════════ */
+#pg-home { background:#0a0820 !important; }
+
+.greeting-sub {
+  color:#8070c0 !important;
+  letter-spacing:.08em;
+}
+.greeting-main {
+  color:#fff !important;
+  animation:logo-pulse 3s ease-in-out infinite;
+}
+.greeting-main em { color:#ff80d0 !important; }
+
+.streak-pill {
+  background:rgba(255,96,176,.12) !important;
+  border:1px solid rgba(255,96,176,.38) !important;
+  color:#ff90c8 !important;
+  animation:talk-glow 2.5s ease-in-out infinite;
+}
+
+/* 活动卡片 */
+.glass-card {
+  background:rgba(255,255,255,.045) !important;
+  border:1px solid rgba(120,80,255,.28) !important;
+  border-radius:16px !important;
+}
+.glass-card:active {
+  border-color:rgba(180,120,255,.55) !important;
+}
+.card-title { color:#e8e0ff !important; }
+.card-sub   { color:#6858a8 !important; }
+
+/* 底部导航 */
+.bottom-nav {
+  background:#07051a !important;
+  border-top:1px solid rgba(100,60,200,.32) !important;
+}
+.nav-lbl { color:#504088 !important; }
+.nav-item.active .nav-icon {
+  background:rgba(160,80,255,.22) !important;
+  box-shadow:0 0 10px rgba(160,80,255,.45) !important;
+}
+.nav-item.active .nav-lbl { color:#b888ff !important; }
+
+/* section label */
+.sec-label {
+  color:#604890 !important;
+  letter-spacing:.18em;
+}
+
+/* ══════════════════════════════
+   FRIENDS PAGE
+══════════════════════════════ */
+#pg-friends { background:#0a0820 !important; }
+
+.friends-header { border-bottom:1px solid rgba(100,60,200,.22); }
+
+.page-title { color:#e8e0ff !important; }
+
+.heart-pill {
+  background:rgba(255,60,120,.18) !important;
+  border:1px solid rgba(255,60,120,.38) !important;
+  color:#ff80b0 !important;
+  font-weight:700;
+}
+
+/* Yuki 特色卡片 */
+.yuki-card {
+  background:linear-gradient(135deg,rgba(80,40,180,.22),rgba(160,40,120,.18)) !important;
+  border:1px solid rgba(160,80,255,.38) !important;
+  border-left:3px solid #c060ff !important;
+  border-radius:20px !important;
+  animation:talk-glow 3s ease-in-out infinite;
+}
+.friend-name     { color:#fff !important; }
+.friend-name-sub { color:rgba(200,180,255,.55) !important; }
+
+/* tags */
+.tag {
+  background:rgba(255,255,255,.07) !important;
+  border:1px solid rgba(120,80,255,.28) !important;
+  color:#9880d0 !important;
+}
+.tag.pink {
+  background:rgba(255,60,130,.16) !important;
+  border-color:rgba(255,80,150,.35) !important;
+  color:#ff90c0 !important;
+}
+
+/* 话す大按钮 */
+.btn-pink,
+.btn-talk-lg {
+  background:linear-gradient(90deg,#7040e0,#c040a0) !important;
+  border:1px solid rgba(220,120,255,.42) !important;
+  color:#fff !important;
+  border-radius:12px !important;
+  position:relative !important;
+  overflow:hidden !important;
+  animation:btn-glow 2s ease-in-out infinite !important;
+}
+.btn-pink::before,
+.btn-talk-lg::before {
+  content:'';
+  position:absolute;top:0;left:-100%;
+  width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);
+  animation:shimmer 2.5s ease-in-out infinite;
+}
+
+/* 小朋友卡片 */
+.friend-sm {
+  background:rgba(255,255,255,.045) !important;
+  border:1px solid rgba(120,80,255,.25) !important;
+  border-radius:16px !important;
+  position:relative;
+  overflow:hidden;
+}
+/* 每个角色左侧彩色竖条 */
+.friend-sm:nth-child(1) { border-left:3px solid #4070ff !important; }
+.friend-sm:nth-child(2) { border-left:3px solid #ff5060 !important; }
+.friend-sm:nth-child(3) { border-left:3px solid #20c890 !important; }
+.friend-sm:nth-child(4) { border-left:3px solid #8060ff !important; }
+
+.friend-sm.offline { opacity:.38 !important; }
+
+.friend-sm-name       { color:#e8e0ff !important; }
+.friend-sm-name span  { color:rgba(180,160,255,.5) !important; }
+.friend-sm-sub        { color:#604890 !important; }
+
+.lvl-tag {
+  background:rgba(120,80,255,.22) !important;
+  color:#c0a0ff !important;
+  border:1px solid rgba(140,90,255,.32) !important;
+  border-radius:5px;
+  font-weight:700;
+}
+
+.btn-talk-sm {
+  background:linear-gradient(135deg,#6040c0,#9030c0) !important;
+  border:1px solid rgba(160,100,255,.42) !important;
+  color:#fff !important;
+  border-radius:9px !important;
+  font-weight:700;
+  animation:talk-glow 2s ease-in-out infinite;
+}
+
+.offline-lbl { color:#4a3880 !important; }
+
+/* ══════════════════════════════
+   CALL PAGE
+══════════════════════════════ */
+#pg-call { background:#0d0828 !important; }
+
+.call-header {
+  background:rgba(10,8,40,.96) !important;
+  border-bottom:1px solid rgba(120,80,255,.22) !important;
+}
+
+.btn-end-top {
+  background:rgba(180,40,60,.6) !important;
+  border:1px solid rgba(220,60,80,.4) !important;
+  border-radius:18px !important;
+  color:#fff !important;
+}
+
+.timer {
+  color:rgba(210,190,255,.9) !important;
+  background:rgba(255,255,255,.07) !important;
+  border-radius:20px;
+  padding:5px 13px;
+}
+
+.caption-btn {
+  background:rgba(120,80,255,.18) !important;
+  border:1px solid rgba(130,90,255,.35) !important;
+  color:#b090ff !important;
+}
+
+/* live2d 框 */
+.live2d-frame {
+  background:rgba(255,255,255,.03) !important;
+  border:1px solid rgba(120,80,255,.22) !important;
+  border-radius:20px !important;
+}
+.live2d-badge {
+  background:linear-gradient(90deg,#7040e0,#c040a0) !important;
+  animation:btn-glow 2.5s ease-in-out infinite;
+}
+
+/* 角色浮动 */
+.char-big { animation:idol-float 3s ease-in-out infinite !important; }
+
+.call-name {
+  color:#e8e0ff !important;
+  animation:logo-pulse 3s ease-in-out infinite;
+}
+.call-mood { color:rgba(160,140,220,.6) !important; }
+
+/* 音波条 */
+.wbar {
+  background:linear-gradient(to top,#c040a0,#7040e0) !important;
+}
+
+/* 气泡 */
+.chat-msg-yuki .chat-bubble {
+  background:rgba(80,60,160,.35) !important;
+  border:1px solid rgba(120,80,255,.3) !important;
+}
+.chat-msg-user .chat-bubble {
+  background:linear-gradient(135deg,rgba(112,64,224,.5),rgba(192,64,160,.45)) !important;
+  border:1px solid rgba(200,100,255,.35) !important;
+}
+
+/* 控制按钮 */
+.call-controls {
+  background:rgba(7,5,22,.96) !important;
+  border-top:1px solid rgba(100,60,200,.22) !important;
+}
+.ctrl-circle {
+  background:rgba(255,255,255,.08) !important;
+  border:1px solid rgba(120,80,255,.28) !important;
+}
+.ctrl-circle.main-mic {
+  background:linear-gradient(135deg,#7040e0,#c040a0) !important;
+  border:none !important;
+  box-shadow:0 6px 28px rgba(160,60,220,.55) !important;
+  animation:btn-glow 2s ease-in-out infinite;
+}
+.ctrl-circle.end-call {
+  background:rgba(180,40,60,.5) !important;
+  border-color:rgba(220,60,80,.4) !important;
+}
+.ctrl-lbl { color:rgba(150,130,200,.6) !important; }
+
+/* 输入框 */
+.call-input-area { background:#070518 !important; }
+.call-text-input {
+  background:rgba(255,255,255,.07) !important;
+  border:1px solid rgba(120,80,255,.32) !important;
+  color:#e8e0ff !important;
+  border-radius:22px !important;
+}
+.call-text-input::placeholder { color:rgba(120,100,180,.5) !important; }
+.call-text-input:focus { border-color:rgba(180,110,255,.65) !important; }
+.call-send-btn {
+  background:linear-gradient(135deg,#7040e0,#c040a0) !important;
+  animation:btn-glow 2s ease-in-out infinite;
+}
+
+/* ══════════════════════════════
+   SUMMARY PAGE
+══════════════════════════════ */
+#pg-summary { background:#0a0820 !important; }
+
+.summary-bubble {
+  background:linear-gradient(135deg,rgba(100,50,200,.22),rgba(180,50,140,.18)) !important;
+  border:1px solid rgba(160,80,255,.32) !important;
+  color:#e8e0ff !important;
+}
+.bubble-en { color:rgba(180,160,255,.55) !important; }
+
+.stat-card {
+  background:rgba(255,255,255,.045) !important;
+  border:1px solid rgba(120,80,255,.22) !important;
+  border-radius:14px !important;
+}
+.stat-val { color:#e8e0ff !important; animation:logo-pulse 3s ease-in-out infinite; }
+.stat-lbl { color:#604890 !important; }
+
+/* 单词chip */
+.chip.new {
+  background:linear-gradient(135deg,#7040e0,#c040a0) !important;
+  color:#fff !important;
+  border:none !important;
+  animation:btn-glow 2.5s ease-in-out infinite;
+}
+.chip.rev {
+  background:rgba(255,255,255,.07) !important;
+  border:1px solid rgba(120,80,255,.25) !important;
+  color:#8070c0 !important;
+}
+
+/* 会话回顾按钮 */
+.conv-toggle-btn {
+  background:rgba(255,255,255,.05) !important;
+  border:1px solid rgba(120,80,255,.28) !important;
+  color:#a080ff !important;
+}
+
+/* 对话气泡 recap */
+.conv-msg-user .conv-text {
+  background:linear-gradient(135deg,rgba(112,64,224,.4),rgba(192,64,160,.35)) !important;
+  border:1px solid rgba(180,100,255,.32) !important;
+}
+.conv-msg-yuki .conv-text {
+  background:rgba(80,60,160,.3) !important;
+  border:1px solid rgba(120,80,255,.28) !important;
+}
+
+/* 记忆卡片 */
+.memory-card {
+  background:rgba(100,50,255,.1) !important;
+  border:1px solid rgba(130,70,255,.32) !important;
+  border-left:3px solid #a060ff !important;
+  border-radius:16px !important;
+}
+.mem-title { color:#a880ff !important; }
+.mem-text  { color:#e8e0ff !important; }
+.mem-en    { color:rgba(160,140,220,.55) !important; }
+
+/* 返回按钮 */
+.btn-return {
+  background:linear-gradient(90deg,#7040e0,#c040a0) !important;
+  border:none !important;
+  color:#fff !important;
+  border-radius:14px !important;
+  position:relative !important;
+  overflow:hidden !important;
+  animation:btn-glow 2s ease-in-out infinite;
+}
+.btn-return::before {
+  content:'';
+  position:absolute;top:0;left:-100%;
+  width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);
+  animation:shimmer 2.5s ease-in-out infinite;
+}
+
+/* ══════════════════════════════
+   VIDEO CALL PAGE (已有结构)
+══════════════════════════════ */
+#pg-video-call {
+  background:linear-gradient(180deg,#0d1a6e 0%,#1a0d5e 40%,#2d1040 100%) !important;
 }
