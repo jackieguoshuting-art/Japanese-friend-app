@@ -9,7 +9,12 @@ import { getClaudeReply } from './services/claude.service.js';
 import { getRandomFallbackReply } from './features/chat.js';
 import { save, load } from './core/storage.js';
 
-const characterMap = { yuki: yukiConfig, ren: renConfig, hana: hanaConfig };
+const characterMap = {
+  yuki: yukiConfig,
+  ren:  renConfig,
+  hana: hanaConfig,
+  mio:  yukiConfig,
+};
 
 // Tracks messages for the current call session
 const conversationHistory = [];
@@ -111,11 +116,11 @@ function bindCharacterButtons() {
   });
 
   const friendCards = [...document.querySelectorAll('.friend-sm:not(.offline)')];
+  const ids = ['ren', 'hana', 'mio'];
   friendCards.forEach((card, index) => {
-    const ids = ['ren', 'hana', 'mio']; // mio falls back later
-    const id = ids[index];
+    const id = ids[index] || 'yuki';
     card.addEventListener('click', () => {
-      setActiveCharacter(id === 'mio' ? 'yuki' : id);
+      setActiveCharacter(id);
       openModeModal();
     });
   });
@@ -141,16 +146,30 @@ function appendChatMessage(role, ja, en, id) {
 }
 
 async function triggerOpeningMessage() {
-  appendChatMessage('yuki', '……', '', 'chat-loading');
   const characterId = appState.activeCharacter || 'yuki';
   const character = characterMap[characterId] || yukiConfig;
+
+  const fixedOpenings = {
+    ren: { ja: '1', en: '1' },
+    hana: { ja: '2', en: '2' },
+    mio: { ja: '3', en: '3' },
+  };
+
+  if (fixedOpenings[characterId]) {
+    const o = fixedOpenings[characterId];
+    appendChatMessage('yuki', o.ja, o.en);
+    conversationHistory.push({ role: 'yuki', text: o.ja });
+    return;
+  }
+
+  appendChatMessage('yuki', '……', '', 'chat-loading');
   try {
     const reply = await getClaudeReply({
       character,
       topic:   getDailyTopic(new Date(), characterId),
       memory:  getCharacterMemory(characterId),
       history: [],
-      userText: '[conversation start] Greet the user naturally as Yuki would when picking up the phone.',
+      userText: '[conversation start] Start the conversation naturally. Open with a topic or question as this character would.',
     });
     document.getElementById('chat-loading')?.remove();
     const replyJa = reply.replyJa || 'よ';
@@ -413,6 +432,10 @@ function nextChar() {
 }
 
 function openModeModal() {
+  const charIdMap = ['yuki', 'ren', 'hana', 'mio'];
+  const selectedId = charIdMap[charIndex] || 'yuki';
+  const resolvedId = selectedId === 'mio' ? 'mio' : selectedId;
+  setActiveCharacter(resolvedId);
   const m = document.getElementById('mode-modal');
   if (m) m.style.display = 'flex';
 }
