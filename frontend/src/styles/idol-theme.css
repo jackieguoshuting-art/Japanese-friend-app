@@ -3,39 +3,6 @@
    精准覆盖版，基于实际CSS文件
    ============================================ */
 
-:root {
-  --idol-bg: #060c18;
-  --idol-card: rgba(255,255,255,0.04);
-  --idol-border: rgba(40,100,255,0.25);
-  --idol-accent: #1a48cc;
-  --idol-accent2: #1e5acc;
-  --idol-text: #d0e8ff;
-  --idol-muted: #2a5080;
-}
-
-body { background: #040810 !important; }
-.phone { background: #060c18 !important; box-shadow: 0 0 60px rgba(30,80,220,.3) !important; }
-.page { background: #060c18 !important; }
-#pg-home, #pg-friends, #pg-call, #pg-text, #pg-summary, #pg-video-call {
-  background: #060c18 !important;
-}
-
-/* ── app-shell flex layout so bottom-nav stays pinned ── */
-.app-shell {
-  display: flex !important;
-  flex-direction: column !important;
-}
-.app-shell .page.active {
-  flex: 1 !important;
-  min-height: 0 !important;
-}
-.bottom-nav {
-  display: flex !important;
-  flex-shrink: 0 !important;
-  position: relative !important;
-  z-index: 20 !important;
-}
-
 /* ── 动画 ── */
 @keyframes sway {
   0%,100%{opacity:.12} 50%{opacity:.28}
@@ -48,19 +15,19 @@ body { background: #040810 !important; }
   0%{left:-100%} 100%{left:200%}
 }
 @keyframes btn-glow {
-  0%,100% { box-shadow: 0 0 8px rgba(30,100,220,.5); }
-  50%      { box-shadow: 0 0 22px rgba(50,130,255,.9), 0 0 44px rgba(20,80,200,.4); }
+  0%,100%{box-shadow:0 0 8px rgba(30,100,220,.6)}
+  50%{box-shadow:0 0 22px rgba(60,140,255,.95),0 0 44px rgba(120,40,200,.45)}
 }
 @keyframes idol-float {
   0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)}
 }
 @keyframes logo-pulse {
-  0%,100% { text-shadow: 0 0 20px #2060cc, 0 0 40px #1040aa; }
-  50%      { text-shadow: 0 0 30px #4090ff, 0 0 60px #2060cc, 0 0 80px #102080; }
+  0%,100%{text-shadow:0 0 20px #2a70ff,0 0 40px #1040aa}
+  50%{text-shadow:0 0 30px #4090ff,0 0 60px #2060cc,0 0 80px #102080}
 }
 @keyframes talk-glow {
-  0%,100% { box-shadow: 0 0 4px rgba(30,90,200,.4); }
-  50%      { box-shadow: 0 0 14px rgba(40,120,240,.8); }
+  0%,100%{box-shadow:0 0 4px rgba(30,90,200,.4)}
+  50%{box-shadow:0 0 14px rgba(50,120,255,.85)}
 }
 
 /* ── 装饰元素 helper ── */
