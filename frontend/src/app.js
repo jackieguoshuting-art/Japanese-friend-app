@@ -158,7 +158,7 @@ async function triggerOpeningMessage() {
       topic:   getDailyTopic(new Date(), characterId),
       memory:  getCharacterMemory(characterId),
       history: [],
-      userText: '[conversation start] You are Yuki. Open the conversation casually and warmly, like texting a close friend. Be spontaneous and natural — mention something you are doing, something funny that happened, or just check in. Do NOT ask formal or generic questions like "what is your favorite season". Keep it to 1-2 short casual sentences in Japanese.',
+      userText: '[START]',
     });
     document.getElementById('chat-loading')?.remove();
     const replyJa = reply.replyJa || 'よ';
@@ -567,7 +567,7 @@ async function initTextPageForChar() {
       topic:   getDailyTopic(new Date(), characterId),
       memory:  getCharacterMemory(characterId),
       history: [],
-      userText: '[conversation start] You are Yuki. Open the conversation casually and warmly, like texting a close friend. Be spontaneous and natural — mention something you are doing, something funny that happened, or just check in. Do NOT ask formal or generic questions like "what is your favorite season". Keep it to 1-2 short casual sentences in Japanese.',
+      userText: '[START]',
     });
     document.getElementById('text-typing-open')?.remove();
     const replyJa = reply.replyJa || 'よ';
