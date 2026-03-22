@@ -42,8 +42,9 @@ function serveStatic(res, urlPath) {
   try {
     const ext  = path.extname(full);
     const mime = MIME[ext] || 'text/plain';
+    const data = fs.readFileSync(full);
     res.writeHead(200, { 'Content-Type': mime });
-    res.end(fs.readFileSync(full));
+    res.end(data);
   } catch {
     res.writeHead(404);
     res.end('Not found');

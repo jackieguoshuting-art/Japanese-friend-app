@@ -434,10 +434,6 @@ function nextChar() {
 }
 
 function openModeModal() {
-  const charIdMap = ['yuki', 'ren', 'hana', 'mio'];
-  const selectedId = charIdMap[charIndex] || 'yuki';
-  const resolvedId = selectedId === 'mio' ? 'mio' : selectedId;
-  setActiveCharacter(resolvedId);
   const m = document.getElementById('mode-modal');
   if (m) m.style.display = 'flex';
 }
