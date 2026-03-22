@@ -153,7 +153,14 @@ async function triggerOpeningMessage() {
       { ja: 'おう、生きてるよ。なんか用？', en: 'Yeah, still alive. Need something?' },
       { ja: 'hey、休憩しようとしてたとこ。どした？', en: 'Hey, was just about to take a break. What\'s up?' },
     ];
-    const randomOpening = yukiOpenings[Math.floor(Math.random() * yukiOpenings.length)];
+    const YUKI_OPENING_HISTORY_KEY = 'yukiOpeningHistory';
+    const recentHistory = JSON.parse(localStorage.getItem(YUKI_OPENING_HISTORY_KEY) || '[]');
+    const available = yukiOpenings.map((_, i) => i).filter(i => !recentHistory.includes(i));
+    const pool = available.length > 0 ? available : yukiOpenings.map((_, i) => i);
+    const chosen = pool[Math.floor(Math.random() * pool.length)];
+    const recentUpdated = [...recentHistory, chosen].slice(-7);
+    localStorage.setItem(YUKI_OPENING_HISTORY_KEY, JSON.stringify(recentUpdated));
+    const randomOpening = yukiOpenings[chosen];
     appendChatMessage('yuki', randomOpening.ja, randomOpening.en);
     conversationHistory.push({ role: 'yuki', text: randomOpening.ja });
     return;
