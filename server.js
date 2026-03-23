@@ -102,6 +102,7 @@ const server = http.createServer(async (req, res) => {
         }
 
         const text = JSON.parse(result.raw).content?.[0]?.text || '';
+        console.log('[DEBUG] Claude raw text:', text);
         let parsed;
         try { parsed = JSON.parse(text); }
         catch { parsed = { replyJa: text, replyEn: '', memoryCandidate: '' }; }
