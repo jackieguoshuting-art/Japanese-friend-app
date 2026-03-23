@@ -90,18 +90,14 @@ const server = http.createServer(async (req, res) => {
         const { prompt, systemPrompt } = JSON.parse(body);
         const enhancedSystem = (systemPrompt || '') + `
 
-VOCABULARY MARKUP RULE:
-In every reply, wrap 2-4 important or potentially unfamiliar Japanese words/phrases with this exact format:
-[[word|reading|meaning_in_english]]
-
-Example: [[ちょうど|ちょうど|just/exactly]]古着漁ってたとこ。[[なんか|なんか|somehow/something]]用？
-
+IMPORTANT — VOCABULARY MARKUP (required in every reply):
+In your replyJa value, wrap 2-3 useful Japanese words with: [[word|reading|english]]
+Example: [[ちょうど|ちょうど|just now]]コーヒー淹れてた。[[なんか|なんか|something]]用？
 Rules:
-- Only mark words that are genuinely useful for a Japanese learner
-- Do not mark extremely basic words like は、が、の、です
-- Maximum 4 marked words per reply
-- Keep the rest of the reply completely natural
-- The markup must not break the sentence flow
+- Do not mark basic particles like は が の を に
+- Put [[]] markup directly inside the replyJa string value
+- Do NOT wrap your response in markdown code blocks
+- Return raw JSON only, no backticks
 `;
         const result = await callAnthropic({
           model:      'claude-sonnet-4-20250514',
@@ -117,9 +113,19 @@ Rules:
         }
 
         const text = JSON.parse(result.raw).content?.[0]?.text || '';
+        const cleanText = text.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/```\s*$/i,'').trim();
         let parsed;
-        try { parsed = JSON.parse(text); }
-        catch { parsed = { replyJa: text, replyEn: '', memoryCandidate: '' }; }
+        try { parsed = JSON.parse(cleanText); }
+        catch {
+          const jaMatch = cleanText.match(/"replyJa"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+          const enMatch = cleanText.match(/"replyEn"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+          const memMatch = cleanText.match(/"memoryCandidate"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+          parsed = {
+            replyJa: jaMatch ? jaMatch[1] : cleanText,
+            replyEn: enMatch ? enMatch[1] : '',
+            memoryCandidate: memMatch ? memMatch[1] : '',
+          };
+        }
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(parsed));

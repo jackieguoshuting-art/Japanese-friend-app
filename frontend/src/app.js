@@ -599,7 +599,7 @@ async function initTextPageForChar() {
       <div class="text-mini-avatar">${initials}</div>
       <div>
         <div class="text-bubble yuki" id="${msgId}" onclick="toggleTranslation('${msgId}')" style="cursor:pointer;">
-          ${ja}
+          ${parseVocabMarkup(ja)}
           <div class="msg-translation" id="tr-${msgId}" style="display:none;">
             <div class="translation-divider"></div>
             <div class="translation-text">${en || ''}</div>
