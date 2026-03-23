@@ -103,9 +103,10 @@ const server = http.createServer(async (req, res) => {
 
         const text = JSON.parse(result.raw).content?.[0]?.text || '';
         console.log('[DEBUG] Claude raw text:', text);
+        const cleanText = text.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
         let parsed;
-        try { parsed = JSON.parse(text); }
-        catch { parsed = { replyJa: text, replyEn: '', memoryCandidate: '' }; }
+        try { parsed = JSON.parse(cleanText); }
+        catch { parsed = { replyJa: cleanText, replyEn: '', memoryCandidate: '' }; }
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(parsed));
