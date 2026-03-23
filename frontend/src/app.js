@@ -507,10 +507,19 @@ function initTextPage() {
     const row = document.createElement('div');
     row.className = 'text-msg-row ' + role;
     if (role === 'yuki') {
+      const initials = { yuki: '悠', ren: '蓮', hana: '花', mio: '緒' }[appState.activeCharacter] || '悠';
+      const msgId = 'msg-' + Date.now();
       row.innerHTML = `
-        <div class="text-mini-avatar">悠</div>
+        <div class="text-mini-avatar">${initials}</div>
         <div>
-          <div class="text-bubble yuki">${text}${furigana ? '<span class="text-furigana">'+furigana+'</span>' : ''}</div>
+          <div class="text-bubble yuki" id="${msgId}" onclick="toggleTranslation('${msgId}')" style="cursor:pointer;">
+            ${text}
+            <div class="msg-translation" id="tr-${msgId}" style="display:none;">
+              <div class="translation-divider"></div>
+              <div class="translation-text">${furigana || ''}</div>
+            </div>
+          </div>
+          <div class="tap-hint">TAP TO TRANSLATE</div>
         </div>
         <span class="text-timestamp">${ts}</span>`;
     } else {
@@ -584,10 +593,19 @@ async function initTextPageForChar() {
   function addTextMsg(ja, en) {
     const row = document.createElement('div');
     row.className = 'text-msg-row yuki';
+    const initials = { yuki: '悠', ren: '蓮', hana: '花', mio: '緒' }[characterId] || '悠';
+    const msgId = 'msg-' + Date.now();
     row.innerHTML = `
-      <div class="text-mini-avatar">悠</div>
+      <div class="text-mini-avatar">${initials}</div>
       <div>
-        <div class="text-bubble yuki">${ja}${en ? '<span class="text-furigana">'+en+'</span>' : ''}</div>
+        <div class="text-bubble yuki" id="${msgId}" onclick="toggleTranslation('${msgId}')" style="cursor:pointer;">
+          ${ja}
+          <div class="msg-translation" id="tr-${msgId}" style="display:none;">
+            <div class="translation-divider"></div>
+            <div class="translation-text">${en || ''}</div>
+          </div>
+        </div>
+        <div class="tap-hint">TAP TO TRANSLATE</div>
       </div>
       <span class="text-timestamp">${ts}</span>`;
     list.appendChild(row);
@@ -628,3 +646,13 @@ async function initTextPageForChar() {
 
 window.initTextPageForChar = initTextPageForChar;
 window.triggerOpeningMessage = triggerOpeningMessage;
+
+function toggleTranslation(msgId) {
+  const tr = document.getElementById('tr-' + msgId);
+  const hint = document.querySelector('[id="' + msgId + '"]')?.parentElement?.querySelector('.tap-hint');
+  if (!tr) return;
+  const isOpen = tr.style.display !== 'none';
+  tr.style.display = isOpen ? 'none' : 'block';
+  if (hint) hint.style.display = isOpen ? 'block' : 'none';
+}
+window.toggleTranslation = toggleTranslation;

@@ -645,3 +645,24 @@ body { background:#040810; }
   from { transform: translateX(-50%) rotate(0deg); }
   to   { transform: translateX(-50%) rotate(360deg); }
 }
+
+.translation-divider {
+  height: 0.5px;
+  background: rgba(60,120,255,.3);
+  margin: 6px 0;
+}
+.translation-text {
+  font-size: 11px;
+  color: #4a80cc;
+  line-height: 1.5;
+}
+.tap-hint {
+  font-size: 9px;
+  color: #1e3458;
+  margin-top: 3px;
+  padding-left: 2px;
+  letter-spacing: .03em;
+}
+.text-bubble.yuki:active {
+  opacity: .85;
+}
