@@ -88,10 +88,25 @@ const server = http.createServer(async (req, res) => {
     req.on('end', async () => {
       try {
         const { prompt, systemPrompt } = JSON.parse(body);
+        const enhancedSystem = (systemPrompt || '') + `
+
+VOCABULARY MARKUP RULE:
+In every reply, wrap 2-4 important or potentially unfamiliar Japanese words/phrases with this exact format:
+[[word|reading|meaning_in_english]]
+
+Example: [[ちょうど|ちょうど|just/exactly]]古着漁ってたとこ。[[なんか|なんか|somehow/something]]用？
+
+Rules:
+- Only mark words that are genuinely useful for a Japanese learner
+- Do not mark extremely basic words like は、が、の、です
+- Maximum 4 marked words per reply
+- Keep the rest of the reply completely natural
+- The markup must not break the sentence flow
+`;
         const result = await callAnthropic({
           model:      'claude-sonnet-4-20250514',
           max_tokens: 256,
-          system:     systemPrompt || 'You are a friendly Japanese AI friend.',
+          system:     enhancedSystem,
           messages:   [{ role: 'user', content: prompt }],
         });
 
