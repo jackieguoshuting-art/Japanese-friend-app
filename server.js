@@ -88,21 +88,10 @@ const server = http.createServer(async (req, res) => {
     req.on('end', async () => {
       try {
         const { prompt, systemPrompt } = JSON.parse(body);
-        const enhancedSystem = (systemPrompt || '') + `
-
-IMPORTANT — VOCABULARY MARKUP (required in every reply):
-In your replyJa value, wrap 2-3 useful Japanese words with: [[word|reading|english]]
-Example: [[ちょうど|ちょうど|just now]]コーヒー淹れてた。[[なんか|なんか|something]]用？
-Rules:
-- Do not mark basic particles like は が の を に
-- Put [[]] markup directly inside the replyJa string value
-- Do NOT wrap your response in markdown code blocks
-- Return raw JSON only, no backticks
-`;
         const result = await callAnthropic({
           model:      'claude-sonnet-4-20250514',
           max_tokens: 256,
-          system:     enhancedSystem,
+          system:     systemPrompt || 'You are a friendly Japanese AI friend.',
           messages:   [{ role: 'user', content: prompt }],
         });
 
@@ -113,19 +102,9 @@ Rules:
         }
 
         const text = JSON.parse(result.raw).content?.[0]?.text || '';
-        const cleanText = text.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/```\s*$/i,'').trim();
         let parsed;
-        try { parsed = JSON.parse(cleanText); }
-        catch {
-          const jaMatch = cleanText.match(/"replyJa"\s*:\s*"((?:[^"\\]|\\.)*)"/);
-          const enMatch = cleanText.match(/"replyEn"\s*:\s*"((?:[^"\\]|\\.)*)"/);
-          const memMatch = cleanText.match(/"memoryCandidate"\s*:\s*"((?:[^"\\]|\\.)*)"/);
-          parsed = {
-            replyJa: jaMatch ? jaMatch[1] : cleanText,
-            replyEn: enMatch ? enMatch[1] : '',
-            memoryCandidate: memMatch ? memMatch[1] : '',
-          };
-        }
+        try { parsed = JSON.parse(text); }
+        catch { parsed = { replyJa: text, replyEn: '', memoryCandidate: '' }; }
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(parsed));
