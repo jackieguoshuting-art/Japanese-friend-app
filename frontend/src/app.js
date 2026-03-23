@@ -500,6 +500,7 @@ function initTextPage() {
   const input = document.getElementById('text-input');
   const btn = document.getElementById('text-send-btn');
   if (!list || !input || !btn) return;
+  const textHistory = [];
 
   function addMsg(role, text, furigana) {
     const now = new Date();
@@ -546,16 +547,19 @@ function initTextPage() {
     const msg = input.value.trim(); if (!msg) return;
     input.value = '';
     addMsg('user', msg);
+    textHistory.push({ role: 'user', content: msg });
     addTyping();
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ prompt: msg, systemPrompt: window.YUKI_SYSTEM_PROMPT || 'You are Yuki, a friendly Japanese friend. Reply in Japanese with short casual sentences.' })
+        body: JSON.stringify({ messages: textHistory, systemPrompt: window.YUKI_SYSTEM_PROMPT || 'You are Yuki, a friendly Japanese friend. Reply in Japanese with short casual sentences.' })
       });
       const data = await res.json();
       removeTyping();
-      addMsg('yuki', data.replyJa || data.text || '...', data.replyEn || '');
+      const replyJa = data.replyJa || data.text || '...';
+      addMsg('yuki', replyJa, data.replyEn || '');
+      textHistory.push({ role: 'assistant', content: replyJa });
     } catch(e) {
       removeTyping();
       addMsg('yuki', 'ごめん、ちょっと待って…', 'Sorry, one moment...');
@@ -567,6 +571,7 @@ function initTextPage() {
 
   if (list.children.length === 0) {
     addMsg('yuki', 'あ、来てくれた！元気だった？', 'Ah, you came! How have you been?');
+    textHistory.push({ role: 'assistant', content: 'あ、来てくれた！元気だった？' });
   }
 }
 

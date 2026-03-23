@@ -87,12 +87,12 @@ const server = http.createServer(async (req, res) => {
     req.on('data', c => body += c);
     req.on('end', async () => {
       try {
-        const { prompt, systemPrompt } = JSON.parse(body);
+        const { prompt, messages, systemPrompt } = JSON.parse(body);
         const result = await callAnthropic({
           model:      'claude-sonnet-4-20250514',
           max_tokens: 256,
           system:     systemPrompt || 'You are a friendly Japanese AI friend.',
-          messages:   [{ role: 'user', content: prompt }],
+          messages:   messages && Array.isArray(messages) ? messages : [{ role: 'user', content: prompt }],
         });
 
         if (result.status !== 200) {
