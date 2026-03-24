@@ -15,6 +15,36 @@ const characterMap = {
   mio:  yukiConfig,
 };
 
+const CALL_CAPTION_KEY = 'callCaptionMode';
+
+function getCallCaptionMode() {
+  return localStorage.getItem(CALL_CAPTION_KEY) || 'bilingual';
+}
+
+function applyCallCaptionMode() {
+  const list = document.getElementById('chat-list');
+  if (!list) return;
+  const mode = getCallCaptionMode();
+  list.classList.toggle('caption-mode-ja-only', mode === 'ja-only');
+  list.classList.toggle('caption-mode-bilingual', mode === 'bilingual');
+  const lbl = document.getElementById('call-caption-lbl');
+  if (lbl) {
+    lbl.textContent = mode === 'ja-only' ? '字幕 · 日本語のみ' : '字幕 · 日本語＋訳';
+  }
+}
+
+function initCallCaptionToggle() {
+  applyCallCaptionMode();
+  const toggle = document.getElementById('call-caption-toggle');
+  if (!toggle || toggle.dataset.boundCaption === '1') return;
+  toggle.dataset.boundCaption = '1';
+  toggle.addEventListener('click', () => {
+    const next = getCallCaptionMode() === 'bilingual' ? 'ja-only' : 'bilingual';
+    localStorage.setItem(CALL_CAPTION_KEY, next);
+    applyCallCaptionMode();
+  });
+}
+
 function appendChatMessage(role, ja, en, id) {
   const list = document.getElementById('chat-list');
   if (!list) return;
@@ -22,12 +52,19 @@ function appendChatMessage(role, ja, en, id) {
   msg.className = `chat-msg chat-msg-${role === 'user' ? 'user' : 'yuki'}`;
   if (id) msg.id = id;
   if (role === 'user') {
-    msg.innerHTML = `<div class="chat-bubble"><div class="chat-ja">${ja}</div></div>`;
+    const safe = window.escapeHtml?.(ja) ?? ja;
+    msg.innerHTML = `<div class="chat-bubble"><div class="chat-ja">${safe}</div></div>`;
   } else {
-    msg.innerHTML = `<div class="chat-dot"></div><div class="chat-bubble"><div class="chat-ja">${ja}</div>${en ? `<div class="chat-en">${en}</div>` : ''}</div>`;
+    const jaHtml = window.parseVocabMarkup?.(ja) ?? (window.escapeHtml?.(ja) ?? ja);
+    const enBlock =
+      en != null && en !== ''
+        ? `<div class="chat-en">${window.escapeHtml?.(en) ?? en}</div>`
+        : '';
+    msg.innerHTML = `<div class="chat-dot"></div><div class="chat-bubble"><div class="chat-ja">${jaHtml}</div>${enBlock}</div>`;
   }
   list.appendChild(msg);
   list.scrollTop = list.scrollHeight;
+  applyCallCaptionMode();
 }
 
 async function triggerOpeningMessage() {
@@ -160,8 +197,11 @@ function initCallInput() {
 
   btn.addEventListener('click', sendMessage);
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
+  initCallCaptionToggle();
 }
 
 window.appendChatMessage = appendChatMessage;
 window.triggerOpeningMessage = triggerOpeningMessage;
 window.initCallInput = initCallInput;
+window.applyCallCaptionMode = applyCallCaptionMode;
+window.getCallCaptionMode = getCallCaptionMode;

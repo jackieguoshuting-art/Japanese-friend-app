@@ -677,33 +677,78 @@ body { background:#040810; }
 .vocab-word:hover { background: rgba(60,120,255,.15); }
 .vocab-word.active { background: rgba(60,120,255,.2); border-bottom-color: #4080ff; }
 
+.vocab-card-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(4, 10, 24, 0.52);
+  backdrop-filter: blur(3px);
+}
+.vocab-card-backdrop.open {
+  display: block;
+}
+
 .vocab-card {
   display: none;
-  position: absolute;
-  bottom: 130px;
-  left: 14px; right: 14px;
-  z-index: 50;
-  background: #0e1c30;
-  border: 1px solid rgba(50,110,220,.4);
-  border-radius: 12px;
-  padding: 12px 14px;
+  position: fixed;
+  left: 50%;
+  bottom: max(20px, env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  width: min(360px, calc(100vw - 32px));
+  z-index: 301;
+  background: linear-gradient(165deg, #0c1828 0%, #0a1422 100%);
+  border: 1px solid rgba(50, 110, 220, 0.45);
+  border-radius: 16px;
+  padding: 16px 18px 18px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(80, 140, 255, 0.12) inset;
 }
-.vocab-card.open { display: block; }
+.vocab-card.open {
+  display: block;
+}
 .vocab-card-close {
   float: right;
-  font-size: 11px; color: #1e3458;
-  background: none; border: none;
-  cursor: pointer; padding: 0 4px;
+  font-size: 14px;
+  color: rgba(180, 210, 255, 0.65);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  margin: -4px -6px 0 0;
+  line-height: 1;
+}
+.vocab-card-close:hover {
+  color: #d0e8ff;
 }
 .vocab-card-word {
-  font-size: 16px; font-weight: 700;
-  color: #d0e8ff; margin-bottom: 2px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #e8f2ff;
+  margin: 0 28px 6px 0;
+  line-height: 1.25;
+  letter-spacing: 0.02em;
 }
 .vocab-card-reading {
-  font-size: 11px; color: #3a70cc;
-  margin-bottom: 6px;
+  font-size: 13px;
+  color: #5a9cff;
+  margin-bottom: 10px;
+}
+.vocab-card-reading::before {
+  content: '読み · ';
+  font-size: 10px;
+  color: rgba(100, 160, 255, 0.55);
+  letter-spacing: 0.06em;
 }
 .vocab-card-meaning {
-  font-size: 12px; color: #7090b0;
-  line-height: 1.6;
+  font-size: 13px;
+  color: rgba(180, 205, 235, 0.88);
+  line-height: 1.65;
+}
+.vocab-card-meaning::before {
+  content: '意味 · ';
+  display: block;
+  font-size: 10px;
+  color: rgba(100, 160, 255, 0.5);
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
 }

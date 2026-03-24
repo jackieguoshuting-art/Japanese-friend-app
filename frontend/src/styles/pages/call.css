@@ -135,6 +135,22 @@
 .chat-ja { font-size: 14px; color: #fff; line-height: 1.6; }
 .chat-en { font-size: 11px; color: rgba(255,255,255,0.38); margin-top: 3px; line-height: 1.4; }
 
+/* Video call caption mode: default bilingual; ja-only hides English lines */
+.chat-list.caption-mode-ja-only .chat-en {
+  display: none !important;
+}
+.chat-msg-yuki .chat-ja .vocab-word {
+  border-bottom: 1px dashed rgba(120, 180, 255, 0.65);
+  cursor: pointer;
+}
+.chat-msg-yuki .chat-ja .vocab-word:hover {
+  background: rgba(40, 100, 220, 0.2);
+}
+.chat-msg-yuki .chat-ja .vocab-word.active {
+  background: rgba(40, 100, 220, 0.28);
+  border-bottom-color: #5a9cff;
+}
+
 .call-input-area {
   display: flex;
   align-items: center;
