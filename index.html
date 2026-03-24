@@ -442,55 +442,128 @@
 
 <div id="pg-shadow" class="page">
   <div class="stars-layer" id="sl-shadow"></div>
-  <div class="page-body">
-    <div class="shadow-header">
+
+  <!-- ── View: Library ── -->
+  <div id="sdw-library" class="sdw-view">
+    <div class="sdw-lib-hdr">
       <button class="back-btn" onclick="go('home')">‹</button>
       <div class="page-title">Live Shadowing</div>
     </div>
-    <p class="shadow-lead">ライブシャドーイング — 発音とイントネを追う練習エリア（プレースホルダー）</p>
-    <div class="shadow-sessions">
-      <div class="shadow-card">
-        <div class="shadow-card-icon">🎭</div>
-        <div>
-          <div class="shadow-card-title">Session 1 · あいさつ</div>
-          <div class="shadow-card-sub">準備中 · まもなく利用可能</div>
-        </div>
+
+    <div class="sdw-daily-banner" id="sdw-daily-banner" onclick="shadowStartDaily()">
+      <div class="sdw-daily-tag">今日のシーン · Daily</div>
+      <div class="sdw-daily-story" id="sdw-daily-story">読み込み中…</div>
+      <div class="sdw-daily-line" id="sdw-daily-line"></div>
+      <div class="sdw-daily-cta">挑戦する →</div>
+    </div>
+
+    <div class="sdw-continue-row" id="sdw-continue-row" style="display:none;" onclick="shadowResume()">
+      <div class="sdw-continue-icon">⏩</div>
+      <div class="sdw-continue-body">
+        <div class="sdw-continue-label">前回の続き</div>
+        <div class="sdw-continue-info" id="sdw-continue-info"></div>
       </div>
-      <div class="shadow-card">
-        <div class="shadow-card-icon">✨</div>
-        <div>
-          <div class="shadow-card-title">Session 2 · カジュアル</div>
-          <div class="shadow-card-sub">準備中</div>
-        </div>
+      <div class="sdw-continue-arrow">→</div>
+    </div>
+
+    <div class="sdw-lib-section">ストーリーライブラリー</div>
+    <div class="sdw-story-grid" id="sdw-story-grid"></div>
+
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="go('home')"><div class="nav-icon">🏠</div><div class="nav-lbl">Home</div></div>
+      <div class="nav-item" onclick="go('friends')"><div class="nav-icon">💬</div><div class="nav-lbl">Talk</div></div>
+      <div class="nav-item" data-nav="shadow" onclick="go('shadow')"><div class="nav-icon">🎭</div><div class="nav-lbl">Shadow</div></div>
+      <div class="nav-item" data-nav="listen" onclick="go('listen')"><div class="nav-icon">🎧</div><div class="nav-lbl">Listen</div></div>
+    </div>
+  </div>
+
+  <!-- ── View: Scene List ── -->
+  <div id="sdw-scenes" class="sdw-view" style="display:none;">
+    <div class="sdw-scenes-hdr">
+      <button class="back-btn" onclick="shadowGoLib()">‹</button>
+      <div class="sdw-scenes-title" id="sdw-scenes-title"></div>
+    </div>
+    <div class="sdw-scenes-list" id="sdw-scenes-list"></div>
+  </div>
+
+  <!-- ── View: VN Scene (fullscreen) ── -->
+  <div id="sdw-scene" class="sdw-fullscreen" style="display:none;">
+    <div class="sdw-vn-bg" id="sdw-vn-bg">
+      <div class="sdw-vn-topbar">
+        <button class="sdw-vn-close-btn" onclick="shadowGoLib()">✕</button>
+        <div class="sdw-vn-prog-wrap"><div class="sdw-vn-prog-fill" id="sdw-vn-prog-fill"></div></div>
+        <div class="sdw-vn-num" id="sdw-vn-num">1/3</div>
       </div>
-      <div class="shadow-card">
-        <div class="shadow-card-icon">🎵</div>
-        <div>
-          <div class="shadow-card-title">Session 3 · リズム</div>
-          <div class="shadow-card-sub">準備中</div>
-        </div>
+      <div class="sdw-vn-role-tag" id="sdw-vn-role-tag"></div>
+      <div class="sdw-vn-char-area">
+        <div class="sdw-vn-char-emoji" id="sdw-vn-char-emoji">👧</div>
+        <div class="sdw-vn-char-name" id="sdw-vn-char-name"></div>
+      </div>
+      <div class="sdw-vn-dialogue">
+        <div class="sdw-vn-spkr" id="sdw-vn-spkr"></div>
+        <div class="sdw-vn-line" id="sdw-vn-line"></div>
+        <div class="sdw-vn-reading" id="sdw-vn-reading"></div>
+        <div class="sdw-vn-trans" id="sdw-vn-trans"></div>
+      </div>
+      <div class="sdw-vn-ctrls">
+        <button class="sdw-ctrl-btn" onclick="shadowPlayLine()">▶ 聴く</button>
+        <button class="sdw-ctrl-btn" onclick="shadowPlaySlow()">🐢 スロー</button>
+        <button class="sdw-speak-btn" id="sdw-speak-btn" onclick="shadowToggleRecord()">
+          <span class="sdw-mic-icon">🎤</span>
+          <span id="sdw-speak-lbl">Speak</span>
+        </button>
+      </div>
+      <div class="sdw-rec-status" id="sdw-rec-status" style="display:none;">
+        <div class="sdw-rec-dot"></div>
+        <span id="sdw-rec-lbl">録音中…</span>
       </div>
     </div>
-    <p class="shadow-placeholder">教材と再生・録音などの機能は、このセクションに順次追加する予定です。</p>
   </div>
-  <div class="bottom-nav">
-  <div class="nav-item" onclick="go('home')">
-    <div class="nav-icon">🏠</div>
-    <div class="nav-lbl">Home</div>
+
+  <!-- ── View: Analysis (fullscreen) ── -->
+  <div id="sdw-analysis" class="sdw-fullscreen" style="display:none;">
+    <div class="sdw-analysis-body">
+      <div class="sdw-analysis-title">発音分析</div>
+      <div class="sdw-score-ring">
+        <svg class="sdw-score-svg" viewBox="0 0 100 100">
+          <circle class="sdw-score-track" cx="50" cy="50" r="42"/>
+          <circle class="sdw-score-arc" id="sdw-score-arc" cx="50" cy="50" r="42"
+                  stroke-dasharray="264" stroke-dashoffset="264"/>
+        </svg>
+        <div class="sdw-score-inner">
+          <div class="sdw-score-num" id="sdw-score-num">--</div>
+          <div class="sdw-score-unit">/ 100</div>
+        </div>
+      </div>
+      <div class="sdw-feedback-list" id="sdw-feedback-list"></div>
+      <div class="sdw-analysis-target-wrap">
+        <div class="sdw-analysis-target-lbl">目標台詞</div>
+        <div class="sdw-analysis-target" id="sdw-analysis-target"></div>
+      </div>
+      <div class="sdw-analysis-btns">
+        <button class="sdw-btn-outline" onclick="shadowRetry()">もう一度</button>
+        <button class="sdw-btn-solid" onclick="shadowContinueScene()">次へ →</button>
+      </div>
+    </div>
   </div>
-  <div class="nav-item" onclick="go('friends')">
-    <div class="nav-icon">💬</div>
-    <div class="nav-lbl">Talk</div>
+
+  <!-- ── View: Reward (fullscreen) ── -->
+  <div id="sdw-reward" class="sdw-fullscreen" style="display:none;">
+    <div class="sdw-reward-body">
+      <div class="sdw-reward-sparkles">✦ ✧ ✦</div>
+      <div class="sdw-reward-title">シーン完了！</div>
+      <div class="sdw-reward-sub">あなたの声で完成しました</div>
+      <div class="sdw-reward-frame">
+        <div class="sdw-reward-char" id="sdw-reward-char"></div>
+        <div class="sdw-reward-quote" id="sdw-reward-quote"></div>
+      </div>
+      <button class="sdw-reward-play-btn" id="sdw-reward-play-btn" onclick="shadowRewardPlay()">▶ 配音版を再生</button>
+      <div class="sdw-reward-btns">
+        <button class="sdw-btn-outline" onclick="shadowGoLib()">ライブラリへ</button>
+        <button class="sdw-btn-solid" id="sdw-next-scene-btn" onclick="shadowNextScene()">次のシーン →</button>
+      </div>
+    </div>
   </div>
-  <div class="nav-item" data-nav="shadow" onclick="go('shadow')">
-    <div class="nav-icon">🎭</div>
-    <div class="nav-lbl">Shadow</div>
-  </div>
-  <div class="nav-item" data-nav="listen" onclick="go('listen')">
-    <div class="nav-icon">🎧</div>
-    <div class="nav-lbl">Listen</div>
-  </div>
-</div>
 </div>
 
 <div id="pg-listen" class="page">
