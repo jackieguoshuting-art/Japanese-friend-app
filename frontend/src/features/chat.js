@@ -73,8 +73,9 @@ Return JSON with:
   "replyEn": "...",
   "memoryCandidate": "..."
 }
-In replyJa, mark 1–2 useful words for the learner using exactly this pattern (no spaces inside brackets): [[見たままの単語|ひらがな読み|English meaning]]
-Example fragment: 週末に[[映画|えいが|movie]]を見た？
+In replyJa, mark vocabulary DENSELY for the app UI: wrap almost EVERY noun and EVERY lexical verb (and meaningful い/な adjective predicates) as [[surface|ひらがな|English gloss]] — no spaces inside brackets.
+Skip ONLY particles (は を に が の と も や か ね よ さ へ で から まで より って), empty fillers, and bare です／ます／だ with no new lemma. Mark whole inflected verb forms as one span when one lemma. Compound nouns = one span. Aim for ~80%+ of nouns/verbs marked, not just one or two.
+Example: 週末に[[映画館|えいがかん|movie theater]]で[[映画|えいが|movie]]を[[見た|みた|watched]]。
 Difficulty: ${difficulty}
 `.trim();
 }

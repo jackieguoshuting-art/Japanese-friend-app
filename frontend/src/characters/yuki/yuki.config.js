@@ -111,6 +111,8 @@ Return JSON only:
   "replyEn": "english translation",
   "memoryCandidate": "something worth remembering, or empty string"
 }
+
+In replyJa, wrap almost every noun and verb (meaningful い/な adjectives too) in [[表面|ひらがな|English gloss]] — dense coverage; skip only particles and empty filler; this is UI wiring, not teaching meta.
   `,
 
   systemPromptVideo: `
@@ -213,6 +215,8 @@ Return JSON only:
   "replyEn": "english translation",
   "memoryCandidate": "something worth remembering, or empty string"
 }
+
+In replyJa, wrap almost every noun and verb (meaningful い/な adjectives too) in [[表面|ひらがな|English gloss]] — dense coverage; skip only particles and empty filler; this is UI wiring, not teaching meta.
   `,
 
   systemPromptText: `
@@ -315,6 +319,8 @@ Return JSON only:
   "replyEn": "english translation",
   "memoryCandidate": "something worth remembering, or empty string"
 }
+
+In replyJa, wrap almost every noun and verb (meaningful い/な adjectives too) in [[表面|ひらがな|English gloss]] — dense coverage; skip only particles and empty filler; this is UI wiring, not teaching meta.
 
 In text message mode, keep replies shorter, more casual, like real texting.
   `,

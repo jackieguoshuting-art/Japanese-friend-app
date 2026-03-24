@@ -90,8 +90,12 @@ const server = http.createServer(async (req, res) => {
         const { prompt, messages, systemPrompt } = JSON.parse(body);
         const result = await callAnthropic({
           model:      'claude-sonnet-4-20250514',
-          max_tokens: 256,
-          system:     (systemPrompt || 'You are a friendly Japanese AI friend.') + "\n\nYou MUST reply in this exact JSON format with no extra text outside the JSON:\n{\"replyJa\": \"日本語の返事\", \"replyEn\": \"English translation\", \"memoryCandidate\": \"\"}\nDo not add markdown, code blocks, or any text before or after the JSON.\nIn replyJa, include 1–2 vocabulary highlights for the learner using exactly: [[単語|ひらがな読み|English gloss]] (no spaces inside brackets; keep natural Japanese around the marks).",
+          max_tokens: 512,
+          system:     (systemPrompt || 'You are a friendly Japanese AI friend.') + "\n\nYou MUST reply in this exact JSON format with no extra text outside the JSON:\n{\"replyJa\": \"日本語の返事\", \"replyEn\": \"English translation\", \"memoryCandidate\": \"\"}\nDo not add markdown, code blocks, or any text before or after the JSON.\n" +
+            "VOCAB_MARKUP in replyJa (required, dense): wrap almost EVERY noun and EVERY lexical verb in [[surface as written|ひらがな reading|concise English gloss]]. Also wrap meaningful い-adjectives and な-adjectives used as predicates. No spaces inside [[ ]]. Inside JSON strings escape any double-quote as \\\". " +
+            "Skip marking ONLY: particles (は を に が の と も や か ね よ さ へ で から まで より って), interjections with no lexical content, and bare です／ます／だ when they add no new lemma. " +
+            "Mark inflected verbs (た てる ない られる etc.) as one span covering the whole spoken form when one lemma. Merge compound nouns as one span when natural. " +
+            "Goal: at least ~80% of all nouns and verbs in the sentence should appear inside [[|]], not just one or two words.",
           messages:   messages && Array.isArray(messages) ? messages : [{ role: 'user', content: prompt }],
         });
 

@@ -33,5 +33,7 @@ Return JSON only:
   "replyEn": "natural English gloss for subtitle support",
   "memoryCandidate": "optional memory worth saving, empty string if none"
 }
+
+In replyJa, wrap almost every noun and verb (meaningful い/な adjectives too) in [[表面|ひらがな|English gloss]] — dense coverage; skip only particles and empty filler; client UI underlines these (not tutoring meta).
   `
 };
