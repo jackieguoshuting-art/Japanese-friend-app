@@ -28,6 +28,9 @@ export function go(pageName) {
   appState.activePage = pageName;
   syncNav(pageName);
   updateNavActive(pageName);
+  if (pageName === 'call') {
+    window.applyCallCaptionMode?.();
+  }
 }
 
 export function syncNav(pageName) {

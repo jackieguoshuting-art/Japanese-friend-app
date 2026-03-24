@@ -91,7 +91,7 @@ const server = http.createServer(async (req, res) => {
         const result = await callAnthropic({
           model:      'claude-sonnet-4-20250514',
           max_tokens: 256,
-          system:     (systemPrompt || 'You are a friendly Japanese AI friend.') + "\n\nYou MUST reply in this exact JSON format with no extra text outside the JSON:\n{\"replyJa\": \"日本語の返事\", \"replyEn\": \"English translation\", \"memoryCandidate\": \"\"}\nDo not add markdown, code blocks, or any text before or after the JSON.",
+          system:     (systemPrompt || 'You are a friendly Japanese AI friend.') + "\n\nYou MUST reply in this exact JSON format with no extra text outside the JSON:\n{\"replyJa\": \"日本語の返事\", \"replyEn\": \"English translation\", \"memoryCandidate\": \"\"}\nDo not add markdown, code blocks, or any text before or after the JSON.\nIn replyJa, include 1–2 vocabulary highlights for the learner using exactly: [[単語|ひらがな読み|English gloss]] (no spaces inside brackets; keep natural Japanese around the marks).",
           messages:   messages && Array.isArray(messages) ? messages : [{ role: 'user', content: prompt }],
         });
 

@@ -681,7 +681,7 @@ body { background:#040810; }
   display: none;
   position: fixed;
   inset: 0;
-  z-index: 300;
+  z-index: 10000;
   background: rgba(4, 10, 24, 0.52);
   backdrop-filter: blur(3px);
 }
@@ -696,7 +696,7 @@ body { background:#040810; }
   bottom: max(20px, env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
   width: min(360px, calc(100vw - 32px));
-  z-index: 301;
+  z-index: 10001;
   background: linear-gradient(165deg, #0c1828 0%, #0a1422 100%);
   border: 1px solid rgba(50, 110, 220, 0.45);
   border-radius: 16px;

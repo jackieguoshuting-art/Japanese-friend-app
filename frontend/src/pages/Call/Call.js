@@ -22,26 +22,40 @@ function getCallCaptionMode() {
 }
 
 function applyCallCaptionMode() {
-  const list = document.getElementById('chat-list');
-  if (!list) return;
   const mode = getCallCaptionMode();
-  list.classList.toggle('caption-mode-ja-only', mode === 'ja-only');
-  list.classList.toggle('caption-mode-bilingual', mode === 'bilingual');
-  const lbl = document.getElementById('call-caption-lbl');
-  if (lbl) {
-    lbl.textContent = mode === 'ja-only' ? '字幕 · 日本語のみ' : '字幕 · 日本語＋訳';
+  const list = document.getElementById('chat-list');
+  if (list) {
+    list.classList.toggle('caption-mode-ja-only', mode === 'ja-only');
+    list.classList.toggle('caption-mode-bilingual', mode === 'bilingual');
+  }
+  const bottomLbl = document.getElementById('call-caption-lbl');
+  const headerBtn = document.getElementById('call-header-caption-btn');
+  if (bottomLbl) {
+    bottomLbl.textContent = mode === 'ja-only' ? '字幕 · 日本語のみ' : '字幕 · 日本語＋訳';
+  }
+  if (headerBtn) {
+    headerBtn.textContent = mode === 'ja-only' ? '字幕 · 日本語' : '字幕 · 雙語';
+    headerBtn.setAttribute('aria-pressed', mode === 'bilingual' ? 'true' : 'false');
   }
 }
 
-function initCallCaptionToggle() {
+function toggleCallCaptionMode() {
+  const next = getCallCaptionMode() === 'bilingual' ? 'ja-only' : 'bilingual';
+  localStorage.setItem(CALL_CAPTION_KEY, next);
+  applyCallCaptionMode();
+}
+
+/** Keyboard for bottom caption control (onclick is on HTML for reliability). */
+function initCallCaptionControl() {
   applyCallCaptionMode();
   const toggle = document.getElementById('call-caption-toggle');
-  if (!toggle || toggle.dataset.boundCaption === '1') return;
-  toggle.dataset.boundCaption = '1';
-  toggle.addEventListener('click', () => {
-    const next = getCallCaptionMode() === 'bilingual' ? 'ja-only' : 'bilingual';
-    localStorage.setItem(CALL_CAPTION_KEY, next);
-    applyCallCaptionMode();
+  if (!toggle || toggle.dataset.kbdCaption === '1') return;
+  toggle.dataset.kbdCaption = '1';
+  toggle.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleCallCaptionMode();
+    }
   });
 }
 
@@ -73,10 +87,10 @@ async function triggerOpeningMessage() {
 
   if (characterId === 'yuki') {
     const yukiOpenings = [
-      { ja: 'よ、ちょうどコーヒー淹れてたとこ。どした？', en: 'Yo, just making coffee. What\'s up?' },
-      { ja: 'おう、今帰ってきたとこ。なんか用？', en: 'Hey, just got back. Need something?' },
-      { ja: 'yo、下北ぶらついてたんだけど。どうした', en: 'Yo, was wandering Shimokitazawa. What\'s up?' },
-      { ja: 'おー、ちょうど音楽聴いてた。なんか用？', en: 'Oh, was just listening to music. What\'s up?' },
+      { ja: 'よ、ちょうど[[コーヒー|こーひー|coffee]]淹れてたとこ。どした？', en: 'Yo, just making coffee. What\'s up?' },
+      { ja: 'おう、今[[帰ってきた|かえってきた|came back]]とこ。なんか用？', en: 'Hey, just got back. Need something?' },
+      { ja: 'yo、[[下北|しもきた|Shimokitazawa]]ぶらついてたんだけど。どうした', en: 'Yo, was wandering Shimokitazawa. What\'s up?' },
+      { ja: 'おー、ちょうど[[音楽|おんがく|music]]聴いてた。なんか用？', en: 'Oh, was just listening to music. What\'s up?' },
       { ja: 'どした、急に', en: 'What\'s up, out of nowhere?' },
       { ja: '珍しいね、どうした', en: 'Rare to hear from you. What\'s going on?' },
       { ja: 'this is Yuki。なに？', en: 'This is Yuki. What?' },
@@ -197,7 +211,7 @@ function initCallInput() {
 
   btn.addEventListener('click', sendMessage);
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
-  initCallCaptionToggle();
+  initCallCaptionControl();
 }
 
 window.appendChatMessage = appendChatMessage;
@@ -205,3 +219,4 @@ window.triggerOpeningMessage = triggerOpeningMessage;
 window.initCallInput = initCallInput;
 window.applyCallCaptionMode = applyCallCaptionMode;
 window.getCallCaptionMode = getCallCaptionMode;
+window.toggleCallCaptionMode = toggleCallCaptionMode;

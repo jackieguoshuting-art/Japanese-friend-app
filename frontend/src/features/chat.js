@@ -18,7 +18,8 @@ export const limits = {
 export const fallbackReplies = [
   { replyJa: "ごめん、ちょっと聞こえなかった！もう一回言って？", replyEn: "Sorry, I didn't catch that! Can you say it again?", memoryCandidate: "" },
   { replyJa: "あれ、なんかうまく繋がらなかったみたい。もう一度！", replyEn: "Hmm, something went wrong on my end. Try again!", memoryCandidate: "" },
-  { replyJa: "ちょっと待って、今なんか変だった気がする…もう一回！", replyEn: "Wait, something felt off just now… one more time!", memoryCandidate: "" }
+  { replyJa: "ちょっと待って、今なんか変だった気がする…もう一回！", replyEn: "Wait, something felt off just now… one more time!", memoryCandidate: "" },
+  { replyJa: "ごめん、[[聞き取れ|ききとれ|couldn't hear]]なかった。[[もう一回|もういっかい|one more time]]言って？", replyEn: "Sorry, I couldn't catch that—can you say it once more?", memoryCandidate: "" }
 ];
 
 export function getRandomFallbackReply() {
@@ -72,6 +73,8 @@ Return JSON with:
   "replyEn": "...",
   "memoryCandidate": "..."
 }
+In replyJa, mark 1–2 useful words for the learner using exactly this pattern (no spaces inside brackets): [[見たままの単語|ひらがな読み|English meaning]]
+Example fragment: 週末に[[映画|えいが|movie]]を見た？
 Difficulty: ${difficulty}
 `.trim();
 }

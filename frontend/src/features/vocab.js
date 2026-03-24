@@ -96,8 +96,9 @@ function bindVocabEscape() {
 }
 
 function ensureVocabCardShell() {
-  const shell = document.getElementById('app');
-  if (!shell) return;
+  /** Mount on body so .phone { overflow:hidden } never clips the overlay. */
+  const mount = document.body;
+  if (!mount) return;
 
   let backdrop = document.getElementById('vocab-card-backdrop');
   if (!backdrop) {
@@ -106,7 +107,9 @@ function ensureVocabCardShell() {
     backdrop.className = 'vocab-card-backdrop';
     backdrop.setAttribute('aria-hidden', 'true');
     backdrop.addEventListener('click', () => closeVocabCard());
-    shell.appendChild(backdrop);
+    mount.appendChild(backdrop);
+  } else if (backdrop.parentElement !== mount) {
+    mount.appendChild(backdrop);
   }
 
   let card = document.getElementById('vocab-card-global');
@@ -127,7 +130,9 @@ function ensureVocabCardShell() {
       closeVocabCard();
     });
     card.addEventListener('click', (e) => e.stopPropagation());
-    shell.appendChild(card);
+    mount.appendChild(card);
+  } else if (card.parentElement !== mount) {
+    mount.appendChild(card);
   }
 }
 
