@@ -13,12 +13,13 @@ const characterMap = {
   mio: yukiConfig,
 };
 
+let textHistory = [];
+
 function initTextPage() {
   const list = document.getElementById('text-chat-list');
   const input = document.getElementById('text-input');
   const btn = document.getElementById('text-send-btn');
   if (!list || !input || !btn) return;
-  const textHistory = [];
 
   function addMsg(role, text, furigana) {
     const now = new Date();
@@ -68,10 +69,12 @@ function initTextPage() {
     textHistory.push({ role: 'user', content: msg });
     addTyping();
     try {
+      const characterId = appState.activeCharacter || 'yuki';
+      const character = characterMap[characterId] || yukiConfig;
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ messages: textHistory, systemPrompt: window.YUKI_SYSTEM_PROMPT || 'You are Yuki, a friendly Japanese friend. Reply in Japanese with short casual sentences.' })
+        body: JSON.stringify({ messages: textHistory, systemPrompt: character.systemPrompt || window.YUKI_SYSTEM_PROMPT })
       });
       const data = await res.json();
       removeTyping();
@@ -97,6 +100,7 @@ async function initTextPageForChar() {
   const list = document.getElementById('text-chat-list');
   if (!list) return;
   list.innerHTML = '';
+  textHistory = [];
   if (window._convHistory) window._convHistory.length = 0;
 
   const characterId = appState.activeCharacter || 'yuki';
@@ -163,7 +167,6 @@ async function initTextPageForChar() {
     addTextMsg('よ', 'Hey');
     window._convHistory?.push({ role: 'yuki', text: 'よ' });
   }
-  window.initTextPage?.();
 }
 
 window.initTextPage = initTextPage;
