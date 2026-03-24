@@ -74,7 +74,7 @@ function initTextPage() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ messages: textHistory, systemPrompt: character.systemPrompt || window.YUKI_SYSTEM_PROMPT })
+        body: JSON.stringify({ messages: textHistory, systemPrompt: character.systemPrompt || window.YUKI_SYSTEM_PROMPT || 'You are a friendly Japanese AI friend. Reply only in JSON: {"replyJa":"...","replyEn":"...","memoryCandidate":""}' })
       });
       const data = await res.json();
       removeTyping();
@@ -87,8 +87,8 @@ function initTextPage() {
     }
   }
 
-  btn.addEventListener('click', send);
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+  btn.onclick = send;
+  input.onkeydown = e => { if (e.key === 'Enter') send(); };
 
   if (list.children.length === 0) {
     addMsg('yuki', 'あ、来てくれた！元気だった？', 'Ah, you came! How have you been?');
@@ -141,6 +141,7 @@ async function initTextPageForChar() {
     const o = fixedOpenings[characterId];
     addTextMsg(o.ja, o.en);
     window._convHistory?.push({ role: 'yuki', text: o.ja });
+    initTextPage();
     return;
   }
 
