@@ -163,6 +163,7 @@ async function initTextPageForChar() {
     addTextMsg('よ', 'Hey');
     window._convHistory?.push({ role: 'yuki', text: 'よ' });
   }
+  window.initTextPage?.();
 }
 
 window.initTextPage = initTextPage;
