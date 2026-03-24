@@ -130,8 +130,8 @@ function init() {
   document.querySelector('.back-btn')?.addEventListener('click', () => go('home'));
   document.querySelector('.nav-item:nth-child(2)')?.setAttribute('data-nav', 'friends');
   document.querySelector('.nav-item:nth-child(1)')?.setAttribute('data-nav', 'home');
-  document.querySelector('.nav-item:nth-child(3)')?.setAttribute('data-nav', 'home');
-  document.querySelector('.nav-item:nth-child(4)')?.setAttribute('data-nav', 'home');
+  // Do not set nav items 3–4 here: index.html assigns Shadow/Listen targets; overwriting
+  // data-nav broke Shadow on Home (listener ran after onclick and called go('home')).
 
   go('home');
 }
