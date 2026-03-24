@@ -1,0 +1,237 @@
+#pg-listen {
+  background: var(--color-phone);
+}
+
+#pg-listen .page-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.listen-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 56px 20px 12px;
+}
+
+.listen-header .page-title {
+  flex: 1;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-white);
+}
+
+.listen-tagline {
+  padding: 0 20px 16px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.listen-hub-grid {
+  padding: 0 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.listen-hub-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(32, 176, 160, 0.07);
+  border: 1px solid rgba(32, 176, 160, 0.22);
+  border-radius: 18px;
+  padding: 16px 18px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+  color: inherit;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.listen-hub-card:hover {
+  background: rgba(32, 176, 160, 0.11);
+  border-color: rgba(32, 176, 160, 0.32);
+}
+
+.listen-hub-card-icon {
+  font-size: 26px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.listen-hub-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-white);
+}
+
+.listen-hub-card-sub {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 3px;
+}
+
+/* Detail (module scene) */
+.listen-detail {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.listen-detail.is-open {
+  display: flex;
+}
+
+.listen-detail .listen-header {
+  padding-top: 48px;
+}
+
+.listen-detail-mood {
+  padding: 0 20px 12px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.listen-scene-chips {
+  padding: 0 20px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.listen-chip {
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(32, 176, 160, 0.25);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.listen-player {
+  margin: 0 16px 14px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(10, 24, 32, 0.65);
+  border: 1px solid rgba(32, 176, 160, 0.18);
+}
+
+.listen-player-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: rgba(32, 200, 180, 0.85);
+  margin-bottom: 12px;
+}
+
+.listen-wave {
+  height: 36px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 14px;
+  opacity: 0.55;
+}
+
+.listen-wave span {
+  width: 4px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #40d8c0, #208878);
+  transition: height 0.2s;
+}
+
+.listen-player.is-playing .listen-wave span {
+  animation: listen-bar 0.6s ease-in-out infinite alternate;
+}
+
+.listen-player.is-playing .listen-wave span:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.listen-player.is-playing .listen-wave span:nth-child(3) {
+  animation-delay: 0.2s;
+}
+.listen-player.is-playing .listen-wave span:nth-child(4) {
+  animation-delay: 0.15s;
+}
+.listen-player.is-playing .listen-wave span:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+.listen-player.is-slow.is-playing .listen-wave span {
+  animation-duration: 1.1s;
+}
+
+@keyframes listen-bar {
+  from {
+    height: 8px;
+  }
+  to {
+    height: 28px;
+  }
+}
+
+.listen-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.listen-ctrl-btn {
+  font-size: 12px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-white);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.listen-ctrl-btn:hover {
+  background: rgba(32, 176, 160, 0.15);
+  border-color: rgba(32, 176, 160, 0.35);
+}
+
+.listen-ctrl-btn.is-on {
+  background: rgba(32, 176, 160, 0.22);
+  border-color: rgba(32, 176, 160, 0.45);
+  color: #8cf0e0;
+}
+
+.listen-transcript {
+  margin: 0 16px 24px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 13px;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.78);
+  display: none;
+}
+
+.listen-transcript.is-visible {
+  display: block;
+}
+
+.listen-transcript-hint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.38);
+  margin-bottom: 10px;
+}
+
+.listen-hub-view.is-hidden {
+  display: none;
+}
