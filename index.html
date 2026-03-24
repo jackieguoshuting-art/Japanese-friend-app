@@ -29,6 +29,7 @@
   <link rel="stylesheet" href="./frontend/src/styles/pages/friends.css" />
   <link rel="stylesheet" href="./frontend/src/styles/pages/call.css" />
   <link rel="stylesheet" href="./frontend/src/styles/pages/summary.css" />
+  <link rel="stylesheet" href="./frontend/src/styles/pages/shadow.css" />
 
   <!-- Theme -->
   <link rel="stylesheet" href="./frontend/src/styles/themes/default.css" />
@@ -127,7 +128,7 @@
 
     <!-- Feature cards -->
     <div class="feat-cards">
-      <div class="feat-card shadowing">
+      <div class="feat-card shadowing" onclick="go('shadow')">
         <div class="feat-icon" style="background:rgba(48,112,255,.12);">🎭</div>
         <div>
           <div class="feat-title">Live Shadowing</div>
@@ -156,11 +157,11 @@
     <div class="nav-icon">💬</div>
     <div class="nav-lbl">Talk</div>
   </div>
-  <div class="nav-item">
+  <div class="nav-item" data-nav="shadow" onclick="go('shadow')">
     <div class="nav-icon">🎭</div>
     <div class="nav-lbl">Shadow</div>
   </div>
-  <div class="nav-item">
+  <div class="nav-item" data-nav="home" onclick="go('home')">
     <div class="nav-icon">🎧</div>
     <div class="nav-lbl">Listen</div>
   </div>
@@ -249,11 +250,11 @@
     <div class="nav-icon">💬</div>
     <div class="nav-lbl">Talk</div>
   </div>
-  <div class="nav-item">
+  <div class="nav-item" data-nav="shadow" onclick="go('shadow')">
     <div class="nav-icon">🎭</div>
     <div class="nav-lbl">Shadow</div>
   </div>
-  <div class="nav-item">
+  <div class="nav-item" data-nav="home" onclick="go('home')">
     <div class="nav-icon">🎧</div>
     <div class="nav-lbl">Listen</div>
   </div>
@@ -335,11 +336,11 @@
     <div class="nav-icon">💬</div>
     <div class="nav-lbl">Talk</div>
   </div>
-  <div class="nav-item">
+  <div class="nav-item" data-nav="shadow" onclick="go('shadow')">
     <div class="nav-icon">🎭</div>
     <div class="nav-lbl">Shadow</div>
   </div>
-  <div class="nav-item">
+  <div class="nav-item" data-nav="home" onclick="go('home')">
     <div class="nav-icon">🎧</div>
     <div class="nav-lbl">Listen</div>
   </div>
@@ -427,11 +428,64 @@
     <div class="nav-icon">💬</div>
     <div class="nav-lbl">Talk</div>
   </div>
-  <div class="nav-item">
+  <div class="nav-item" data-nav="shadow" onclick="go('shadow')">
     <div class="nav-icon">🎭</div>
     <div class="nav-lbl">Shadow</div>
   </div>
-  <div class="nav-item">
+  <div class="nav-item" data-nav="home" onclick="go('home')">
+    <div class="nav-icon">🎧</div>
+    <div class="nav-lbl">Listen</div>
+  </div>
+</div>
+</div>
+
+<div id="pg-shadow" class="page">
+  <div class="stars-layer" id="sl-shadow"></div>
+  <div class="page-body">
+    <div class="shadow-header">
+      <button class="back-btn" onclick="go('home')">‹</button>
+      <div class="page-title">Live Shadowing</div>
+    </div>
+    <p class="shadow-lead">ライブシャドーイング — 発音とイントネを追う練習エリア（プレースホルダー）</p>
+    <div class="shadow-sessions">
+      <div class="shadow-card">
+        <div class="shadow-card-icon">🎭</div>
+        <div>
+          <div class="shadow-card-title">Session 1 · あいさつ</div>
+          <div class="shadow-card-sub">準備中 · まもなく利用可能</div>
+        </div>
+      </div>
+      <div class="shadow-card">
+        <div class="shadow-card-icon">✨</div>
+        <div>
+          <div class="shadow-card-title">Session 2 · カジュアル</div>
+          <div class="shadow-card-sub">準備中</div>
+        </div>
+      </div>
+      <div class="shadow-card">
+        <div class="shadow-card-icon">🎵</div>
+        <div>
+          <div class="shadow-card-title">Session 3 · リズム</div>
+          <div class="shadow-card-sub">準備中</div>
+        </div>
+      </div>
+    </div>
+    <p class="shadow-placeholder">教材と再生・録音などの機能は、このセクションに順次追加する予定です。</p>
+  </div>
+  <div class="bottom-nav">
+  <div class="nav-item" onclick="go('home')">
+    <div class="nav-icon">🏠</div>
+    <div class="nav-lbl">Home</div>
+  </div>
+  <div class="nav-item" onclick="go('friends')">
+    <div class="nav-icon">💬</div>
+    <div class="nav-lbl">Talk</div>
+  </div>
+  <div class="nav-item" data-nav="shadow" onclick="go('shadow')">
+    <div class="nav-icon">🎭</div>
+    <div class="nav-lbl">Shadow</div>
+  </div>
+  <div class="nav-item" data-nav="home" onclick="go('home')">
     <div class="nav-icon">🎧</div>
     <div class="nav-lbl">Listen</div>
   </div>
@@ -516,6 +570,7 @@
   <script type="module" src="./frontend/src/features/vocab.js"></script>
   <script type="module" src="./frontend/src/pages/Call/Call.js"></script>
   <script type="module" src="./frontend/src/pages/Text/Text.js"></script>
+  <script type="module" src="./frontend/src/pages/Shadow/Shadow.js"></script>
   <script type="module" src="./frontend/src/app.js"></script>
 </body>
 </html>
