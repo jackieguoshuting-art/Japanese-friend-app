@@ -106,10 +106,20 @@ async function initTextPageForChar() {
   const characterId = appState.activeCharacter || 'yuki';
   const character = characterMap[characterId] || yukiConfig;
 
+  const headerAvatar = document.querySelector('.text-avatar');
+  const headerName = document.querySelector('.text-header-name');
+  const headerSub = document.querySelector('.text-header-sub');
+  const avatarText = { yuki: '悠生', ren: '蓮', hana: '花', mio: '緒' }[characterId] || '悠生';
+  const fullName = { yuki: '凪原 悠生 — Yuki', ren: '蓮 — Ren', hana: '花 — Hana', mio: '緒 — Mio' }[characterId] || '凪原 悠生 — Yuki';
+  const location = { yuki: '下北沢', ren: '大阪', hana: '京都', mio: '東京' }[characterId] || '下北沢';
+  if (headerAvatar) headerAvatar.textContent = avatarText;
+  if (headerName) headerName.textContent = fullName;
+  if (headerSub) headerSub.innerHTML = `<span class="text-online-label">オンライン</span> · ${location}`;
+
   const fixedOpenings = {
-    ren:  { ja: 'よ。', en: 'Hey.' },
-    hana: { ja: 'きたきた！', en: 'You came!' },
-    mio:  { ja: 'あ、来てくれたんだ。', en: 'Oh, you came.' },
+    ren:  { ja: '1', en: '1' },
+    hana: { ja: '2', en: '2' },
+    mio:  { ja: '3', en: '3' },
   };
 
   const now = new Date();
@@ -141,6 +151,7 @@ async function initTextPageForChar() {
     const o = fixedOpenings[characterId];
     addTextMsg(o.ja, o.en);
     window._convHistory?.push({ role: 'yuki', text: o.ja });
+    initTextPage();
     return;
   }
 
