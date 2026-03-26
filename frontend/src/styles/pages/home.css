@@ -1,184 +1,428 @@
-#pg-home { background: var(--color-phone); }
-.home-header { padding: 56px 22px 22px; position: relative; z-index: 1; }
-.greeting-sub { font-size: 12px; color: rgba(255,255,255,0.42); letter-spacing: 0.04em; margin-bottom: 5px; }
-.greeting-main { font-size: 25px; font-weight: 700; color: var(--color-white); }
-.greeting-main em { color: var(--color-pink-1); font-style: normal; }
-.home-cards { padding: 8px 16px 0; display: flex; flex-direction: column; gap: 13px; position: relative; z-index: 1; }
+@import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Epilogue:wght@700;900&family=Be+Vietnam+Pro:wght@400;700&family=ABeeZee&display=swap');
 
-.stage-wrap {
-  position: relative;
-  height: 260px;
-  overflow: hidden;
-  flex-shrink: 0;
-  background: linear-gradient(180deg, #030814 0%, #060d1e 55%, #040810 100%);
+/* ─── Page ──────────────────────────────────────── */
+#pg-home {
+  background: #fdfcfb;
+  overflow-y: auto;
 }
-.stage-label {
-  position: absolute;
-  top: 12px; left: 0; right: 0;
-  text-align: center;
-  font-size: 10px;
-  font-weight: 700;
-  color: #1e4070;
-  letter-spacing: .22em;
-  z-index: 5;
+
+.home-wrap {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
 }
-.char-zone {
-  position: absolute;
-  bottom: 52px; left: 0; right: 0;
+
+/* ─── Header ────────────────────────────────────── */
+.home-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  background: rgba(253, 252, 251, 0.8);
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  z-index: 6;
+  justify-content: space-between;
+  padding: 16px 24px 8px;
+  border-bottom: 1px solid #0047ff;
 }
-.char-arrow {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  background: rgba(40,100,255,.15);
-  border: 1px solid rgba(40,100,255,.3);
-  color: #4878cc;
-  font-size: 16px;
+
+.home-header-btn {
+  background: none;
+  border: none;
   cursor: pointer;
+  padding: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
 }
-.char-box {
+
+.home-hdr-img {
+  display: block;
+}
+
+.home-header-title {
+  font-family: 'Epilogue', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  color: #0047ff;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ─── Main ──────────────────────────────────────── */
+.home-main {
+  flex: 1;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 32px 16px 160px;
+}
+
+/* ─── Card Section (with absolute arrows) ───────── */
+.home-card-wrap {
+  position: relative;
+  padding: 0 32px;
+}
+
+.home-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.home-arrow-left  { left: 0; }
+.home-arrow-right { right: 0; }
+
+/* ─── Dossier Card ──────────────────────────────── */
+.home-card {
+  background: #fff;
+  border: 1px solid #0047ff;
+  border-radius: 32px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Card title row */
+.home-card-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.home-card-title {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 36px;
+  color: #0047ff;
+  line-height: 1;
+}
+
+.home-card-deco {
+  display: flex;
+  gap: 8px;
+  opacity: 0.5;
+  padding-top: 6px;
+}
+
+/* Section headings */
+.home-section-head {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
+
+.home-section-head--mt {
+  margin-top: 8px;
+}
+
+.home-section-label {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(0, 71, 255, 0.7);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.home-divider {
+  width: 100%;
+  height: 1px;
+  background: #0047ff;
+  flex-shrink: 0;
+}
+
+/* ─── General Info Row ──────────────────────────── */
+.home-card-general {
+  display: flex;
+  gap: 16px;
+  min-height: 192px;
+}
+
+/* Polaroid photo */
+.home-polaroid {
+  position: relative;
+  width: 89px;
+  flex-shrink: 0;
+  background: #fff;
+  border: 1px solid #f3f4f6;
+  padding: 9px;
+  box-sizing: border-box;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.home-polaroid-tape {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 60px;
+  height: 20px;
+  background: rgba(0, 71, 255, 0.4);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+}
+
+.home-polaroid-photo {
+  flex: 1;
+  background: #f9fafb;
+  border: 1px solid #0047ff;
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 #home-char-canvas {
-  image-rendering: pixelated;
-  animation: charBob 3s ease-in-out infinite;
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
 }
-.char-name-tag {
-  font-size: 10px;
-  font-weight: 700;
-  color: #3060a0;
-  letter-spacing: .08em;
-  background: rgba(40,100,255,.1);
-  border: 1px solid rgba(40,100,255,.2);
-  border-radius: 10px;
-  padding: 2px 10px;
+
+.home-polaroid-foot {
+  height: 28px;
+  padding-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
-.home-start-area {
-  position: absolute;
-  bottom: 10px; left: 50%;
-  transform: translateX(-50%);
-  z-index: 8;
-  width: 180px;
+
+.home-polaroid-line {
+  width: 32px;
+  height: 4px;
+  background: #f3f4f6;
+  border-radius: 9999px;
 }
-.home-start-btn {
-  width: 100%;
-  padding: 10px 0;
-  background: linear-gradient(90deg, #1a48aa, #1e5acc);
-  border: 1px solid rgba(60,140,255,.4);
-  border-radius: 8px;
-  color: #d0e8ff;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  letter-spacing: .04em;
-}
-.feat-cards {
-  padding: 10px 14px 8px;
+
+/* Fields column */
+.home-card-fields {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  justify-content: space-between;
 }
-.feat-card {
+
+/* Name + Age row */
+.home-field-nameage {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.home-field-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.home-field-block--sep {
+  border-left: 1px solid #0047ff;
+  padding-left: 9px;
+}
+
+.home-field-label {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  color: rgba(0, 71, 255, 0.7);
+  text-transform: uppercase;
+  line-height: 12px;
+}
+
+.home-field-val {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0a0a0a;
+  line-height: 1.3;
+}
+
+/* Birthday */
+.home-field-bday {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.home-field-bday-top {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: rgba(255,255,255,.025);
-  border: 1px solid #111d2e;
-  border-radius: 12px;
-  padding: 12px 14px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
+  justify-content: space-between;
 }
-.feat-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 2px; height: 100%;
-}
-.feat-card.shadowing::before { background: linear-gradient(180deg,#3070ff,#1040cc); }
-.feat-card.listening::before { background: linear-gradient(180deg,#20d0c0,#108090); }
-.feat-icon {
-  width: 42px; height: 42px;
-  border-radius: 10px;
+
+.home-field-bday-dots {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
+  gap: 4px;
 }
-.feat-title { font-size: 13px; font-weight: 700; color: #c0d8ff; }
-.feat-sub   { font-size: 10px; color: #1e3a5a; margin-top: 2px; }
-.feat-badge {
+
+.home-bd-sub {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 8px;
+  color: rgba(0, 71, 255, 0.5);
+  line-height: 12px;
+}
+
+.home-card-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #dce8ff;
+  border: 1px solid #a5c0ff;
   display: inline-block;
-  font-size: 10px;
-  border-radius: 20px;
-  padding: 2px 9px;
-  margin-top: 5px;
-}
-.mode-modal {
-  display: none;
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,.72);
-  z-index: 100;
-  align-items: flex-end;
-  justify-content: center;
-}
-.mode-sheet {
-  width: 100%;
-  padding: 0 14px 28px;
-}
-.mode-sheet-label {
-  text-align: center;
-  font-size: 10px;
-  color: rgba(80,140,255,.4);
-  letter-spacing: .12em;
-  margin-bottom: 12px;
-}
-.mode-choice {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px 18px;
-  background: rgba(8,16,36,.96);
-  border: 1px solid #1a2d45;
-  border-radius: 14px;
-  cursor: pointer;
-  margin-bottom: 10px;
-}
-.mode-choice-icon {
-  width: 44px; height: 44px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
   flex-shrink: 0;
 }
-.mode-choice-title { font-size: 14px; font-weight: 700; color: #c0d8ff; margin-bottom: 2px; }
-.mode-choice-sub   { font-size: 11px; color: #1e3a5a; }
-.mode-cancel {
+
+.home-card-dot.filled {
+  background: #a5c0ff;
+  border-color: #0047ff;
+}
+
+/* ─── More Information ──────────────────────────── */
+.home-card-more {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.home-card-more-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.home-card-more-box {
+  border: 1px dashed rgba(0, 71, 255, 0.35);
+  border-radius: 2px;
+  padding: 8px;
+  font-size: 10px;
+  color: #444;
+  min-height: 40px;
+}
+
+/* Chat Button */
+.home-chat-btn {
   width: 100%;
+  background: #0047ff;
+  color: #fff;
+  border: none;
+  border-radius: 16px;
   padding: 14px;
-  background: rgba(6,10,20,.96);
-  border: 1px solid #111d2e;
-  border-radius: 12px;
-  color: #1e3a5a;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
   cursor: pointer;
+  box-shadow: 0 6px 0 #ff8fab;
+}
+
+/* ─── Feature Buttons ───────────────────────────── */
+.home-features {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.home-feat-btn {
+  width: 100%;
+  border: none;
+  border-radius: 36px;
+  padding: 32px;
+  font-family: 'Epilogue', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #fff;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.home-feat-icon-ring {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.home-feat-shadow { background: #0047ff; }
+.home-feat-listen { background: #ff8e9b; }
+
+/* ─── Bottom Nav ────────────────────────────────── */
+.home-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 390px;
+  height: 112px;
+  background: #0047ff;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 32px 24px;
+  box-sizing: border-box;
+  z-index: 4;
+  -webkit-mask-image: url('https://www.figma.com/api/mcp/asset/5426e8f1-2c38-4eaa-8385-bf062a38fb6a');
+  mask-image: url('https://www.figma.com/api/mcp/asset/5426e8f1-2c38-4eaa-8385-bf062a38fb6a');
+  -webkit-mask-size: 390px 112px;
+  mask-size: 390px 112px;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: 0 0;
+  mask-position: 0 0;
+}
+
+.home-nav .nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.home-nav .nav-icon-img {
+  display: block;
+  opacity: 0.7;
+}
+
+.home-nav .nav-item.active .nav-icon-img {
+  opacity: 1;
+}
+
+.home-nav .nav-lbl {
+  font-size: 10px;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.home-nav .nav-item.active .nav-lbl {
+  font-family: 'ABeeZee', sans-serif;
+  color: #fff;
 }

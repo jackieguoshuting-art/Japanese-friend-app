@@ -40,134 +40,160 @@
 <body data-theme="default">
   <div class="phone app-shell" id="app">
 <div id="pg-home" class="page active">
-  <div class="stars-layer" id="sl-home"></div>
+  <div class="home-wrap">
 
-  <div class="page-body" style="display:flex;flex-direction:column;height:100%;overflow:hidden;">
+    <!-- Header -->
+    <header class="home-header">
+      <button class="home-header-btn">
+        <img src="https://www.figma.com/api/mcp/asset/02e2ea94-552a-4d9f-89c8-ce5c2750a48c" alt="menu" class="home-hdr-img" width="18" height="12">
+      </button>
+      <div class="home-header-title">ABOUT ME!</div>
+      <button class="home-header-btn">
+        <img src="https://www.figma.com/api/mcp/asset/f47ed4e8-88d8-430b-846b-110aad138dac" alt="dossier" class="home-hdr-img" width="20" height="16">
+      </button>
+    </header>
 
-    <!-- Stage area -->
-    <div class="stage-wrap">
-      <!-- 背景面板 -->
-      <div class="stage-back-panel stage-bp-l"></div>
-      <div class="stage-back-panel stage-bp-r"></div>
+    <!-- Main scrollable content -->
+    <div class="home-main">
 
-      <!-- 光束 -->
-      <div class="stage-beam sb1"></div>
-      <div class="stage-beam sb2"></div>
-      <div class="stage-beam sb3"></div>
-      <div class="stage-beam sb4"></div>
-      <div class="stage-beam sb5"></div>
+      <!-- Dossier Card + Arrows -->
+      <div class="home-card-wrap">
+        <button class="home-arrow home-arrow-left" onclick="prevChar()">
+          <img src="https://www.figma.com/api/mcp/asset/15981f87-c71e-4159-a85f-f44389f06b85" alt="prev" width="11" height="18">
+        </button>
 
-      <!-- 星星装饰 -->
-      <div class="stage-star" style="top:10%;left:12%;font-size:8px;animation-delay:0s;">✦</div>
-      <div class="stage-star" style="top:20%;right:14%;font-size:7px;animation-delay:.5s;">★</div>
-      <div class="stage-star" style="top:38%;left:7%;font-size:6px;animation-delay:1s;">✧</div>
-      <div class="stage-star" style="top:28%;right:8%;font-size:9px;animation-delay:1.5s;">✦</div>
-      <div class="stage-star" style="top:22%;left:48%;font-size:7px;animation-delay:.8s;">✧</div>
-      <div class="stage-star" style="top:42%;right:22%;font-size:6px;animation-delay:1.2s;">★</div>
+        <div class="home-card">
+          <!-- Card Title -->
+          <div class="home-card-title-row">
+            <div class="home-card-title">ABOUT ME!</div>
+            <div class="home-card-deco">
+              <img src="https://www.figma.com/api/mcp/asset/ee46d678-bf83-4bdc-bd84-5ca1606a32c2" alt="" width="12" height="11">
+              <img src="https://www.figma.com/api/mcp/asset/899872b9-a98b-4451-8506-dee1ea5ba42d" alt="" width="12" height="12">
+            </div>
+          </div>
 
-      <!-- 菱形装饰 -->
-      <div class="stage-diamond" style="top:20%;left:38%;background:#ff80d0;animation-delay:.4s;"></div>
-      <div class="stage-diamond" style="top:15%;right:35%;background:#80c8ff;width:7px;height:7px;animation-delay:1s;"></div>
-      <div class="stage-diamond" style="top:45%;left:20%;background:#ffe060;width:6px;height:6px;animation-delay:1.6s;"></div>
-      <div class="stage-diamond" style="top:32%;right:18%;background:#c080ff;animation-delay:.7s;"></div>
+          <!-- General Information -->
+          <div class="home-section-head">
+            <div class="home-section-label">GENERAL INFORMATION</div>
+            <div class="home-divider"></div>
+          </div>
 
-      <!-- 音箱 -->
-      <div class="stage-spk stage-spk-l"></div>
-      <div class="stage-spk stage-spk-r"></div>
-      <div class="stage-spk-sm stage-spk-sm-l"></div>
-      <div class="stage-spk-sm stage-spk-sm-r"></div>
+          <div class="home-card-general">
+            <!-- Polaroid photo -->
+            <div class="home-polaroid">
+              <div class="home-polaroid-tape"></div>
+              <div class="home-polaroid-photo">
+                <canvas id="home-char-canvas" width="72" height="110"></canvas>
+              </div>
+              <div class="home-polaroid-foot">
+                <div class="home-polaroid-line"></div>
+              </div>
+            </div>
 
-      <!-- 透视地板 -->
-      <div class="stage-floor-3d">
-        <svg width="100%" height="60" viewBox="0 0 340 60" preserveAspectRatio="none">
-          <line x1="170" y1="0" x2="0" y2="60" stroke="rgba(100,80,255,.3)" stroke-width="1"/>
-          <line x1="170" y1="0" x2="60" y2="60" stroke="rgba(100,80,255,.25)" stroke-width="1"/>
-          <line x1="170" y1="0" x2="120" y2="60" stroke="rgba(100,80,255,.2)" stroke-width="1"/>
-          <line x1="170" y1="0" x2="200" y2="60" stroke="rgba(100,80,255,.2)" stroke-width="1"/>
-          <line x1="170" y1="0" x2="260" y2="60" stroke="rgba(100,80,255,.25)" stroke-width="1"/>
-          <line x1="170" y1="0" x2="340" y2="60" stroke="rgba(100,80,255,.3)" stroke-width="1"/>
-          <line x1="0" y1="20" x2="340" y2="20" stroke="rgba(100,80,255,.15)" stroke-width="1"/>
-          <line x1="0" y1="40" x2="340" y2="40" stroke="rgba(100,80,255,.15)" stroke-width="1"/>
-        </svg>
-      </div>
+            <!-- Info fields -->
+            <div class="home-card-fields">
+              <div class="home-field-nameage">
+                <div class="home-field-block">
+                  <div class="home-field-label">NAME</div>
+                  <div class="home-field-val" id="char-name-tag">Yuki</div>
+                  <div class="home-divider"></div>
+                </div>
+                <div class="home-field-block home-field-block--sep">
+                  <div class="home-field-label">AGE</div>
+                  <div class="home-field-val" id="dossier-age">23</div>
+                  <div class="home-divider"></div>
+                </div>
+              </div>
+              <div class="home-field-bday">
+                <div class="home-field-bday-top">
+                  <div class="home-field-label">BIRTHDAY</div>
+                  <div class="home-field-bday-dots">
+                    <span class="home-bd-sub">MM</span>
+                    <span class="home-card-dot filled"></span>
+                    <span class="home-card-dot filled"></span>
+                    <span class="home-bd-sub">DD</span>
+                    <span class="home-card-dot"></span>
+                    <span class="home-card-dot"></span>
+                  </div>
+                </div>
+                <div class="home-divider"></div>
+              </div>
+              <div class="home-field-block">
+                <div class="home-field-label">HEIGHT</div>
+                <div class="home-field-val" id="dossier-height">175cm</div>
+                <div class="home-divider"></div>
+              </div>
+              <div class="home-field-block">
+                <div class="home-field-label">MBTI</div>
+                <div class="home-field-val" id="dossier-mbti">INFJ</div>
+                <div class="home-divider"></div>
+              </div>
+            </div>
+          </div>
 
-      <!-- 八角星 -->
-      <svg class="stage-starburst" viewBox="0 0 60 60">
-        <polygon points="30,2 33,27 58,30 33,33 30,58 27,33 2,30 27,27" fill="none" stroke="#ffe060" stroke-width="1" opacity=".8"/>
-        <polygon points="30,8 33,28 52,30 33,32 30,52 27,32 8,30 27,28" fill="none" stroke="#ff80d0" stroke-width=".5" opacity=".6"/>
-      </svg>
+          <!-- More Information -->
+          <div class="home-section-head home-section-head--mt">
+            <div class="home-section-label">MORE INFORMATION</div>
+            <div class="home-divider"></div>
+          </div>
+          <div class="home-card-more">
+            <div class="home-card-more-item">
+              <div class="home-field-label">LIKES &amp; SPECIALTIES</div>
+              <div class="home-card-more-box" id="dossier-likes">古着 · 音楽 · 下北沢</div>
+            </div>
+            <div class="home-card-more-item">
+              <div class="home-field-label">SIGNATURE TRAITS</div>
+              <div class="home-card-more-box" id="dossier-traits">穏やか · ドライ · 観察眼</div>
+            </div>
+          </div>
 
-      <!-- CRT扫描线 -->
-      <div class="stage-scanlines"></div>
-
-      <!-- Light beams -->
-      <div class="light-beam" style="left:5%;background:linear-gradient(180deg,#1040a0,transparent);transform:rotate(-15deg);animation-delay:0s;"></div>
-      <div class="light-beam" style="left:30%;background:linear-gradient(180deg,#0830a0,transparent);transform:rotate(-5deg);animation-delay:0.5s;"></div>
-      <div class="light-beam" style="left:58%;background:linear-gradient(180deg,#0828a0,transparent);transform:rotate(6deg);animation-delay:1s;"></div>
-      <div class="light-beam" style="left:80%;background:linear-gradient(180deg,#1038c0,transparent);transform:rotate(18deg);animation-delay:1.5s;"></div>
-      <!-- Star decorations -->
-      <div class="sparkle-deco" style="top:18%;left:6%;font-size:11px;animation-delay:0s;color:#2050a0;">✦</div>
-      <div class="sparkle-deco" style="top:25%;right:8%;font-size:9px;animation-delay:0.4s;color:#1840a0;">✧</div>
-      <div class="sparkle-deco" style="top:50%;left:4%;font-size:13px;animation-delay:0.8s;color:#2060c0;">✦</div>
-      <div class="sparkle-deco" style="bottom:30%;right:6%;font-size:10px;animation-delay:1.2s;color:#1848b0;">★</div>
-      <!-- Stage label -->
-      <div class="stage-label">✦ LIVE STAGE ✦</div>
-      <!-- Character zone -->
-      <div class="char-zone">
-        <button class="char-arrow" onclick="prevChar()">‹</button>
-        <div class="char-box">
-          <canvas id="home-char-canvas" width="72" height="110"></canvas>
-          <div class="char-name-tag" id="char-name-tag">YUKI · 悠生</div>
+          <button class="home-chat-btn" onclick="openModeModal()">CHAT WITH ME</button>
         </div>
-        <button class="char-arrow" onclick="nextChar()">›</button>
+
+        <button class="home-arrow home-arrow-right" onclick="nextChar()">
+          <img src="https://www.figma.com/api/mcp/asset/7fb23b2e-785f-4032-8ea5-c22f219fb43f" alt="next" width="11" height="18">
+        </button>
       </div>
-      <!-- Start button -->
-      <div class="home-start-area">
-        <button class="home-start-btn" onclick="openModeModal();">💬 Start Talking</button>
+
+      <!-- Feature Buttons -->
+      <div class="home-features">
+        <button class="home-feat-btn home-feat-shadow" onclick="go('shadow')">
+          <span class="home-feat-icon-ring">
+            <img src="https://www.figma.com/api/mcp/asset/4f66e92b-05e7-4cef-8ba6-0f3d3d62217a" alt="" width="23" height="23">
+          </span>
+          SHADOWING
+        </button>
+        <button class="home-feat-btn home-feat-listen" onclick="go('listen')">
+          <span class="home-feat-icon-ring">
+            <img src="https://www.figma.com/api/mcp/asset/95826d18-3d4b-490c-95e6-0a99b56b7d1e" alt="" width="25" height="25">
+          </span>
+          LISTENING
+        </button>
+      </div>
+
+    </div><!-- /.home-main -->
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav home-nav">
+      <div class="nav-item active" onclick="go('home')">
+        <img src="https://www.figma.com/api/mcp/asset/2bb7e09b-0060-4db4-807b-fa36b1d6ac29" alt="" class="nav-icon-img" width="16" height="18">
+        <div class="nav-lbl">HOME</div>
+      </div>
+      <div class="nav-item" onclick="go('friends')">
+        <img src="https://www.figma.com/api/mcp/asset/82bb737b-0cbf-4c30-8b58-d330a00dfd4c" alt="" class="nav-icon-img" width="20" height="20">
+        <div class="nav-lbl">TALK</div>
+      </div>
+      <div class="nav-item" onclick="go('shadow')">
+        <img src="https://www.figma.com/api/mcp/asset/bca4e46c-2f08-49f3-8e5a-7549596be08a" alt="" class="nav-icon-img" width="15" height="20">
+        <div class="nav-lbl">SHADOW</div>
+      </div>
+      <div class="nav-item" onclick="go('listen')">
+        <img src="https://www.figma.com/api/mcp/asset/719c4287-6fb0-41b9-b6eb-ac62f36b0fac" alt="" class="nav-icon-img" width="18" height="21">
+        <div class="nav-lbl">LISTEN</div>
       </div>
     </div>
 
-    <!-- Feature cards -->
-    <div class="feat-cards">
-      <div class="feat-card shadowing" onclick="go('shadow')">
-        <div class="feat-icon" style="background:rgba(48,112,255,.12);">🎭</div>
-        <div>
-          <div class="feat-title">Live Shadowing</div>
-          <div class="feat-sub">ライブシャドーイング · 発音＆イントネーション</div>
-          <span class="feat-badge" style="background:rgba(48,112,255,.18);color:#4878cc;border:1px solid rgba(48,112,255,.28);">New · 3 sessions</span>
-        </div>
-      </div>
-      <div class="feat-card listening" onclick="go('listen')">
-        <div class="feat-icon" style="background:rgba(32,176,160,.12);">🎧</div>
-        <div>
-          <div class="feat-title">Immersive Listening</div>
-          <div class="feat-sub">没入型リスニング · ストーリーで自然習得</div>
-          <span class="feat-badge" style="background:rgba(32,176,160,.18);color:#30b8a8;border:1px solid rgba(32,176,160,.28);">8 エピソード</span>
-        </div>
-      </div>
-    </div>
   </div>
-
-  <!-- Bottom nav -->
-  <div class="bottom-nav">
-  <div class="nav-item" onclick="go('home')">
-    <div class="nav-icon">🏠</div>
-    <div class="nav-lbl">Home</div>
-  </div>
-  <div class="nav-item" onclick="go('friends')">
-    <div class="nav-icon">💬</div>
-    <div class="nav-lbl">Talk</div>
-  </div>
-  <div class="nav-item" data-nav="shadow" onclick="go('shadow')">
-    <div class="nav-icon">🎭</div>
-    <div class="nav-lbl">Shadow</div>
-  </div>
-  <div class="nav-item" data-nav="listen" onclick="go('listen')">
-    <div class="nav-icon">🎧</div>
-    <div class="nav-lbl">Listen</div>
-  </div>
-</div>
-
 </div>
 
 <div id="pg-friends" class="page">
