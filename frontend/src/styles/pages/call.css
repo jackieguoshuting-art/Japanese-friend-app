@@ -99,11 +99,19 @@ button.caption-btn {
   z-index: 1;
   height: 160px;
   overflow-y: auto;
+  scroll-behavior: smooth;
   display: flex;
   flex-direction: column;
   gap: 8px;
   padding: 8px 0;
   scrollbar-width: none;
+}
+/* Inside caption area: let vc-caption-area control scroll */
+.vc-caption-area .chat-list {
+  height: auto;
+  overflow: visible;
+  margin: 0;
+  padding: 0;
 }
 .chat-list::-webkit-scrollbar { display: none; }
 .chat-msg {
@@ -198,12 +206,10 @@ button.caption-btn {
 .call-send-btn:disabled { opacity: 0.4; cursor: default; }
 
 /* ═══════════════════════════════════════════
-   #pg-video-call  (Figma node 5:2)
+   #pg-call  (Figma node 5:2 video call UI)
    ═══════════════════════════════════════════ */
-#pg-video-call {
+#pg-call {
   position: relative;
-  display: flex;
-  flex-direction: column;
   overflow: hidden;
   background: #faf9f8;
 }
@@ -218,9 +224,10 @@ button.caption-btn {
 .vc-bg-img {
   position: absolute;
   inset: 0;
-  width: 226.67%;
+  width: 100%;
   height: 100%;
-  left: -63.33%;
+  left: 0;
+  top: 0;
   object-fit: cover;
   object-position: center;
 }
@@ -353,13 +360,21 @@ button.caption-btn {
   display: flex;
   gap: 8px;
   margin-bottom: 8px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 .vc-caption-area .chat-msg:last-child { margin-bottom: 0; }
 .vc-caption-area .chat-bubble {
   font-size: 13px;
   line-height: 1.5;
   font-family: 'Noto Sans JP', 'Be Vietnam Pro', sans-serif;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
 }
+.vc-caption-area .chat-dot { display: none; }
 .vc-caption-area .chat-ja {
   color: #fff;
 }
@@ -443,7 +458,7 @@ button.caption-btn {
   padding: 9px;
   box-shadow: 0 20px 25px -5px rgba(0,53,197,0.1), 0 8px 10px -6px rgba(0,53,197,0.1);
 }
-#pg-video-call .call-text-input {
+#pg-call .call-text-input {
   flex: 1;
   background: transparent;
   border: none;
@@ -455,10 +470,10 @@ button.caption-btn {
   letter-spacing: 1.4px;
   border-radius: 0;
 }
-#pg-video-call .call-text-input::placeholder {
+#pg-call .call-text-input::placeholder {
   color: rgba(116, 118, 136, 0.5);
 }
-#pg-video-call .call-send-btn {
+#pg-call .call-send-btn {
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -471,7 +486,7 @@ button.caption-btn {
   flex-shrink: 0;
   transition: transform 0.15s;
 }
-#pg-video-call .call-send-btn:active { transform: scale(0.92); }
+#pg-call .call-send-btn:active { transform: scale(0.92); }
 
 /* ═══════════════════════════════════════════
    #pg-text  — Text Chat (Figma design system)

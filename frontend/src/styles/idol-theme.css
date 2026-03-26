@@ -424,7 +424,7 @@ body { background:#040810; }
 /* ══════════════════════════════
    TEXT MESSAGE PAGE
 ══════════════════════════════ */
-#pg-text { background: #111110; display: flex; flex-direction: column; }
+#pg-text { background: #111110; }
 
 .text-header {
   background: #111110;

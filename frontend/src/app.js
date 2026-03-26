@@ -99,6 +99,13 @@ function initBottomNav() {
   });
 }
 
+window.endCall = function () {
+  try { save('lastConversation', conversationHistory); } catch (e) { console.warn('endCall save:', e); }
+  try { renderConversationSummary(); } catch (e) { console.warn('endCall renderSummary:', e); }
+  try { renderMemoryCard(); } catch (e) { console.warn('endCall renderMemory:', e); }
+  go('summary');
+};
+
 window.toggleConvRecap = function () {
   const content = document.getElementById('conv-recap-content');
   const btn     = document.getElementById('conv-toggle-btn');

@@ -335,7 +335,7 @@
   <!-- Controls: mute / mic / hangup + text input -->
   <div class="vc-controls">
     <!-- Hidden end-call trigger preserved for app.js compat -->
-    <div class="ctrl" onclick="go('summary')" style="display:none">
+    <div class="ctrl" onclick="endCall()" style="display:none">
       <div class="end-call"></div>
     </div>
     <div class="vc-ctrl-row">
@@ -347,8 +347,8 @@
         <img src="https://www.figma.com/api/mcp/asset/7a7fef5a-a5e7-4e3f-9b9c-47b3270c64e9"
              alt="" width="21" height="29">
       </button>
-      <button class="vc-btn vc-btn-hangup btn-end-top" aria-label="End call"
-        onclick="document.querySelector('.ctrl .end-call')?.parentElement?.click()">
+      <button class="vc-btn vc-btn-hangup" aria-label="End call"
+        onclick="endCall()">
         <img src="https://www.figma.com/api/mcp/asset/950ec3c0-836a-425a-a1b5-a9f67d3da9ae"
              alt="" style="transform:rotate(135deg)" width="22" height="9">
       </button>
