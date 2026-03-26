@@ -292,89 +292,79 @@
 </div>
 
 <div id="pg-call" class="page">
-  <div class="stars-layer" id="sl-call"></div>
 
-  <!-- Header -->
-  <div class="call-header">
-    <button class="btn-end-top" onclick="save && save('lastConversation', []); go('summary');">✕ 終了</button>
-    <div class="timer">07:23</div>
-    <button type="button" class="caption-btn" id="call-header-caption-btn" onclick="event.stopPropagation(); window.toggleCallCaptionMode && window.toggleCallCaptionMode();" title="字幕：日本語のみ / 日＋訳">字幕 · 雙語</button>
+  <!-- Full-bleed background: street photo + noise + blur overlay -->
+  <div class="vc-bg">
+    <img src="https://www.figma.com/api/mcp/asset/ce28908e-d1fb-423e-9373-0ea8a28fb285"
+         class="vc-bg-img" alt="" aria-hidden="true">
+    <img src="https://www.figma.com/api/mcp/asset/268b5c48-b045-4aba-b73b-085357b06a67"
+         class="vc-bg-noise" alt="" aria-hidden="true">
+    <div class="vc-bg-saturation" aria-hidden="true"></div>
+    <div class="vc-bg-overlay" aria-hidden="true"></div>
   </div>
 
-  <!-- Live 2D -->
-  <div class="live2d-wrap">
-    <div class="live2d-frame">
-      <div class="live2d-grid"></div>
-      <div class="live2d-badge">✦ Live 2D</div>
-      <div class="char-big">🌸</div>
+  <!-- Frosted glass header -->
+  <header class="vc-header">
+    <button class="vc-hdr-btn" onclick="go('home')" aria-label="Menu">
+      <img src="https://www.figma.com/api/mcp/asset/c8483a0d-03f7-4201-8959-1fa39b787e69"
+           alt="" width="18" height="12">
+    </button>
+    <div class="vc-hdr-title">ARCHIVE_01</div>
+    <button class="vc-hdr-btn vc-caption-toggle" id="caption-toggle-btn" data-caption="off"
+      onclick="(function(b){var m=['off','ja','bilingual'],l=['字幕 OFF','日本語','双語'],i=(m.indexOf(b.dataset.caption)+1)%3;b.dataset.caption=m[i];b.querySelector('.vc-cap-lbl').textContent=l[i];var a=document.getElementById('call-caption-area');if(a)a.dataset.caption=m[i]})(this)"
+      aria-label="Toggle captions">
+      <span class="vc-cap-lbl">字幕 OFF</span>
+    </button>
+  </header>
+
+  <!-- Main: pixel character + wave viz + caption area -->
+  <div class="vc-main">
+    <div class="vc-char-area">
+      <canvas id="call-char-canvas" width="72" height="110"></canvas>
+    </div>
+    <div id="wave-viz" class="vc-wave-viz" aria-hidden="true">
+      <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+      <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+      <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
+    </div>
+    <div id="call-caption-area" class="vc-caption-area" data-caption="off">
+      <div id="chat-list"></div>
     </div>
   </div>
 
-  <!-- Call status -->
-  <div class="call-status">
-    <div class="call-name">✦ Yuki と通話中 ✦</div>
-    <div class="call-mood">😊 楽しい気分 · Happy mood</div>
-  </div>
-
-  <!-- Wave visualizer -->
-  <div class="wave-viz" id="wave-viz">
-    <div class="wbar" style="height:18px;"></div>
-    <div class="wbar" style="height:32px;"></div>
-    <div class="wbar" style="height:24px;"></div>
-    <div class="wbar" style="height:40px;"></div>
-    <div class="wbar" style="height:28px;"></div>
-    <div class="wbar" style="height:44px;"></div>
-    <div class="wbar" style="height:34px;"></div>
-    <div class="wbar" style="height:38px;"></div>
-    <div class="wbar" style="height:20px;"></div>
-  </div>
-
-  <!-- Chat list -->
-  <div class="chat-list" id="chat-list"></div>
-
-  <!-- Controls -->
-  <div class="call-controls">
-    <div class="ctrl">
-      <div class="ctrl-circle">🔇</div>
-      <div class="ctrl-lbl">ミュート</div>
+  <!-- Controls: mute / mic / hangup + text input -->
+  <div class="vc-controls">
+    <!-- Hidden end-call trigger preserved for app.js compat -->
+    <div class="ctrl" onclick="go('summary')" style="display:none">
+      <div class="end-call"></div>
     </div>
-    <div class="ctrl">
-      <div class="ctrl-circle main-mic">🎤</div>
-      <div class="ctrl-lbl">話す</div>
+    <div class="vc-ctrl-row">
+      <button class="vc-btn vc-btn-mute" aria-label="Mute">
+        <img src="https://www.figma.com/api/mcp/asset/758f812b-6a2e-4bf4-b9e5-0b260e607a24"
+             alt="" width="20" height="21">
+      </button>
+      <button class="vc-btn vc-btn-mic" aria-label="Microphone">
+        <img src="https://www.figma.com/api/mcp/asset/7a7fef5a-a5e7-4e3f-9b9c-47b3270c64e9"
+             alt="" width="21" height="29">
+      </button>
+      <button class="vc-btn vc-btn-hangup btn-end-top" aria-label="End call"
+        onclick="document.querySelector('.ctrl .end-call')?.parentElement?.click()">
+        <img src="https://www.figma.com/api/mcp/asset/950ec3c0-836a-425a-a1b5-a9f67d3da9ae"
+             alt="" style="transform:rotate(135deg)" width="22" height="9">
+      </button>
     </div>
-    <div class="ctrl" id="call-caption-toggle" role="button" tabindex="0" title="字幕：日本語のみ ⇄ 日＋訳" onclick="event.stopPropagation(); window.toggleCallCaptionMode && window.toggleCallCaptionMode();">
-      <div class="ctrl-circle" aria-hidden="true">💬</div>
-      <div class="ctrl-lbl" id="call-caption-lbl">字幕 · 日本語＋訳</div>
-    </div>
-    <div class="ctrl" onclick="go('summary')">
-      <div class="ctrl-circle end-call">📵</div>
-      <div class="ctrl-lbl">終了</div>
+    <div class="vc-input-row">
+      <div class="vc-input-pill">
+        <input type="text" id="call-text-input" class="call-text-input"
+               placeholder="Add to the record..." autocomplete="off">
+        <button id="call-send-btn" class="call-send-btn">
+          <img src="https://www.figma.com/api/mcp/asset/9c66a847-aa14-42fd-b006-88e0ec85aed2"
+               alt="Send" width="16" height="13">
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Text input -->
-  <div class="call-input-area">
-    <input id="call-text-input" class="call-text-input" type="text" placeholder="日本語で話す…" autocomplete="off" />
-    <button id="call-send-btn" class="call-send-btn">➤</button>
-  </div>
-  <div class="bottom-nav">
-  <div class="nav-item" onclick="go('home')">
-    <div class="nav-icon">🏠</div>
-    <div class="nav-lbl">Home</div>
-  </div>
-  <div class="nav-item" onclick="go('friends')">
-    <div class="nav-icon">💬</div>
-    <div class="nav-lbl">Talk</div>
-  </div>
-  <div class="nav-item" data-nav="shadow" onclick="go('shadow')">
-    <div class="nav-icon">🎭</div>
-    <div class="nav-lbl">Shadow</div>
-  </div>
-  <div class="nav-item" data-nav="listen" onclick="go('listen')">
-    <div class="nav-icon">🎧</div>
-    <div class="nav-lbl">Listen</div>
-  </div>
-</div>
 </div>
 
 <div id="pg-summary" class="page">
@@ -777,78 +767,6 @@
       <button class="text-send-btn" id="text-send-btn">
         <img src="https://www.figma.com/api/mcp/asset/a5a91117-e4bf-4852-95aa-d19289833238" alt="send" width="16" height="13">
       </button>
-    </div>
-  </div>
-
-</div>
-
-<div id="pg-video-call" class="page">
-
-  <!-- Background: street photo + blur overlay -->
-  <div class="vc-bg">
-    <img src="https://www.figma.com/api/mcp/asset/cb049e40-8836-4f1a-b7cd-378c04ca0856"
-         class="vc-bg-img" alt="">
-    <div class="vc-bg-overlay"></div>
-  </div>
-
-  <!-- Header -->
-  <header class="vc-header">
-    <button class="vc-hdr-btn" onclick="go('home')">
-      <img src="https://www.figma.com/api/mcp/asset/4c277c25-bfc6-403f-8b47-df06ee38c6fd"
-           alt="menu" width="18" height="12">
-    </button>
-    <div class="vc-hdr-title">ARCHIVE_01</div>
-    <button class="vc-caption-btn" id="vc-caption-btn" data-mode="off"
-      onclick="(function(b){var m=['off','ja','bilingual'],l=['字幕 OFF','日本語','双語'],i=(m.indexOf(b.dataset.mode)+1)%3;b.dataset.mode=m[i];b.textContent=l[i];var a=document.getElementById('vc-subtitle-area');if(a)a.dataset.captionMode=m[i]})(this)">字幕 OFF</button>
-  </header>
-
-  <!-- Main: pixel character + subtitle captions -->
-  <div class="vc-main">
-    <div class="vc-char-area">
-      <canvas id="call-char-canvas" width="72" height="110"></canvas>
-    </div>
-    <div class="vc-subtitle-wrap" id="vc-subtitle-area" data-caption-mode="off">
-      <div class="chat-list" id="video-call-chat-list">
-        <div class="chat-msg chat-msg-yuki">
-          <div class="chat-dot"></div>
-          <div class="chat-bubble">
-            <div class="chat-ja">
-              <span class="vocab-word" data-word="東京" data-reading="とうきょう" data-meaning="Tokyo">東京</span>は
-              <span class="vocab-word" data-word="今日" data-reading="きょう" data-meaning="today">今日</span>もいい
-              <span class="vocab-word" data-word="天気" data-reading="てんき" data-meaning="weather">天気</span>ですね。
-            </div>
-            <div class="chat-en">It's nice weather in Tokyo today too.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Controls: mute / mic / hangup + text input -->
-  <div class="vc-controls">
-    <div class="vc-ctrl-row">
-      <button class="vc-btn vc-btn-mute">
-        <img src="https://www.figma.com/api/mcp/asset/25c4a6e3-f8fc-406b-83f2-e725aa59954a"
-             alt="mute" width="20" height="21">
-      </button>
-      <button class="vc-btn vc-btn-mic">
-        <img src="https://www.figma.com/api/mcp/asset/cdf3ee0e-8cc6-43e7-b1f1-f81988fce011"
-             alt="mic" width="21" height="29">
-      </button>
-      <button class="vc-btn vc-btn-hangup" onclick="document.querySelector('.ctrl .end-call')?.parentElement?.click()">
-        <img src="https://www.figma.com/api/mcp/asset/c612b24b-04ad-403f-9c9d-ad8e27869be7"
-             alt="end call" width="22" height="9" style="transform:rotate(135deg)">
-      </button>
-    </div>
-    <div class="vc-input-row">
-      <div class="vc-input-pill">
-        <input type="text" id="call-text-input" class="call-text-input"
-               placeholder="Add to the record..." autocomplete="off">
-        <button id="call-send-btn" class="call-send-btn">
-          <img src="https://www.figma.com/api/mcp/asset/a5a91117-e4bf-4852-95aa-d19289833238"
-               alt="send" width="16" height="13">
-        </button>
-      </div>
     </div>
   </div>
 
