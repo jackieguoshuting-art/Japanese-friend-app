@@ -752,3 +752,21 @@ body { background:#040810; }
   letter-spacing: 0.06em;
   margin-bottom: 4px;
 }
+
+/* ── 强制覆盖底部导航颜色 ── */
+#pg-home .bottom-nav {
+  background: #002FA7 !important;
+}
+
+#pg-home .bottom-nav .nav-item {
+  color: rgba(255,255,255,0.6) !important;
+}
+
+#pg-home .bottom-nav .nav-lbl {
+  color: rgba(255,255,255,0.6) !important;
+}
+
+#pg-home .bottom-nav .nav-item.active,
+#pg-home .bottom-nav .nav-item:first-child {
+  color: #ffffff !important;
+}
