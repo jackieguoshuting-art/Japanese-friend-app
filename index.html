@@ -748,33 +748,38 @@
 </div>
 
 <div id="pg-text" class="page">
-  <div class="text-header">
-    <button class="text-back-btn" onclick="go('friends')">‹</button>
+
+  <!-- Header -->
+  <header class="text-header">
+    <button class="text-back-btn" onclick="go('friends')">
+      <img src="https://www.figma.com/api/mcp/asset/e07dc187-9968-42df-ab17-60354dcc9b30" alt="back" width="16" height="16">
+    </button>
     <div class="text-avatar-wrap">
-      <div class="text-avatar">悠生</div>
+      <div class="text-avatar">悠</div>
       <div class="text-online-dot"></div>
     </div>
     <div class="text-header-info">
       <div class="text-header-name">凪原 悠生 — Yuki</div>
       <div class="text-header-sub"><span class="text-online-label">オンライン</span> · 下北沢</div>
     </div>
-  </div>
+    <button class="text-menu-btn">
+      <img src="https://www.figma.com/api/mcp/asset/a5452676-d3dc-49fd-be38-b4b0bb063866" alt="menu" width="4" height="18">
+    </button>
+  </header>
 
+  <!-- Chat list (populated by JS) -->
   <div class="text-chat-area" id="text-chat-list"></div>
 
+  <!-- Input area -->
   <div class="text-input-area">
     <div class="text-input-row">
       <input class="text-input-box" id="text-input" type="text" placeholder="日本語で話しかけて..." autocomplete="off" />
       <button class="text-send-btn" id="text-send-btn">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="#e4e2f8"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+        <img src="https://www.figma.com/api/mcp/asset/a5a91117-e4bf-4852-95aa-d19289833238" alt="send" width="16" height="13">
       </button>
     </div>
-    <div class="text-input-hint">
-      <span class="text-hint-tag active">字幕 ON</span>
-      <span class="text-hint-tag">ひらがな</span>
-      <span class="text-hint-tag">翻訳</span>
-    </div>
   </div>
+
 </div>
 
 <div id="pg-video-call" class="page">
