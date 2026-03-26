@@ -32,15 +32,22 @@ function setActiveCharacter(characterId) {
     mio: '🌙'
   }[characterId] || '🌸';
 
-  document.querySelector('.char-big').textContent = emoji;
-  document.querySelector('.call-name').textContent = `✦ ${displayName} と通話中 ✦`;
-  document.querySelector('.call-mood').textContent = `${characterId === 'ren' ? '😌 落ち着いた気分' : characterId === 'hana' ? '🤩 元気いっぱい' : '😊 楽しい気分'} · ${character.name} mood`;
+  const charBig = document.querySelector('.char-big');
+  if (charBig) charBig.textContent = emoji;
+  const callName = document.querySelector('.call-name');
+  if (callName) callName.textContent = `✦ ${displayName} と通話中 ✦`;
+  const callMood = document.querySelector('.call-mood');
+  if (callMood) callMood.textContent = `${characterId === 'ren' ? '😌 落ち着いた気分' : characterId === 'hana' ? '🤩 元気いっぱい' : '😊 楽しい気分'} · ${character.name} mood`;
   const chatList = document.getElementById('chat-list');
   if (chatList) chatList.innerHTML = '';
-  document.querySelector('.summary-ava').textContent = emoji;
-  document.querySelector('.mem-ava').textContent = emoji;
-  document.querySelector('.memory-card .mem-text').textContent = memory[0]?.factJa || '「アメリカに住んでるって言ってたね」';
-  document.querySelector('.memory-card .mem-en').textContent = memory[0]?.factEn || `"You mentioned you live in America" — saved to ${character.name}'s memory ✦`;
+  const summaryAva = document.querySelector('.summary-ava');
+  if (summaryAva) summaryAva.textContent = emoji;
+  const memAva = document.querySelector('.mem-ava');
+  if (memAva) memAva.textContent = emoji;
+  const memText = document.querySelector('.memory-card .mem-text');
+  if (memText) memText.textContent = memory[0]?.factJa || '「アメリカに住んでるって言ってたね」';
+  const memEn = document.querySelector('.memory-card .mem-en');
+  if (memEn) memEn.textContent = memory[0]?.factEn || `"You mentioned you live in America" — saved to ${character.name}'s memory ✦`;
   window.initWordTooltips?.();
 }
 
