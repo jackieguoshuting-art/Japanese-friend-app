@@ -725,23 +725,75 @@
 </div>
 
 <div id="pg-video-call" class="page">
-  <div class="stars-layer" id="sl-video-call"></div>
-  <div class="call-header">
-    <button class="btn-end-top" onclick="go('friends')">✕ 終了</button>
-    <div class="timer">00:00</div>
-    <div class="caption-btn">字幕 ON</div>
+
+  <!-- Background: street photo + blur overlay -->
+  <div class="vc-bg">
+    <img src="https://www.figma.com/api/mcp/asset/cb049e40-8836-4f1a-b7cd-378c04ca0856"
+         class="vc-bg-img" alt="">
+    <div class="vc-bg-overlay"></div>
   </div>
-  <div class="live2d-wrap" style="flex:1;display:flex;align-items:center;justify-content:center;">
-    <div class="live2d-frame" style="width:100%;height:100%;">
-      <div class="live2d-grid"></div>
-      <div class="live2d-badge">✦ Video Chat</div>
-      <div class="char-big">🌸</div>
+
+  <!-- Header -->
+  <header class="vc-header">
+    <button class="vc-hdr-btn" onclick="go('home')">
+      <img src="https://www.figma.com/api/mcp/asset/4c277c25-bfc6-403f-8b47-df06ee38c6fd"
+           alt="menu" width="18" height="12">
+    </button>
+    <div class="vc-hdr-title">ARCHIVE_01</div>
+    <button class="vc-caption-btn" id="vc-caption-btn" data-mode="off"
+      onclick="(function(b){var m=['off','ja','bilingual'],l=['字幕 OFF','日本語','双語'],i=(m.indexOf(b.dataset.mode)+1)%3;b.dataset.mode=m[i];b.textContent=l[i];var a=document.getElementById('vc-subtitle-area');if(a)a.dataset.captionMode=m[i]})(this)">字幕 OFF</button>
+  </header>
+
+  <!-- Main: pixel character + subtitle captions -->
+  <div class="vc-main">
+    <div class="vc-char-area">
+      <canvas id="call-char-canvas" width="72" height="110"></canvas>
+    </div>
+    <div class="vc-subtitle-wrap" id="vc-subtitle-area" data-caption-mode="off">
+      <div class="chat-list" id="video-call-chat-list">
+        <div class="chat-msg chat-msg-yuki">
+          <div class="chat-dot"></div>
+          <div class="chat-bubble">
+            <div class="chat-ja">
+              <span class="vocab-word" data-word="東京" data-reading="とうきょう" data-meaning="Tokyo">東京</span>は
+              <span class="vocab-word" data-word="今日" data-reading="きょう" data-meaning="today">今日</span>もいい
+              <span class="vocab-word" data-word="天気" data-reading="てんき" data-meaning="weather">天気</span>ですね。
+            </div>
+            <div class="chat-en">It's nice weather in Tokyo today too.</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="call-input-area">
-    <input class="call-text-input" type="text" placeholder="日本語で話す…" autocomplete="off" />
-    <button class="call-send-btn">➤</button>
+
+  <!-- Controls: mute / mic / hangup + text input -->
+  <div class="vc-controls">
+    <div class="vc-ctrl-row">
+      <button class="vc-btn vc-btn-mute">
+        <img src="https://www.figma.com/api/mcp/asset/25c4a6e3-f8fc-406b-83f2-e725aa59954a"
+             alt="mute" width="20" height="21">
+      </button>
+      <button class="vc-btn vc-btn-mic">
+        <img src="https://www.figma.com/api/mcp/asset/cdf3ee0e-8cc6-43e7-b1f1-f81988fce011"
+             alt="mic" width="21" height="29">
+      </button>
+      <button class="vc-btn vc-btn-hangup" onclick="go('home')">
+        <img src="https://www.figma.com/api/mcp/asset/c612b24b-04ad-403f-9c9d-ad8e27869be7"
+             alt="end call" width="22" height="9" style="transform:rotate(135deg)">
+      </button>
+    </div>
+    <div class="vc-input-row">
+      <div class="vc-input-pill">
+        <input type="text" id="call-text-input" class="call-text-input"
+               placeholder="Add to the record..." autocomplete="off">
+        <button id="call-send-btn" class="call-send-btn">
+          <img src="https://www.figma.com/api/mcp/asset/a5a91117-e4bf-4852-95aa-d19289833238"
+               alt="send" width="16" height="13">
+        </button>
+      </div>
+    </div>
   </div>
+
 </div>
 
   <!-- Mode select modal — outside all pages so it works from any page -->

@@ -196,3 +196,217 @@ button.caption-btn {
 }
 .call-send-btn:active { transform: scale(0.92); }
 .call-send-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* ═══════════════════════════════════════════
+   #pg-video-call  (Figma node 5:2)
+   ═══════════════════════════════════════════ */
+#pg-video-call {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #faf9f8;
+}
+
+/* Background */
+.vc-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+.vc-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.vc-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(250, 249, 248, 0.1);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+}
+
+/* Header */
+.vc-header {
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 24px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(250, 249, 248, 0.8);
+  border-bottom: 1px solid rgba(0, 71, 255, 0.2);
+  box-sizing: border-box;
+}
+.vc-hdr-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vc-hdr-title {
+  font-family: 'Epilogue', sans-serif;
+  font-weight: 900;
+  font-size: 20px;
+  color: #0047ff;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+}
+.vc-caption-btn {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 71, 255, 0.45);
+  background: rgba(255, 255, 255, 0.75);
+  color: #0047ff;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+.vc-caption-btn:active { background: rgba(0, 71, 255, 0.12); }
+
+/* Main area: character + captions */
+.vc-main {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px 0;
+  overflow: hidden;
+}
+.vc-char-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+}
+#call-char-canvas {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+.vc-subtitle-wrap {
+  width: 100%;
+  margin-bottom: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 12px 14px;
+  box-sizing: border-box;
+}
+.vc-subtitle-wrap[data-caption-mode="off"]        { display: none; }
+.vc-subtitle-wrap[data-caption-mode="ja"] .chat-en { display: none; }
+
+/* Controls overlay */
+.vc-controls {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 24px 24px;
+}
+.vc-ctrl-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+.vc-btn {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: transform 0.15s;
+  padding: 0;
+  box-sizing: border-box;
+  outline: none;
+}
+.vc-btn:active { transform: scale(0.92); }
+.vc-btn-mute {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #0047ff;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+}
+.vc-btn-mic {
+  width: 80px;
+  height: 80px;
+  background: #0047ff;
+  border: none;
+  box-shadow: 0 25px 50px -12px rgba(0, 53, 197, 0.3);
+}
+.vc-btn-hangup {
+  width: 56px;
+  height: 56px;
+  background: #ba1a1a;
+  border: 1px solid #ba1a1a;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+}
+
+/* Input row */
+.vc-input-row { width: 100%; }
+.vc-input-pill {
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #0047ff;
+  border-radius: 9999px;
+  padding: 9px;
+  box-shadow: 0 20px 25px -5px rgba(0,53,197,0.1), 0 8px 10px -6px rgba(0,53,197,0.1);
+}
+#pg-video-call .call-text-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 9px 16px;
+  font-size: 14px;
+  color: #0a0a0a;
+  font-family: 'Be Vietnam Pro', 'Noto Sans JP', sans-serif;
+  letter-spacing: 1.4px;
+  border-radius: 0;
+}
+#pg-video-call .call-text-input::placeholder {
+  color: rgba(116, 118, 136, 0.5);
+}
+#pg-video-call .call-send-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #0047ff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+#pg-video-call .call-send-btn:active { transform: scale(0.92); }
