@@ -329,8 +329,8 @@
     <div class="wbar" style="height:20px;"></div>
   </div>
 
-  <!-- Chat list -->
-  <div class="chat-list" id="chat-list"></div>
+  <!-- Chat list (legacy pg-call — no longer primary; IDs moved to pg-video-call) -->
+  <div class="chat-list" id="pg-call-chat-list"></div>
 
   <!-- Controls -->
   <div class="call-controls">
@@ -354,8 +354,8 @@
 
   <!-- Text input -->
   <div class="call-input-area">
-    <input id="call-text-input" class="call-text-input" type="text" placeholder="日本語で話す…" autocomplete="off" />
-    <button id="call-send-btn" class="call-send-btn">➤</button>
+    <input class="call-text-input" type="text" placeholder="日本語で話す…" autocomplete="off" />
+    <button class="call-send-btn">➤</button>
   </div>
   <div class="bottom-nav">
   <div class="nav-item" onclick="go('home')">
@@ -808,7 +808,7 @@
       <canvas id="call-char-canvas" width="72" height="110"></canvas>
     </div>
     <div class="vc-subtitle-wrap" id="vc-subtitle-area" data-caption-mode="off">
-      <div class="chat-list" id="video-call-chat-list">
+      <div class="chat-list" id="chat-list">
         <div class="chat-msg chat-msg-yuki">
           <div class="chat-dot"></div>
           <div class="chat-bubble">
@@ -835,7 +835,7 @@
         <img src="https://www.figma.com/api/mcp/asset/cdf3ee0e-8cc6-43e7-b1f1-f81988fce011"
              alt="mic" width="21" height="29">
       </button>
-      <button class="vc-btn vc-btn-hangup" onclick="go('home')">
+      <button class="vc-btn vc-btn-hangup" onclick="document.querySelector('.ctrl .end-call')?.parentElement?.click()">
         <img src="https://www.figma.com/api/mcp/asset/c612b24b-04ad-403f-9c9d-ad8e27869be7"
              alt="end call" width="22" height="9" style="transform:rotate(135deg)">
       </button>
@@ -858,7 +858,7 @@
   <div class="mode-modal" id="mode-modal">
     <div class="mode-sheet">
       <div class="mode-sheet-label">SELECT MODE · モードを選ぶ</div>
-      <div class="mode-choice" onclick="closeModeModal(); go('call'); setTimeout(() => triggerOpeningMessage(), 300)">
+      <div class="mode-choice" onclick="closeModeModal(); go('video-call'); setTimeout(() => triggerOpeningMessage(), 300)">
         <div class="mode-choice-icon" style="background:rgba(48,112,255,.15);">📹</div>
         <div>
           <div class="mode-choice-title">Video Chat</div>
