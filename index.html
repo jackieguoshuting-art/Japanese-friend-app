@@ -378,95 +378,148 @@
 </div>
 
 <div id="pg-summary" class="page">
-  <div class="stars-layer" id="sl-summary"></div>
+  <div class="sum-wrap">
 
-  <div class="page-body">
-    <!-- Header bubble -->
-    <div class="summary-top">
-      <div class="summary-ava">🌸</div>
-      <div class="summary-bubble">
-        また明日話そう！
-        <span class="bubble-en">Let's talk again tomorrow!</span>
+    <!-- Header -->
+    <div class="sum-header">
+      <button class="sum-hdr-btn" onclick="go('friends')">
+        <img src="https://www.figma.com/api/mcp/asset/a427e40a-8059-459a-af72-fd3bdd510d9e" alt="back" width="24" height="24">
+      </button>
+      <div class="sum-hdr-title">ARCHIVE_042</div>
+      <div class="sum-hdr-right">
+        <button class="sum-hdr-btn">
+          <img src="https://www.figma.com/api/mcp/asset/3fba292f-2aab-4c36-9235-f8c8d69dc558" alt="menu" width="24" height="24">
+        </button>
+        <button class="sum-hdr-btn">
+          <img src="https://www.figma.com/api/mcp/asset/b839f6b3-0a45-4b31-827d-69af67cf10d6" alt="share" width="24" height="24">
+        </button>
       </div>
     </div>
 
-    <!-- Stats -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-ico">⏱</div>
-        <div class="stat-val">7:23</div>
-        <div class="stat-lbl">通話時間</div>
+    <!-- Scrollable body -->
+    <div class="sum-body">
+
+      <!-- Success section -->
+      <div class="sum-success">
+        <div class="sum-session-pill">SESSION_COMPLETE</div>
+        <div class="sum-heading">ANOTHER LAYER<br>ADDED TO THE<br>ARCHIVE.</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-ico">💬</div>
-        <div class="stat-val">84</div>
-        <div class="stat-lbl">流暢スコア</div>
+
+      <!-- Daily Record Card -->
+      <div class="sum-card">
+
+        <!-- Card header row -->
+        <div class="sum-card-hdr">
+          <div class="sum-card-label">DAILY RECORD</div>
+          <div class="sum-card-date" id="sum-date">2025.03.25 — 14:32</div>
+          <img src="https://www.figma.com/api/mcp/asset/b839f6b3-0a45-4b31-827d-69af67cf10d6" alt="" width="16" height="16" style="opacity:0.3">
+        </div>
+        <div class="sum-divider"></div>
+
+        <!-- Metrics -->
+        <div class="sum-metrics">
+          <div class="sum-metric-card sum-metric-card--tilt-r">
+            <div class="sum-metric-label">DURATION</div>
+            <div class="stat-val" id="stat-duration">7:23</div>
+          </div>
+          <div class="sum-metric-card sum-metric-card--tilt-l">
+            <div class="sum-metric-label">NEW WORDS</div>
+            <div class="stat-val" id="stat-words">5</div>
+          </div>
+        </div>
+
+        <!-- Today's Words -->
+        <div class="sum-words-section">
+          <div class="sum-section-label">TODAY'S WORDS</div>
+          <div class="sum-chips" id="sum-chips">
+            <div class="sum-chip">週末</div>
+            <div class="sum-chip">映画館</div>
+            <div class="sum-chip">懐かしい</div>
+            <div class="sum-chip">楽しい</div>
+            <div class="sum-chip">おすすめ</div>
+            <div class="sum-chip">すごい</div>
+            <div class="sum-chip">なるほど</div>
+            <div class="sum-chip">ドキドキ</div>
+          </div>
+        </div>
+
+        <!-- Memory card -->
+        <div class="memory-card">
+          <div class="mem-washi"></div>
+          <div class="mem-head">
+            <div class="mem-ava">
+              <img src="https://www.figma.com/api/mcp/asset/fc792764-2903-4c96-9f62-e5f134785907" alt="" width="20" height="20">
+              <span class="summary-ava" style="display:none"></span>
+            </div>
+            <div class="mem-title">WHAT I REMEMBERED</div>
+          </div>
+          <div class="mem-text">「アメリカに住んでるって言ってたね」</div>
+          <div class="mem-en">"You mentioned you live in America" — filed to archive ✦</div>
+        </div>
+
+        <!-- Audio viz bars -->
+        <div class="sum-viz">
+          <div class="sum-vbar" style="height:8px"></div>
+          <div class="sum-vbar" style="height:18px"></div>
+          <div class="sum-vbar" style="height:12px"></div>
+          <div class="sum-vbar" style="height:24px"></div>
+          <div class="sum-vbar" style="height:14px"></div>
+          <div class="sum-vbar" style="height:28px"></div>
+          <div class="sum-vbar" style="height:10px"></div>
+          <div class="sum-vbar" style="height:20px"></div>
+          <div class="sum-vbar" style="height:16px"></div>
+          <div class="sum-vbar" style="height:26px"></div>
+          <div class="sum-vbar" style="height:8px"></div>
+          <div class="sum-vbar" style="height:14px"></div>
+          <div class="sum-vbar" style="height:22px"></div>
+          <div class="sum-vbar" style="height:10px"></div>
+          <div class="sum-vbar" style="height:18px"></div>
+        </div>
+
+        <!-- Conversation recap -->
+        <div id="conv-recap">
+          <button class="sum-toggle-btn" id="conv-toggle-btn" onclick="toggleConvRecap()">VIEW CONVERSATION ↓</button>
+          <div id="conv-recap-content" class="conv-recap-collapsed"></div>
+        </div>
+
+      </div><!-- /.sum-card -->
+
+      <!-- Back to friends button -->
+      <button class="sum-back-btn" onclick="go('friends')">BACK TO FRIENDS</button>
+
+      <!-- Polaroid -->
+      <div class="sum-polaroid-wrap">
+        <div class="sum-polaroid">
+          <img src="https://www.figma.com/api/mcp/asset/1a31026f-b7f4-49c9-9cbf-ed03e8c582ef" alt="" class="sum-polaroid-img">
+          <div class="sum-polaroid-cap">FRAG_ID: 992-SESSION_MOMENT</div>
+        </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-ico">✨</div>
-        <div class="stat-val">5</div>
-        <div class="stat-lbl">新しい単語</div>
+
+      <div style="height:16px"></div>
+
+    </div><!-- /.sum-body -->
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav sum-nav">
+      <div class="nav-item" onclick="go('home')">
+        <img src="https://www.figma.com/api/mcp/asset/2bb7e09b-0060-4db4-807b-fa36b1d6ac29" alt="" class="nav-icon-img" width="16" height="18">
+        <div class="nav-lbl">HOME</div>
+      </div>
+      <div class="nav-item active" onclick="go('friends')">
+        <img src="https://www.figma.com/api/mcp/asset/82bb737b-0cbf-4c30-8b58-d330a00dfd4c" alt="" class="nav-icon-img" width="20" height="20">
+        <div class="nav-lbl">TALK</div>
+      </div>
+      <div class="nav-item" onclick="go('shadow')">
+        <img src="https://www.figma.com/api/mcp/asset/bca4e46c-2f08-49f3-8e5a-7549596be08a" alt="" class="nav-icon-img" width="15" height="20">
+        <div class="nav-lbl">SHADOW</div>
+      </div>
+      <div class="nav-item" onclick="go('listen')">
+        <img src="https://www.figma.com/api/mcp/asset/719c4287-6fb0-41b9-b6eb-ac62f36b0fac" alt="" class="nav-icon-img" width="18" height="21">
+        <div class="nav-lbl">LISTEN</div>
       </div>
     </div>
 
-    <!-- Vocabulary -->
-    <div class="vocab-wrap">
-      <div class="sec-label">今日の単語 · Today's Words</div>
-      <div class="vocab-chips">
-        <div class="chip new">週末</div>
-        <div class="chip new">映画館</div>
-        <div class="chip new">懐かしい</div>
-        <div class="chip rev">楽しい</div>
-        <div class="chip new">おすすめ</div>
-        <div class="chip rev">すごい</div>
-        <div class="chip rev">なるほど</div>
-        <div class="chip new">ドキドキ</div>
-      </div>
-    </div>
-
-    <!-- Conversation recap (populated by JS) -->
-    <div id="conv-recap" hidden>
-      <div style="padding:0 16px 10px;position:relative;z-index:1;">
-        <button class="conv-toggle-btn" id="conv-toggle-btn" onclick="toggleConvRecap()">今日の会話を見る 📖</button>
-      </div>
-      <div id="conv-recap-content" class="conv-recap-collapsed"></div>
-    </div>
-
-    <!-- Yuki memory card -->
-    <div class="memory-card">
-      <div class="mem-head">
-        <div class="mem-ava">🌸</div>
-        <div class="mem-title">Yuki の記憶 · Yuki will remember this</div>
-      </div>
-      <div class="mem-text">「アメリカに住んでるって言ってたね」</div>
-      <div class="mem-en">"You mentioned you live in America" — saved to Yuki's memory ✦</div>
-    </div>
-
-    <!-- Return button -->
-    <button class="btn-pink btn-return" onclick="go('friends')">
-      友達リストに戻る · Back to Friends
-    </button>
-
-    <div style="height:32px;"></div>
-  </div>
-  <div class="bottom-nav">
-  <div class="nav-item" onclick="go('home')">
-    <div class="nav-icon">🏠</div>
-    <div class="nav-lbl">Home</div>
-  </div>
-  <div class="nav-item" onclick="go('friends')">
-    <div class="nav-icon">💬</div>
-    <div class="nav-lbl">Talk</div>
-  </div>
-  <div class="nav-item" data-nav="shadow" onclick="go('shadow')">
-    <div class="nav-icon">🎭</div>
-    <div class="nav-lbl">Shadow</div>
-  </div>
-  <div class="nav-item" data-nav="listen" onclick="go('listen')">
-    <div class="nav-icon">🎧</div>
-    <div class="nav-lbl">Listen</div>
-  </div>
-</div>
+  </div><!-- /.sum-wrap -->
 </div>
 
 <div id="pg-shadow" class="page">
