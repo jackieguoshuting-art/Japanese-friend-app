@@ -57,7 +57,7 @@
   display: flex;
   flex-direction: column;
   gap: 32px;
-  padding: 32px 16px 160px;
+  padding: 32px 16px 32px;
 }
 
 /* ─── Card Section (with absolute arrows) ───────── */
@@ -295,42 +295,59 @@
   border-color: #0047ff;
 }
 
-/* ─── More Information ──────────────────────────── */
-.home-card-more {
+/* ─── More Information (two-column) ─────────────── */
+.home-more-cols {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.home-more-col-left {
+  width: 40%;
+  flex-shrink: 0;
+  display: flex;
+}
+
+.home-more-col-right {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
 .home-card-more-item {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
 .home-card-more-box {
+  flex: 1;
   border: 1px dashed rgba(0, 71, 255, 0.35);
   border-radius: 2px;
   padding: 8px;
   font-size: 10px;
   color: #444;
-  min-height: 40px;
+  min-height: 36px;
 }
 
 /* Chat Button */
 .home-chat-btn {
   width: 100%;
-  background: #0047ff;
+  height: 100%;
+  background: #002FA7;
   color: #fff;
   border: none;
-  border-radius: 16px;
-  padding: 14px;
-  font-size: 16px;
+  border-radius: 12px;
+  padding: 10px 8px;
+  font-size: 13px;
   font-weight: 900;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
+  line-height: 1.4;
   text-transform: uppercase;
   cursor: pointer;
-  box-shadow: 0 6px 0 #ff8fab;
+  box-shadow: 0 5px 0 #ff8fab;
 }
 
 /* ─── Feature Buttons ───────────────────────────── */
@@ -375,11 +392,9 @@
 
 /* ─── Bottom Nav ────────────────────────────────── */
 .home-nav {
-  position: fixed;
+  position: sticky;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 390px;
+  width: 100%;
   height: 112px;
   background: #0047ff;
   display: flex;
@@ -387,11 +402,10 @@
   justify-content: space-between;
   padding: 0 32px 24px;
   box-sizing: border-box;
-  z-index: 4;
   -webkit-mask-image: url('https://www.figma.com/api/mcp/asset/5426e8f1-2c38-4eaa-8385-bf062a38fb6a');
   mask-image: url('https://www.figma.com/api/mcp/asset/5426e8f1-2c38-4eaa-8385-bf062a38fb6a');
-  -webkit-mask-size: 390px 112px;
-  mask-size: 390px 112px;
+  -webkit-mask-size: 100% 112px;
+  mask-size: 100% 112px;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
   -webkit-mask-position: 0 0;
