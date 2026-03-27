@@ -1,6 +1,10 @@
 /* ── Friends Page ── */
 #pg-friends {
-  background: #fdfcfb;
+  background: #FDFCFB !important;
+}
+
+#pg-friends * {
+  --bg-dark: #FDFCFB;
 }
 
 /* ── Header ── */
