@@ -1084,3 +1084,337 @@
   font-weight: 700;
   cursor: pointer;
 }
+
+/* ══════════════════
+   pg-shadow-scenes — Episode List
+══════════════════ */
+#pg-shadow-scenes {
+  background: #faf9f8;
+}
+
+/* ── Header ── */
+.scs-hdr {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 6;
+  padding: 24px 16px 25px;
+}
+.scs-hdr-inner {
+  background: #faf9f8;
+  border: 1px solid #0047ff;
+  border-radius: 16px;
+  box-shadow: 5px 5px 0 rgba(0,71,255,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 17px 14px 17px 17px;
+  position: relative;
+}
+.scs-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.scs-back-btn img { display: block; }
+.scs-hdr-title {
+  flex: 1;
+  text-align: center;
+  font-family: 'Noto Serif JP', 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 20px;
+  color: #1a1c1c;
+  letter-spacing: -0.5px;
+}
+.scs-hdr-tape {
+  width: 40px;
+  height: 24px;
+  background: rgba(253,141,154,0.4);
+  border-left: 1px solid rgba(0,71,255,0.2);
+  border-right: 1px solid rgba(0,71,255,0.2);
+  transform: rotate(-15deg);
+  flex-shrink: 0;
+}
+.scs-hdr-bar {
+  height: 4px;
+  background: #0047ff;
+  opacity: 0.1;
+  margin-top: -1px;
+}
+
+/* ── Scrollable main ── */
+.scs-main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 29px 24px 100px;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  z-index: 5;
+}
+
+/* ── Intro scrap ── */
+.scs-intro {
+  transform: rotate(-1deg);
+  margin-bottom: 57px;
+  position: relative;
+}
+.scs-archive-label {
+  display: inline-block;
+  background: #ffdadc;
+  padding: 4px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #400010;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+.scs-heading {
+  font-family: 'Epilogue', 'Noto Serif JP', sans-serif;
+  font-size: 48px;
+  font-weight: 900;
+  color: #0047ff;
+  letter-spacing: -2.4px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.scs-stamp-deco {
+  position: absolute;
+  top: -41px;
+  right: -25px;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: rgba(0,71,255,0.04);
+  transform: rotate(12deg);
+  opacity: 0.2;
+}
+
+/* ── Episode list container ── */
+.scs-episodes {
+  display: flex;
+  flex-direction: column;
+  gap: 42px;
+}
+
+/* ── Individual episode card ── */
+.scs-episode {
+  position: relative;
+  transform: rotate(var(--ep-rot, 0deg));
+  background: #faf9f8;
+  border: 1px solid #0047ff;
+  border-radius: 16px;
+  box-shadow: 6px 6px 0 rgba(0,71,255,0.08);
+  cursor: pointer;
+  transition: box-shadow 0.18s, transform 0.18s;
+  overflow: hidden;
+}
+.scs-episode.scs-selected {
+  transform: rotate(0deg);
+  box-shadow: 6px 6px 0 rgba(0,71,255,0.2);
+  border-color: #0047ff;
+}
+.scs-episode:active {
+  box-shadow: 2px 2px 0 rgba(0,71,255,0.08);
+}
+
+/* Washi tape strip on top of ep 1 */
+.scs-tape-strip {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(2deg);
+  width: 64px;
+  height: 16px;
+  background: rgba(253,141,154,0.3);
+  border-left: 1px solid rgba(0,71,255,0.1);
+  border-right: 1px solid rgba(0,71,255,0.1);
+}
+
+/* Pink circle deco (ep 4) */
+.scs-ep-deco-pink {
+  position: absolute;
+  bottom: -7px;
+  right: -16px;
+  width: 48px;
+  height: 48px;
+  background: #ffdadc;
+  border: 1px solid rgba(0,71,255,0.2);
+  border-radius: 50%;
+  transform: rotate(-12deg);
+  z-index: 2;
+}
+
+/* Episode main row */
+.scs-ep-main {
+  display: flex;
+  align-items: center;
+  padding: 25px;
+  gap: 0;
+  position: relative;
+  z-index: 1;
+}
+.scs-ep-num {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #0047ff;
+  color: #fff;
+  font-family: 'Epilogue', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 24px;
+}
+.scs-ep-info {
+  flex: 1;
+  min-width: 0;
+}
+.scs-ep-title {
+  font-family: 'Noto Serif JP', 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 18px;
+  color: #0047ff;
+  line-height: 1.25;
+  margin-bottom: 4px;
+}
+.scs-ep-quote {
+  font-family: 'Noto Serif JP', 'WenQuanYi Zen Hei', sans-serif;
+  font-size: 14px;
+  color: #434657;
+  line-height: 1.43;
+}
+.scs-ep-arrow {
+  flex-shrink: 0;
+  margin-left: 24px;
+  display: flex;
+  align-items: center;
+}
+.scs-ep-arrow img { display: block; }
+
+/* Expand preview (hidden by default) */
+.scs-ep-preview {
+  display: none;
+  padding: 0 20px 20px;
+}
+.scs-episode.scs-selected .scs-ep-preview {
+  display: block;
+}
+.scs-preview-card {
+  background: #1a1c2e;
+  border-radius: 12px;
+  height: 160px;
+  position: relative;
+  overflow: hidden;
+}
+.scs-start-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: #0047ff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(0,71,255,0.35);
+}
+
+/* ── Cinematic image fragment ── */
+.scs-img-fragment {
+  position: relative;
+  transform: rotate(1deg);
+  border: 1px solid #0047ff;
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+}
+.scs-img-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1);
+}
+.scs-img-label {
+  position: absolute;
+  bottom: 10px;
+  right: 12px;
+  background: #0047ff;
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 4px 8px;
+  transform: rotate(-2deg);
+}
+
+/* ── Bottom nav (Shadow highlighted, same as pg-shadow) ── */
+#pg-shadow-scenes .bottom-nav {
+  background: #002fa7 !important;
+  border-top: none !important;
+  clip-path: polygon(
+    0% 100%,
+    0% 30%,
+    44% 30%, 48% 19%, 52% 9%, 57% 3%, 62.5% 0%, 68% 3%, 73% 9%, 77% 19%, 81% 30%,
+    100% 30%,
+    100% 100%
+  ) !important;
+  height: 72px !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-around !important;
+  padding: 0 8px 10px !important;
+  z-index: 10;
+  flex-shrink: 0 !important;
+}
+#pg-shadow-scenes .bottom-nav .nav-item {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 3px !important;
+  opacity: 1 !important;
+  cursor: pointer;
+}
+#pg-shadow-scenes .bottom-nav .nav-icon {
+  background: none !important;
+  box-shadow: none !important;
+  font-size: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+}
+#pg-shadow-scenes .bottom-nav .nav-icon-img {
+  display: block;
+  opacity: 0.6;
+  filter: brightness(0) invert(1);
+}
+#pg-shadow-scenes .bottom-nav .nav-lbl {
+  color: rgba(255,255,255,0.6) !important;
+  font-size: 9px !important;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  font-family: 'Space Grotesk', sans-serif;
+}
+#pg-shadow-scenes .bottom-nav .sdw-nav-shadow {
+  margin-bottom: 4px;
+}
+#pg-shadow-scenes .bottom-nav .sdw-nav-shadow .nav-icon-img {
+  opacity: 1;
+}
+#pg-shadow-scenes .bottom-nav .sdw-nav-shadow .nav-lbl {
+  color: #fff !important;
+  font-family: 'ABeeZee', sans-serif;
+  font-weight: 700;
+}

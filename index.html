@@ -781,6 +781,139 @@
   </div>
 </div>
 
+<div id="pg-shadow-scenes" class="page">
+
+  <!-- ── Header ── -->
+  <div class="scs-hdr">
+    <div class="scs-hdr-inner">
+      <button class="scs-back-btn" onclick="go('shadow')">
+        <img src="https://www.figma.com/api/mcp/asset/247b3971-8e2e-4568-bf59-5ef2bc8d564c" width="16" height="16" alt="">
+      </button>
+      <div class="scs-hdr-title">千と千尋の神隠し</div>
+      <div class="scs-hdr-tape"></div>
+    </div>
+    <div class="scs-hdr-bar"></div>
+  </div>
+
+  <!-- ── Scrollable main ── -->
+  <div class="scs-main">
+
+    <!-- Intro scrap (rotated) -->
+    <div class="scs-intro">
+      <div class="scs-archive-label">ARCHIVE_FILE: EPISODES</div>
+      <div class="scs-heading">
+        <div>The Journey</div>
+        <div>of Chihiro</div>
+      </div>
+      <div class="scs-stamp-deco"></div>
+    </div>
+
+    <!-- ── Episode list ── -->
+    <div class="scs-episodes">
+
+      <!-- Episode 1 -->
+      <div class="scs-episode" style="--ep-rot:1.2deg" onclick="scsSelectEpisode(this)">
+        <div class="scs-tape-strip"></div>
+        <div class="scs-ep-main">
+          <div class="scs-ep-num">1</div>
+          <div class="scs-ep-info">
+            <div class="scs-ep-title">不思議なトンネル</div>
+            <div class="scs-ep-quote">「お父さん、ここ変だよ。戻ろうよ。」</div>
+          </div>
+          <div class="scs-ep-arrow"><img src="https://www.figma.com/api/mcp/asset/41ab4123-216d-4d69-ad93-e3ceca02b064" width="25" height="25" alt=""></div>
+        </div>
+        <div class="scs-ep-preview">
+          <div class="scs-preview-card">
+            <button class="scs-start-btn" onclick="event.stopPropagation(); startShadowScene()">開始 →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Episode 2 -->
+      <div class="scs-episode" style="--ep-rot:-0.8deg" onclick="scsSelectEpisode(this)">
+        <div class="scs-ep-main">
+          <div class="scs-ep-num">2</div>
+          <div class="scs-ep-info">
+            <div class="scs-ep-title">神々の集う湯屋</div>
+            <div class="scs-ep-quote">「ここで働かせてください！」</div>
+          </div>
+          <div class="scs-ep-arrow"><img src="https://www.figma.com/api/mcp/asset/41ab4123-216d-4d69-ad93-e3ceca02b064" width="25" height="25" alt=""></div>
+        </div>
+        <div class="scs-ep-preview">
+          <div class="scs-preview-card">
+            <button class="scs-start-btn" onclick="event.stopPropagation(); startShadowScene()">開始 →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cinematic image fragment (between ep 2 and 3) -->
+      <div class="scs-img-fragment">
+        <img src="https://www.figma.com/api/mcp/asset/e7695dee-1cc6-4f19-910a-547158ef092f" alt="Aburaya Bathhouse" class="scs-img-photo">
+        <div class="scs-img-label">LOC_REF: ABURAYA_BATHS</div>
+      </div>
+
+      <!-- Episode 3 -->
+      <div class="scs-episode" style="--ep-rot:0.5deg" onclick="scsSelectEpisode(this)">
+        <div class="scs-ep-main">
+          <div class="scs-ep-num">3</div>
+          <div class="scs-ep-info">
+            <div class="scs-ep-title">カオナシの誘惑</div>
+            <div class="scs-ep-quote">「千、これ……。あげる。」</div>
+          </div>
+          <div class="scs-ep-arrow"><img src="https://www.figma.com/api/mcp/asset/41ab4123-216d-4d69-ad93-e3ceca02b064" width="25" height="25" alt=""></div>
+        </div>
+        <div class="scs-ep-preview">
+          <div class="scs-preview-card">
+            <button class="scs-start-btn" onclick="event.stopPropagation(); startShadowScene()">開始 →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Episode 4 -->
+      <div class="scs-episode" style="--ep-rot:-1.5deg" onclick="scsSelectEpisode(this)">
+        <div class="scs-ep-deco-pink"></div>
+        <div class="scs-ep-main">
+          <div class="scs-ep-num">4</div>
+          <div class="scs-ep-info">
+            <div class="scs-ep-title">沼の底の駅</div>
+            <div class="scs-ep-quote">「一度あったことは忘れないものさ。思い出せないだけで。」</div>
+          </div>
+          <div class="scs-ep-arrow"><img src="https://www.figma.com/api/mcp/asset/41ab4123-216d-4d69-ad93-e3ceca02b064" width="25" height="25" alt=""></div>
+        </div>
+        <div class="scs-ep-preview">
+          <div class="scs-preview-card">
+            <button class="scs-start-btn" onclick="event.stopPropagation(); startShadowScene()">開始 →</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /scs-episodes -->
+  </div><!-- /scs-main -->
+
+  <!-- Bottom nav — Shadow highlighted (3rd item) -->
+  <div class="bottom-nav">
+    <div class="nav-item" onclick="go('home')">
+      <div class="nav-icon"><img class="nav-icon-img" src="https://www.figma.com/api/mcp/asset/f795049e-bb24-4fd8-a169-a7e3a214351b" width="16" height="18" alt=""></div>
+      <div class="nav-lbl">Home</div>
+    </div>
+    <div class="nav-item" onclick="go('friends')">
+      <div class="nav-icon"><img class="nav-icon-img" src="https://www.figma.com/api/mcp/asset/0ddfb882-a767-4a48-aff0-be469d6c20fa" width="20" height="20" alt=""></div>
+      <div class="nav-lbl">Talk</div>
+    </div>
+    <div class="nav-item sdw-nav-shadow" data-nav="shadow" onclick="go('shadow')">
+      <div class="sdw-nav-ring">
+        <div class="nav-icon"><img class="nav-icon-img" src="https://www.figma.com/api/mcp/asset/fb64aa5a-a68d-4719-8283-3c8b97697b26" width="15" height="20" alt=""></div>
+      </div>
+      <div class="nav-lbl">Shadow</div>
+    </div>
+    <div class="nav-item" data-nav="listen" onclick="go('listen')">
+      <div class="nav-icon"><img class="nav-icon-img" src="https://www.figma.com/api/mcp/asset/3b676a10-73d9-45e9-ab5b-4b1294710d84" width="18" height="21" alt=""></div>
+      <div class="nav-lbl">Listen</div>
+    </div>
+  </div>
+
+</div>
+
 <div id="pg-listen" class="page">
   <div class="stars-layer" id="sl-listen"></div>
   <div class="page-body">
@@ -967,7 +1100,15 @@
     });
     if (!wasOpen) el.classList.add('fr-expanded');
   };
-  </script>
+
+  window.scsSelectEpisode = function(el) {
+    var wasSelected = el.classList.contains('scs-selected');
+    document.querySelectorAll('#pg-shadow-scenes .scs-episode.scs-selected').forEach(function(e) {
+      e.classList.remove('scs-selected');
+    });
+    if (!wasSelected) el.classList.add('scs-selected');
+  };
+</script>
   <script type="module" src="./frontend/src/features/character.js"></script>
   <script type="module" src="./frontend/src/features/ui.js"></script>
   <script type="module" src="./frontend/src/features/vocab.js"></script>
