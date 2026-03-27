@@ -783,11 +783,16 @@
 
 <div id="pg-shadow-scenes" class="page">
 
+  <!-- Floating star decoration -->
+  <div class="scs-star-deco">
+    <img src="https://www.figma.com/api/mcp/asset/e14c1ee6-adbd-4e77-8c68-9e6f1f5b1e44" width="30" height="29" alt="">
+  </div>
+
   <!-- ── Header ── -->
   <div class="scs-hdr">
     <div class="scs-hdr-inner">
       <button class="scs-back-btn" onclick="go('shadow')">
-        <img src="https://www.figma.com/api/mcp/asset/247b3971-8e2e-4568-bf59-5ef2bc8d564c" width="16" height="16" alt="">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="#1a1c1c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="scs-hdr-title">千と千尋の神隠し</div>
       <div class="scs-hdr-tape"></div>
@@ -798,14 +803,16 @@
   <!-- ── Scrollable main ── -->
   <div class="scs-main">
 
-    <!-- Intro scrap (rotated) -->
+    <!-- Intro scrap -->
     <div class="scs-intro">
       <div class="scs-archive-label">ARCHIVE_FILE: EPISODES</div>
       <div class="scs-heading">
         <div>The Journey</div>
         <div>of Chihiro</div>
       </div>
-      <div class="scs-stamp-deco"></div>
+      <div class="scs-stamp-deco">
+        <img src="https://www.figma.com/api/mcp/asset/3ad51a72-330b-4b12-8535-004d9c8a2bdd" width="96" height="96" alt="">
+      </div>
     </div>
 
     <!-- ── Episode list ── -->
@@ -813,14 +820,14 @@
 
       <!-- Episode 1 -->
       <div class="scs-episode" style="--ep-rot:1.2deg" onclick="scsSelectEpisode(this)">
-        <div class="scs-tape-strip"></div>
+        <div class="scs-ep-tape"></div>
         <div class="scs-ep-main">
           <div class="scs-ep-num">1</div>
           <div class="scs-ep-info">
             <div class="scs-ep-title">不思議なトンネル</div>
             <div class="scs-ep-quote">「お父さん、ここ変だよ。戻ろうよ。」</div>
           </div>
-          <div class="scs-ep-arrow"><img src="https://www.figma.com/api/mcp/asset/41ab4123-216d-4d69-ad93-e3ceca02b064" width="25" height="25" alt=""></div>
+          <div class="scs-ep-play"></div>
         </div>
         <div class="scs-ep-preview">
           <div class="scs-preview-card">
@@ -837,7 +844,7 @@
             <div class="scs-ep-title">神々の集う湯屋</div>
             <div class="scs-ep-quote">「ここで働かせてください！」</div>
           </div>
-          <div class="scs-ep-arrow"><img src="https://www.figma.com/api/mcp/asset/41ab4123-216d-4d69-ad93-e3ceca02b064" width="25" height="25" alt=""></div>
+          <div class="scs-ep-play"></div>
         </div>
         <div class="scs-ep-preview">
           <div class="scs-preview-card">
@@ -848,7 +855,7 @@
 
       <!-- Cinematic image fragment (between ep 2 and 3) -->
       <div class="scs-img-fragment">
-        <img src="https://www.figma.com/api/mcp/asset/e7695dee-1cc6-4f19-910a-547158ef092f" alt="Aburaya Bathhouse" class="scs-img-photo">
+        <img src="https://www.figma.com/api/mcp/asset/1ab7fea5-bec2-4880-a839-f65fa784d79d" alt="Aburaya Bathhouse" class="scs-img-photo">
         <div class="scs-img-label">LOC_REF: ABURAYA_BATHS</div>
       </div>
 
@@ -860,7 +867,7 @@
             <div class="scs-ep-title">カオナシの誘惑</div>
             <div class="scs-ep-quote">「千、これ……。あげる。」</div>
           </div>
-          <div class="scs-ep-arrow"><img src="https://www.figma.com/api/mcp/asset/41ab4123-216d-4d69-ad93-e3ceca02b064" width="25" height="25" alt=""></div>
+          <div class="scs-ep-play"></div>
         </div>
         <div class="scs-ep-preview">
           <div class="scs-preview-card">
@@ -878,7 +885,7 @@
             <div class="scs-ep-title">沼の底の駅</div>
             <div class="scs-ep-quote">「一度あったことは忘れないものさ。思い出せないだけで。」</div>
           </div>
-          <div class="scs-ep-arrow"><img src="https://www.figma.com/api/mcp/asset/41ab4123-216d-4d69-ad93-e3ceca02b064" width="25" height="25" alt=""></div>
+          <div class="scs-ep-play"></div>
         </div>
         <div class="scs-ep-preview">
           <div class="scs-preview-card">
@@ -890,25 +897,48 @@
     </div><!-- /scs-episodes -->
   </div><!-- /scs-main -->
 
-  <!-- Bottom nav — Shadow highlighted (3rd item) -->
+  <!-- ── Bottom Nav (Figma: EPISODES / GALLERY / ARCHIVE / INFO) ── -->
   <div class="bottom-nav">
-    <div class="nav-item" onclick="go('home')">
-      <div class="nav-icon"><img class="nav-icon-img" src="https://www.figma.com/api/mcp/asset/f795049e-bb24-4fd8-a169-a7e3a214351b" width="16" height="18" alt=""></div>
-      <div class="nav-lbl">Home</div>
-    </div>
-    <div class="nav-item" onclick="go('friends')">
-      <div class="nav-icon"><img class="nav-icon-img" src="https://www.figma.com/api/mcp/asset/0ddfb882-a767-4a48-aff0-be469d6c20fa" width="20" height="20" alt=""></div>
-      <div class="nav-lbl">Talk</div>
-    </div>
-    <div class="nav-item sdw-nav-shadow" data-nav="shadow" onclick="go('shadow')">
-      <div class="sdw-nav-ring">
-        <div class="nav-icon"><img class="nav-icon-img" src="https://www.figma.com/api/mcp/asset/fb64aa5a-a68d-4719-8283-3c8b97697b26" width="15" height="20" alt=""></div>
+    <div class="nav-item scs-nav-ep-active">
+      <div class="scs-nav-ep-card">
+        <div class="nav-icon">
+          <svg width="16" height="18" viewBox="0 0 16 18" fill="none">
+            <rect x="0.5" y="0.5" width="15" height="7" rx="1.5" stroke="#0047ff" stroke-width="1.2"/>
+            <rect x="0.5" y="10.5" width="15" height="7" rx="1.5" stroke="#0047ff" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <div class="nav-lbl">EPISODES</div>
       </div>
-      <div class="nav-lbl">Shadow</div>
     </div>
-    <div class="nav-item" data-nav="listen" onclick="go('listen')">
-      <div class="nav-icon"><img class="nav-icon-img" src="https://www.figma.com/api/mcp/asset/3b676a10-73d9-45e9-ab5b-4b1294710d84" width="18" height="21" alt=""></div>
-      <div class="nav-lbl">Listen</div>
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="1" y="1" width="8" height="8" rx="1.5" stroke="rgba(255,255,255,0.8)" stroke-width="1.2"/>
+          <rect x="11" y="1" width="8" height="8" rx="1.5" stroke="rgba(255,255,255,0.8)" stroke-width="1.2"/>
+          <rect x="1" y="11" width="8" height="8" rx="1.5" stroke="rgba(255,255,255,0.8)" stroke-width="1.2"/>
+          <rect x="11" y="11" width="8" height="8" rx="1.5" stroke="rgba(255,255,255,0.8)" stroke-width="1.2"/>
+        </svg>
+      </div>
+      <div class="nav-lbl">GALLERY</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg width="22" height="16" viewBox="0 0 22 16" fill="none">
+          <path d="M1 6H21V14C21 14.5523 20.5523 15 20 15H2C1.44772 15 1 14.5523 1 14V6Z" stroke="rgba(255,255,255,0.8)" stroke-width="1.2"/>
+          <path d="M1 6V4C1 3.44772 1.44772 3 2 3H7.5L9.5 5H20C20.5523 5 21 5.44772 21 6H1Z" stroke="rgba(255,255,255,0.8)" stroke-width="1.2" fill="rgba(255,255,255,0.8)"/>
+        </svg>
+      </div>
+      <div class="nav-lbl">ARCHIVE</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="9" stroke="rgba(255,255,255,0.8)" stroke-width="1.2"/>
+          <path d="M10 9V14" stroke="rgba(255,255,255,0.8)" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="10" cy="6.5" r="0.8" fill="rgba(255,255,255,0.8)"/>
+        </svg>
+      </div>
+      <div class="nav-lbl">INFO</div>
     </div>
   </div>
 

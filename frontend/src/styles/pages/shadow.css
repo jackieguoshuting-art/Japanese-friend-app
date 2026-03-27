@@ -1093,6 +1093,18 @@
   color: #1a1c1c;
 }
 
+/* Floating star decoration */
+.scs-star-deco {
+  position: absolute;
+  left: 43px;
+  top: 165px;
+  width: 30px;
+  height: 29px;
+  z-index: 3;
+  pointer-events: none;
+}
+.scs-star-deco img { display: block; }
+
 /* ── Header ── */
 .scs-hdr {
   flex-shrink: 0;
@@ -1121,13 +1133,13 @@
   justify-content: center;
   flex-shrink: 0;
 }
-.scs-back-btn img { display: block; }
+.scs-back-btn svg { display: block; }
 .scs-hdr-title {
   flex: 1;
   text-align: center;
   font-family: 'Noto Serif JP', 'WenQuanYi Zen Hei', sans-serif;
   font-size: 20px;
-  color: #1a1c1c;
+  color: #1a1c1c !important;
   letter-spacing: -0.5px;
 }
 .scs-hdr-tape {
@@ -1159,9 +1171,10 @@
 
 /* ── Intro scrap ── */
 .scs-intro {
-  margin-bottom: 40px;
+  margin-bottom: 57px;
   position: relative;
   overflow: visible;
+  transform: rotate(-1deg);
 }
 .scs-archive-label {
   display: inline-block;
@@ -1170,19 +1183,19 @@
   font-family: 'Space Grotesk', sans-serif;
   font-size: 12px;
   font-weight: 700;
-  color: #400010;
+  color: #400010 !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 8px;
 }
 .scs-heading {
   font-family: 'Epilogue', 'Noto Serif JP', sans-serif;
-  font-size: 40px;
+  font-size: 48px;
   font-weight: 900;
   color: #0047ff !important;
-  letter-spacing: -1.6px;
+  letter-spacing: -2.4px;
   text-transform: uppercase;
-  line-height: 1.1;
+  line-height: 1;
 }
 .scs-stamp-deco {
   position: absolute;
@@ -1190,11 +1203,11 @@
   right: -25px;
   width: 96px;
   height: 96px;
-  border-radius: 50%;
-  background: rgba(0,71,255,0.04);
   transform: rotate(12deg);
   opacity: 0.2;
+  pointer-events: none;
 }
+.scs-stamp-deco img { display: block; filter: grayscale(1); }
 
 /* ── Episode list container ── */
 .scs-episodes {
@@ -1207,25 +1220,25 @@
 .scs-episode {
   position: relative;
   transform: rotate(var(--ep-rot, 0deg));
-  background: #fff;
+  background: #faf9f8;
   border: 1px solid #0047ff;
   border-radius: 16px;
   box-shadow: 6px 6px 0 rgba(0,71,255,0.08);
   cursor: pointer;
   transition: box-shadow 0.18s, transform 0.18s;
-  overflow: hidden;
+  overflow: visible;
 }
 .scs-episode.scs-selected {
   transform: rotate(0deg);
   box-shadow: 6px 6px 0 rgba(0,71,255,0.2);
-  border-color: #0047ff;
+  overflow: hidden;
 }
 .scs-episode:active {
   box-shadow: 2px 2px 0 rgba(0,71,255,0.08);
 }
 
-/* Washi tape strip on top of ep 1 */
-.scs-tape-strip {
+/* Washi tape strip (ep 1) */
+.scs-ep-tape {
   position: absolute;
   top: -8px;
   left: 50%;
@@ -1256,7 +1269,6 @@
   display: flex;
   align-items: center;
   padding: 25px;
-  gap: 0;
   position: relative;
   z-index: 1;
 }
@@ -1265,7 +1277,7 @@
   height: 48px;
   border-radius: 50%;
   background: #0047ff;
-  color: #fff;
+  color: #fff !important;
   font-family: 'Epilogue', sans-serif;
   font-size: 20px;
   font-weight: 700;
@@ -1292,13 +1304,28 @@
   color: #434657 !important;
   line-height: 1.43;
 }
-.scs-ep-arrow {
+/* CSS play circle */
+.scs-ep-play {
   flex-shrink: 0;
   margin-left: 24px;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: 1.5px solid #0047ff;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
-.scs-ep-arrow img { display: block; }
+.scs-ep-play::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 0 5px 8px;
+  border-color: transparent transparent transparent #0047ff;
+  margin-left: 2px;
+}
 
 /* Expand preview (hidden by default) */
 .scs-ep-preview {
@@ -1320,7 +1347,7 @@
   bottom: 12px;
   right: 12px;
   background: #0047ff;
-  color: #fff;
+  color: #fff !important;
   border: none;
   border-radius: 8px;
   padding: 8px 16px;
@@ -1336,7 +1363,7 @@
   position: relative;
   transform: rotate(1deg);
   border: 1px solid #0047ff;
-  border-radius: 8px;
+  border-radius: 4px;
   overflow: hidden;
   aspect-ratio: 16/9;
 }
@@ -1352,7 +1379,7 @@
   bottom: 10px;
   right: 12px;
   background: #0047ff;
-  color: #fff;
+  color: #fff !important;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 10px;
   font-weight: 500;
@@ -1360,62 +1387,67 @@
   transform: rotate(-2deg);
 }
 
-/* ── Bottom nav (Shadow highlighted, same as pg-shadow) ── */
+/* ── Bottom Nav (Figma: EPISODES / GALLERY / ARCHIVE / INFO) ── */
 #pg-shadow-scenes .bottom-nav {
-  background: #002fa7 !important;
+  background: #0047ff !important;
   border-top: none !important;
-  clip-path: polygon(
-    0% 100%,
-    0% 30%,
-    44% 30%, 48% 19%, 52% 9%, 57% 3%, 62.5% 0%, 68% 3%, 73% 9%, 77% 19%, 81% 30%,
-    100% 30%,
-    100% 100%
-  ) !important;
-  height: 72px !important;
+  clip-path: none !important;
+  height: 80px !important;
   display: flex !important;
   align-items: flex-end !important;
   justify-content: space-around !important;
-  padding: 0 8px 10px !important;
+  padding: 0 4px 16px !important;
+  gap: 0 !important;
   z-index: 10;
   flex-shrink: 0 !important;
+  box-shadow: 0 -8px 0 rgba(0,71,255,0.1) !important;
 }
 #pg-shadow-scenes .bottom-nav .nav-item {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  gap: 3px !important;
+  justify-content: center !important;
+  gap: 0 !important;
   opacity: 1 !important;
   cursor: pointer;
+  padding: 8px !important;
 }
 #pg-shadow-scenes .bottom-nav .nav-icon {
   background: none !important;
   box-shadow: none !important;
-  font-size: 0;
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
   height: 20px;
+  width: auto;
+  font-size: 0;
 }
-#pg-shadow-scenes .bottom-nav .nav-icon-img {
-  display: block;
-  opacity: 0.6;
-  filter: brightness(0) invert(1);
-}
+#pg-shadow-scenes .bottom-nav .nav-icon svg { display: block; }
 #pg-shadow-scenes .bottom-nav .nav-lbl {
-  color: rgba(255,255,255,0.6) !important;
-  font-size: 9px !important;
-  letter-spacing: 0.7px;
+  color: rgba(255,255,255,0.8) !important;
+  font-family: 'Space Grotesk', sans-serif !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
   text-transform: uppercase;
-  font-family: 'Space Grotesk', sans-serif;
+  padding-top: 4px;
 }
-#pg-shadow-scenes .bottom-nav .sdw-nav-shadow {
-  margin-bottom: 4px;
+
+/* EPISODES — active item (white card, -1deg rotation) */
+#pg-shadow-scenes .bottom-nav .nav-item.scs-nav-ep-active {
+  padding: 0 !important;
+  height: 100%;
+  justify-content: flex-end !important;
 }
-#pg-shadow-scenes .bottom-nav .sdw-nav-shadow .nav-icon-img {
-  opacity: 1;
+.scs-nav-ep-card {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  transform: rotate(-1deg);
 }
-#pg-shadow-scenes .bottom-nav .sdw-nav-shadow .nav-lbl {
-  color: #fff !important;
-  font-family: 'ABeeZee', sans-serif;
-  font-weight: 700;
+#pg-shadow-scenes .bottom-nav .scs-nav-ep-active .nav-lbl {
+  color: #0047ff !important;
 }
