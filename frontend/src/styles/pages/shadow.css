@@ -1451,3 +1451,24 @@
 #pg-shadow-scenes .bottom-nav .scs-nav-ep-active .nav-lbl {
   color: #0047ff !important;
 }
+
+/* ── Visibility overrides ── */
+#pg-shadow-scenes { background: #FDFCFB !important; }
+.scs-hdr-title, .scs-heading, .scs-ep-title, .scs-ep-quote, .scs-archive-label { color: #0A0A0A !important; }
+.scs-ep-num { background: #002FA7 !important; color: #fff !important; }
+
+/* Star + stamp deco as text */
+.scs-star-deco {
+  font-size: 20px;
+  color: #0047ff;
+  opacity: 0.3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.scs-stamp-deco {
+  font-size: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
