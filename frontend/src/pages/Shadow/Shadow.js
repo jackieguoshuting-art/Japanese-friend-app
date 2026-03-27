@@ -245,7 +245,7 @@ function shadowRenderLibrary() {
         <div class="sdw-story-prog-lbl">${pct > 0 ? pct + '% 完了 · ' : ''}${story.scenes.length} シーン</div>
       </div>
     `;
-    card.onclick = () => shadowOpenStory(story.id);
+    card.onclick = () => go('shadow-scenes');
     grid.appendChild(card);
   });
 }
