@@ -96,8 +96,7 @@
 /* ── Intro section ── */
 .sdw-intro {
   position: relative;
-  margin-bottom: 32px;
-  padding: 16px 16px 12px;
+  margin-bottom: 12px;
 }
 .sdw-stamp-wrap {
   position: absolute;
