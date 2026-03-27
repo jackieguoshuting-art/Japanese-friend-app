@@ -979,3 +979,44 @@
   transition: all .15s;
 }
 .sdw-btn-solid:active { transform: scale(.98); }
+
+/* ── Daily Challenge Banner ── */
+.shadow-daily-banner {
+  margin: 12px 16px;
+  border-radius: 12px;
+  padding: 16px;
+  background: rgba(0,47,167,0.15);
+  border: 1.5px solid #002FA7;
+  position: relative;
+  overflow: hidden;
+}
+.shadow-daily-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #002FA7;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.shadow-daily-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: #0A0A0A;
+  margin-bottom: 4px;
+}
+.shadow-daily-quote {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+.shadow-daily-btn {
+  background: #002FA7;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
