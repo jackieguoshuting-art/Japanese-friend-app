@@ -1089,7 +1089,8 @@
    pg-shadow-scenes — Episode List
 ══════════════════ */
 #pg-shadow-scenes {
-  background: #faf9f8;
+  background: #faf9f8 !important;
+  color: #1a1c1c;
 }
 
 /* ── Header ── */
@@ -1158,9 +1159,9 @@
 
 /* ── Intro scrap ── */
 .scs-intro {
-  transform: rotate(-1deg);
-  margin-bottom: 57px;
+  margin-bottom: 40px;
   position: relative;
+  overflow: visible;
 }
 .scs-archive-label {
   display: inline-block;
@@ -1176,12 +1177,12 @@
 }
 .scs-heading {
   font-family: 'Epilogue', 'Noto Serif JP', sans-serif;
-  font-size: 48px;
+  font-size: 40px;
   font-weight: 900;
-  color: #0047ff;
-  letter-spacing: -2.4px;
+  color: #0047ff !important;
+  letter-spacing: -1.6px;
   text-transform: uppercase;
-  line-height: 1;
+  line-height: 1.1;
 }
 .scs-stamp-deco {
   position: absolute;
@@ -1206,7 +1207,7 @@
 .scs-episode {
   position: relative;
   transform: rotate(var(--ep-rot, 0deg));
-  background: #faf9f8;
+  background: #fff;
   border: 1px solid #0047ff;
   border-radius: 16px;
   box-shadow: 6px 6px 0 rgba(0,71,255,0.08);
@@ -1281,14 +1282,14 @@
 .scs-ep-title {
   font-family: 'Noto Serif JP', 'WenQuanYi Zen Hei', sans-serif;
   font-size: 18px;
-  color: #0047ff;
+  color: #0047ff !important;
   line-height: 1.25;
   margin-bottom: 4px;
 }
 .scs-ep-quote {
   font-family: 'Noto Serif JP', 'WenQuanYi Zen Hei', sans-serif;
   font-size: 14px;
-  color: #434657;
+  color: #434657 !important;
   line-height: 1.43;
 }
 .scs-ep-arrow {
