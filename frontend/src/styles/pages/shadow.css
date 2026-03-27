@@ -84,7 +84,7 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 48px 24px 20px;
+  padding: 48px 24px 80px;
   -webkit-overflow-scrolling: touch;
   position: relative;
   z-index: 2;
@@ -97,6 +97,7 @@
 .sdw-intro {
   position: relative;
   margin-bottom: 32px;
+  padding: 16px 16px 12px;
 }
 .sdw-stamp-wrap {
   position: absolute;
@@ -277,7 +278,7 @@
 .sdw-story-grid {
   display: flex;
   flex-direction: column;
-  gap: 34px;
+  gap: 12px;
   padding-bottom: 20px;
   counter-reset: story-idx;
 }
