@@ -33,6 +33,9 @@ const MIME = {
   '.ico':  'image/x-icon',
   '.woff2':'font/woff2',
   '.woff': 'font/woff',
+  '.mov':  'video/quicktime',
+  '.mp4':  'video/mp4',
+  '.webm': 'video/webm',
 };
 
 function serveStatic(res, urlPath) {
