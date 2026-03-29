@@ -1001,8 +1001,10 @@
           <span class="slv-ctrl-lbl">RETRY</span>
         </button>
         <div class="slv-record-wrap">
-          <button class="slv-record-btn" id="shadow-record-btn" onclick="shadowRecord()">⏺</button>
-          <button class="slv-play-small-btn" onclick="shadowPlay()">▶ PLAY</button>
+          <button class="slv-record-btn" id="shadow-record-btn" onclick="slvCycleRecord(this)">
+            <span class="slv-rec-icon">🎙</span>
+          </button>
+          <span class="slv-rec-label" id="slv-rec-label">TAP TO RECORD</span>
         </div>
         <button class="slv-ctrl-btn" onclick="shadowNext()">
           <span class="slv-ctrl-icon">→</span>
@@ -1247,6 +1249,26 @@
       e.classList.remove('scs-selected');
     });
     if (!wasSelected) el.classList.add('scs-selected');
+  };
+
+  // Record button three-state: idle → recording → playback → idle
+  var _slvRecState = 'idle'; // 'idle' | 'recording' | 'playback'
+  var _slvRecStates = {
+    idle:      { icon: '🎙',  label: 'TAP TO RECORD', cls: '' },
+    recording: { icon: '⏹',  label: 'RECORDING…',    cls: 'slv-rec-recording' },
+    playback:  { icon: '▶',   label: 'PLAY BACK',     cls: 'slv-rec-playback' },
+  };
+  window.slvCycleRecord = function(btn) {
+    var next = { idle: 'recording', recording: 'playback', playback: 'idle' }[_slvRecState];
+    _slvRecState = next;
+    var s = _slvRecStates[next];
+    btn.querySelector('.slv-rec-icon').textContent = s.icon;
+    document.getElementById('slv-rec-label').textContent = s.label;
+    btn.className = 'slv-record-btn ' + s.cls;
+    // forward to real handler if wired
+    if (next === 'recording' && typeof shadowRecord === 'function') shadowRecord();
+    if (next === 'playback'  && typeof shadowPlay    === 'function') shadowPlay();
+    if (next === 'idle'      && typeof shadowRetry   === 'function') {} // just reset UI
   };
 </script>
   <script type="module" src="./frontend/src/features/character.js"></script>

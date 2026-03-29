@@ -1662,7 +1662,7 @@
   color: rgba(255,255,255,0.55) !important;
 }
 
-/* Record button + PLAY below it */
+/* Record button — three states */
 .slv-record-wrap {
   display: flex;
   flex-direction: column;
@@ -1670,42 +1670,49 @@
   gap: 8px;
 }
 .slv-record-btn {
-  width: 72px;
-  height: 72px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
-  background: #333;
+  background: #2a2a2a;
   border: 3px solid rgba(255,255,255,0.15);
-  color: #888 !important;
-  font-size: 28px;
+  font-size: 34px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.1s;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
   line-height: 1;
 }
-.slv-record-btn.recording {
-  background: #cc2222;
-  border-color: rgba(255,80,80,0.5);
-  color: #fff !important;
-  box-shadow: 0 4px 24px rgba(204,34,34,0.55);
+/* idle — mic icon, dark grey */
+.slv-record-btn { background: #2a2a2a; border-color: rgba(255,255,255,0.18); }
+/* recording — red */
+.slv-record-btn.slv-rec-recording {
+  background: #d92b2b;
+  border-color: rgba(255,100,100,0.55);
+  box-shadow: 0 6px 28px rgba(217,43,43,0.6), 0 0 0 6px rgba(217,43,43,0.15);
+  animation: slv-rec-pulse 1.2s ease-in-out infinite;
 }
-.slv-record-btn:active { transform: scale(0.93); }
-.slv-play-small-btn {
-  background: none;
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 9999px;
-  color: rgba(255,255,255,0.6) !important;
+@keyframes slv-rec-pulse {
+  0%, 100% { box-shadow: 0 6px 28px rgba(217,43,43,0.6), 0 0 0 6px rgba(217,43,43,0.15); }
+  50%       { box-shadow: 0 6px 28px rgba(217,43,43,0.7), 0 0 0 12px rgba(217,43,43,0.08); }
+}
+/* playback — blue */
+.slv-record-btn.slv-rec-playback {
+  background: #0047ff;
+  border-color: rgba(0,71,255,0.5);
+  box-shadow: 0 6px 28px rgba(0,71,255,0.5);
+}
+.slv-record-btn:active { transform: scale(0.91); }
+.slv-rec-icon { pointer-events: none; }
+.slv-rec-label {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.8px;
-  padding: 5px 14px;
-  cursor: pointer;
-  transition: background 0.15s;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45) !important;
 }
-.slv-play-small-btn:active { background: rgba(255,255,255,0.08); }
 
 /* ── Transcript list ── */
 .slv-transcript {
