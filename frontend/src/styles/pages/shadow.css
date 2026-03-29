@@ -1540,7 +1540,7 @@
 /* ── Video area ── */
 .slv-video-area {
   flex-shrink: 0;
-  height: 190px;
+  height: 210px;
   background: #1a1c2e;
   position: relative;
   overflow: hidden;
@@ -1621,15 +1621,18 @@
   50%       { height: 16px; opacity: 0.65; }
 }
 
+/* ── Bottom (waveform + controls wrapper) ── */
+.slv-bottom {
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
 /* ── Controls ── */
 .slv-controls {
-  flex-shrink: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 24px;
-  padding: 20px 24px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  justify-content: space-around;
+  padding: 16px 24px 20px;
 }
 .slv-ctrl-btn {
   display: flex;
@@ -1642,6 +1645,7 @@
   padding: 12px 22px;
   cursor: pointer;
   transition: background 0.15s;
+  min-width: 72px;
 }
 .slv-ctrl-btn:active { background: rgba(255,255,255,0.12); }
 .slv-ctrl-icon {
@@ -1657,23 +1661,51 @@
   text-transform: uppercase;
   color: rgba(255,255,255,0.55) !important;
 }
-.slv-play-btn {
-  width: 68px;
-  height: 68px;
+
+/* Record button + PLAY below it */
+.slv-record-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.slv-record-btn {
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  background: #0047ff;
-  border: none;
-  color: #fff !important;
-  font-size: 26px;
+  background: #333;
+  border: 3px solid rgba(255,255,255,0.15);
+  color: #888 !important;
+  font-size: 28px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 24px rgba(0,71,255,0.45);
-  padding-left: 4px;
-  transition: box-shadow 0.15s, transform 0.1s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  line-height: 1;
 }
-.slv-play-btn:active { transform: scale(0.94); }
+.slv-record-btn.recording {
+  background: #cc2222;
+  border-color: rgba(255,80,80,0.5);
+  color: #fff !important;
+  box-shadow: 0 4px 24px rgba(204,34,34,0.55);
+}
+.slv-record-btn:active { transform: scale(0.93); }
+.slv-play-small-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 9999px;
+  color: rgba(255,255,255,0.6) !important;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.slv-play-small-btn:active { background: rgba(255,255,255,0.08); }
 
 /* ── Transcript list ── */
 .slv-transcript {

@@ -969,41 +969,48 @@
     <div class="slv-subtitles" id="slv-subtitles">
       <div class="slv-sub-jp" id="slv-sub-jp">お父さん、ここ変だよ。戻ろうよ。</div>
       <div class="slv-sub-en" id="slv-sub-en">Dad, this place is strange. Let's go back.</div>
-      <div class="slv-sub-cn" id="slv-sub-cn">爸爸，这里很奇怪。我们回去吧。</div>
     </div>
 
-    <!-- Recording waveform -->
-    <div class="slv-waveform" id="slv-waveform">
-      <div class="slv-wave-bar" style="--delay:0s"></div>
-      <div class="slv-wave-bar" style="--delay:0.12s"></div>
-      <div class="slv-wave-bar" style="--delay:0.24s"></div>
-      <div class="slv-wave-bar" style="--delay:0.08s"></div>
-      <div class="slv-wave-bar" style="--delay:0.32s"></div>
-      <div class="slv-wave-bar" style="--delay:0.18s"></div>
-      <div class="slv-wave-bar" style="--delay:0.04s"></div>
-      <div class="slv-wave-bar" style="--delay:0.28s"></div>
-      <div class="slv-wave-bar" style="--delay:0.16s"></div>
-      <div class="slv-wave-bar" style="--delay:0.36s"></div>
-      <div class="slv-wave-bar" style="--delay:0.06s"></div>
-      <div class="slv-wave-bar" style="--delay:0.22s"></div>
-      <div class="slv-wave-bar" style="--delay:0.14s"></div>
-      <div class="slv-wave-bar" style="--delay:0.30s"></div>
-      <div class="slv-wave-bar" style="--delay:0.10s"></div>
-      <div class="slv-wave-bar" style="--delay:0.20s"></div>
-    </div>
+    <!-- Bottom control area: waveform row + button row -->
+    <div class="slv-bottom">
 
-    <!-- Controls: Retry | Play | Next -->
-    <div class="slv-controls">
-      <button class="slv-ctrl-btn" onclick="shadowRetry()">
-        <span class="slv-ctrl-icon">↺</span>
-        <span class="slv-ctrl-lbl">Retry</span>
-      </button>
-      <button class="slv-play-btn" onclick="shadowPlay()">▶</button>
-      <button class="slv-ctrl-btn" onclick="shadowNext()">
-        <span class="slv-ctrl-icon">→</span>
-        <span class="slv-ctrl-lbl">Next</span>
-      </button>
-    </div>
+      <!-- Row 1: Recording waveform -->
+      <div class="slv-waveform" id="shadow-waveform">
+        <div class="slv-wave-bar" style="--delay:0s"></div>
+        <div class="slv-wave-bar" style="--delay:0.12s"></div>
+        <div class="slv-wave-bar" style="--delay:0.24s"></div>
+        <div class="slv-wave-bar" style="--delay:0.08s"></div>
+        <div class="slv-wave-bar" style="--delay:0.32s"></div>
+        <div class="slv-wave-bar" style="--delay:0.18s"></div>
+        <div class="slv-wave-bar" style="--delay:0.04s"></div>
+        <div class="slv-wave-bar" style="--delay:0.28s"></div>
+        <div class="slv-wave-bar" style="--delay:0.16s"></div>
+        <div class="slv-wave-bar" style="--delay:0.36s"></div>
+        <div class="slv-wave-bar" style="--delay:0.06s"></div>
+        <div class="slv-wave-bar" style="--delay:0.22s"></div>
+        <div class="slv-wave-bar" style="--delay:0.14s"></div>
+        <div class="slv-wave-bar" style="--delay:0.30s"></div>
+        <div class="slv-wave-bar" style="--delay:0.10s"></div>
+        <div class="slv-wave-bar" style="--delay:0.20s"></div>
+      </div>
+
+      <!-- Row 2: RETRY | Record | NEXT -->
+      <div class="slv-controls">
+        <button class="slv-ctrl-btn" onclick="shadowRetry()">
+          <span class="slv-ctrl-icon">↺</span>
+          <span class="slv-ctrl-lbl">RETRY</span>
+        </button>
+        <div class="slv-record-wrap">
+          <button class="slv-record-btn" id="shadow-record-btn" onclick="shadowRecord()">⏺</button>
+          <button class="slv-play-small-btn" onclick="shadowPlay()">▶ PLAY</button>
+        </div>
+        <button class="slv-ctrl-btn" onclick="shadowNext()">
+          <span class="slv-ctrl-icon">→</span>
+          <span class="slv-ctrl-lbl">NEXT</span>
+        </button>
+      </div>
+
+    </div><!-- /slv-bottom -->
 
     <!-- Transcript list -->
     <div class="slv-transcript">
