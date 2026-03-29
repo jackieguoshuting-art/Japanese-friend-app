@@ -827,7 +827,7 @@
         </div>
         <div class="scs-ep-preview">
           <div class="scs-preview-card">
-            <button class="scs-start-btn" onclick="event.stopPropagation(); startShadowScene()">開始 →</button>
+            <button class="scs-start-btn" onclick="event.stopPropagation(); go('shadow-live')">開始 →</button>
           </div>
         </div>
       </div>
@@ -844,7 +844,7 @@
         </div>
         <div class="scs-ep-preview">
           <div class="scs-preview-card">
-            <button class="scs-start-btn" onclick="event.stopPropagation(); startShadowScene()">開始 →</button>
+            <button class="scs-start-btn" onclick="event.stopPropagation(); go('shadow-live')">開始 →</button>
           </div>
         </div>
       </div>
@@ -867,7 +867,7 @@
         </div>
         <div class="scs-ep-preview">
           <div class="scs-preview-card">
-            <button class="scs-start-btn" onclick="event.stopPropagation(); startShadowScene()">開始 →</button>
+            <button class="scs-start-btn" onclick="event.stopPropagation(); go('shadow-live')">開始 →</button>
           </div>
         </div>
       </div>
@@ -885,7 +885,7 @@
         </div>
         <div class="scs-ep-preview">
           <div class="scs-preview-card">
-            <button class="scs-start-btn" onclick="event.stopPropagation(); startShadowScene()">開始 →</button>
+            <button class="scs-start-btn" onclick="event.stopPropagation(); go('shadow-live')">開始 →</button>
           </div>
         </div>
       </div>
@@ -935,6 +935,113 @@
         </svg>
       </div>
       <div class="nav-lbl">INFO</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     pg-shadow-live — Live Shadowing Player
+══════════════════════════════════════════ -->
+<div id="pg-shadow-live" class="page">
+
+  <!-- ── Top bar: close + progress + ep num ── -->
+  <div class="slv-topbar">
+    <button class="slv-close-btn" onclick="go('shadow-scenes')">✕</button>
+    <div class="slv-prog-wrap">
+      <div class="slv-prog-fill" id="slv-prog-fill" style="width:25%"></div>
+    </div>
+    <div class="slv-ep-num" id="slv-ep-num">EP 1 / 4</div>
+  </div>
+
+  <!-- ── Scrollable body ── -->
+  <div class="slv-body">
+
+    <!-- Video / scene placeholder -->
+    <div class="slv-video-area">
+      <div class="slv-video-placeholder">
+        <span class="slv-video-icon">🎬</span>
+        <span class="slv-video-label">千と千尋の神隠し</span>
+      </div>
+    </div>
+
+    <!-- Multi-layer subtitles (Figma 83:1424) -->
+    <div class="slv-subtitles" id="slv-subtitles">
+      <div class="slv-sub-jp" id="slv-sub-jp">お父さん、ここ変だよ。戻ろうよ。</div>
+      <div class="slv-sub-en" id="slv-sub-en">Dad, this place is strange. Let's go back.</div>
+      <div class="slv-sub-cn" id="slv-sub-cn">爸爸，这里很奇怪。我们回去吧。</div>
+    </div>
+
+    <!-- Recording waveform -->
+    <div class="slv-waveform" id="slv-waveform">
+      <div class="slv-wave-bar" style="--delay:0s"></div>
+      <div class="slv-wave-bar" style="--delay:0.12s"></div>
+      <div class="slv-wave-bar" style="--delay:0.24s"></div>
+      <div class="slv-wave-bar" style="--delay:0.08s"></div>
+      <div class="slv-wave-bar" style="--delay:0.32s"></div>
+      <div class="slv-wave-bar" style="--delay:0.18s"></div>
+      <div class="slv-wave-bar" style="--delay:0.04s"></div>
+      <div class="slv-wave-bar" style="--delay:0.28s"></div>
+      <div class="slv-wave-bar" style="--delay:0.16s"></div>
+      <div class="slv-wave-bar" style="--delay:0.36s"></div>
+      <div class="slv-wave-bar" style="--delay:0.06s"></div>
+      <div class="slv-wave-bar" style="--delay:0.22s"></div>
+      <div class="slv-wave-bar" style="--delay:0.14s"></div>
+      <div class="slv-wave-bar" style="--delay:0.30s"></div>
+      <div class="slv-wave-bar" style="--delay:0.10s"></div>
+      <div class="slv-wave-bar" style="--delay:0.20s"></div>
+    </div>
+
+    <!-- Controls: Retry | Play | Next -->
+    <div class="slv-controls">
+      <button class="slv-ctrl-btn" onclick="shadowRetry()">
+        <span class="slv-ctrl-icon">↺</span>
+        <span class="slv-ctrl-lbl">Retry</span>
+      </button>
+      <button class="slv-play-btn" onclick="shadowPlay()">▶</button>
+      <button class="slv-ctrl-btn" onclick="shadowNext()">
+        <span class="slv-ctrl-icon">→</span>
+        <span class="slv-ctrl-lbl">Next</span>
+      </button>
+    </div>
+
+    <!-- Transcript list -->
+    <div class="slv-transcript">
+      <div class="slv-transcript-hdr">台詞リスト · LINES</div>
+      <div class="slv-transcript-list" id="slv-transcript-list">
+        <div class="slv-titem slv-titem-active">
+          <div class="slv-titem-num">1</div>
+          <div class="slv-titem-text">お父さん、ここ変だよ。戻ろうよ。</div>
+        </div>
+        <div class="slv-titem">
+          <div class="slv-titem-num">2</div>
+          <div class="slv-titem-text">ここで働かせてください！</div>
+        </div>
+        <div class="slv-titem">
+          <div class="slv-titem-num">3</div>
+          <div class="slv-titem-text">千、これ……。あげる。</div>
+        </div>
+        <div class="slv-titem">
+          <div class="slv-titem-num">4</div>
+          <div class="slv-titem-text">一度あったことは忘れないものさ。思い出せないだけで。</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /slv-body -->
+
+  <!-- Finished modal (hidden by default) -->
+  <div class="slv-finished-modal" id="slv-finished-modal" style="display:none;">
+    <div class="slv-finished-card">
+      <div class="slv-finished-emoji">🎉</div>
+      <div class="slv-finished-title">FINISHED!</div>
+      <div class="slv-finished-sub">シャドウイング完了</div>
+      <div class="slv-finished-score">
+        <span class="slv-score-num">4</span>
+        <span class="slv-score-unit">/ 4 シーン</span>
+      </div>
+      <button class="slv-play-version-btn" onclick="shadowPlay()">▶ Play My Version</button>
+      <button class="slv-back-btn" onclick="go('shadow-scenes')">← Back to Episodes</button>
     </div>
   </div>
 
