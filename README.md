@@ -14,6 +14,10 @@
 - Live Shadowing 模块 ✅（Library / Scene / VN / Analysis / Reward 五个视图）
 - Immersive Listening 模块 ✅（Listen hub, 场景播放器）
 - app.js 拆分完成 ✅（UI / character / Call / Text / Shadow / Listen 均已移到独立模块）
+- Friends 页面（`id="pg-friends"`）✅ 按 Figma 重建：剪贴板风格角色卡片（叠放微旋转）+ 软木板装饰区 + Klein blue 波浪底部导航
+- Shadow 库页面（`id="pg-shadow"`）✅ 按 Figma node 61:672 重建：Scrapbook Folder 风格 + 每日挑战卡片 + INDEX 标签作品列表
+- Shadow 关卡页（`id="pg-shadow-scenes"`）✅ 按 Figma node 75:1268 重建：千と千尋の神隠し 四关卡列表 + 点击展开预览 + EPISODES/GALLERY/ARCHIVE/INFO 底部导航
+- Shadow 路由 ✅ 作品卡片点击 → `go('shadow-scenes')`；关卡页返回 → `go('shadow')`
 
 ## 文件结构
 
