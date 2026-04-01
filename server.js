@@ -38,16 +38,35 @@ const MIME = {
   '.webm': 'video/webm',
 };
 
-function serveStatic(res, urlPath) {
+function serveStatic(res, urlPath, req) {
   const rel  = urlPath === '/' ? 'index.html' : urlPath.split('?')[0];
   let   full = path.join(__dirname, rel);
   if (fs.existsSync(full) && fs.statSync(full).isDirectory()) full = path.join(full, 'index.html');
   try {
-    const ext  = path.extname(full);
-    const mime = MIME[ext] || 'text/plain';
-    const data = fs.readFileSync(full);
-    res.writeHead(200, { 'Content-Type': mime });
-    res.end(data);
+    const ext   = path.extname(full);
+    const mime  = MIME[ext] || 'text/plain';
+    const total = fs.statSync(full).size;
+    const range = req && req.headers['range'];
+
+    if (range) {
+      const [startStr, endStr] = range.replace(/bytes=/, '').split('-');
+      const start = parseInt(startStr, 10);
+      const end   = endStr ? parseInt(endStr, 10) : total - 1;
+      res.writeHead(206, {
+        'Content-Type':   mime,
+        'Content-Range':  `bytes ${start}-${end}/${total}`,
+        'Accept-Ranges':  'bytes',
+        'Content-Length': end - start + 1,
+      });
+      fs.createReadStream(full, { start, end }).pipe(res);
+    } else {
+      res.writeHead(200, {
+        'Content-Type':   mime,
+        'Accept-Ranges':  'bytes',
+        'Content-Length': total,
+      });
+      fs.createReadStream(full).pipe(res);
+    }
   } catch {
     res.writeHead(404);
     res.end('Not found');
@@ -125,7 +144,7 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  serveStatic(res, req.url);
+  serveStatic(res, req.url, req);
 });
 
 server.listen(PORT, () => {

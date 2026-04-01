@@ -63,6 +63,8 @@ function hide(el)  { if (el) el.style.display = 'none'; }
 
 function setPhaseUI(cfg) {
   // cfg: flags for which controls to show
+  const playRecBtn = document.getElementById('shadow-play-recording-btn');
+  if (playRecBtn && !cfg.retry) playRecBtn.style.display = 'none';
   if (demoControls) demoControls.style.display = cfg.demoRow ? '' : 'none';
   if (replayBtn)    replayBtn.style.display     = cfg.replay  ? '' : 'none';
   if (slowBtn)      slowBtn.style.display       = cfg.slow    ? '' : 'none';
@@ -89,6 +91,7 @@ function startDemo(idx) {
 }
 
 function onDemoDone() {
+  if (phase !== 'demo' && phase !== 'awaiting-done') return;
   phase = 'await-record';
   const line = CHIHIRO_LINES[currentIdx];
   video.pause();
@@ -156,23 +159,38 @@ function stopRecording() {
   }
 }
 
-// ─── Auto-play user recording then show RETRY/NEXT ───────────────────────────
+// ─── Show user recording controls after recording ────────────────────────────
 function playUserRecording(blob) {
   phase = 'after-record';
-  setPhaseUI({ demoRow: false, replay: false, slow: false, countdown: false,
-               record: false, retry: false, next: false });
+  const line = CHIHIRO_LINES[currentIdx];
+  video.pause();
+  video.currentTime = line.start;
 
-  const url = URL.createObjectURL(blob);
-  userAudio = new Audio(url);
-  userAudio.onended = () => {
-    URL.revokeObjectURL(url);
-    userAudio = null;
-    const line = CHIHIRO_LINES[currentIdx];
-    video.currentTime = line.start;
-    setPhaseUI({ demoRow: false, replay: false, slow: false, countdown: false,
-                 record: false, retry: true, next: true });
-  };
-  userAudio.play();
+  // 不自动播放，显示播放键让用户手动点
+  setPhaseUI({ demoRow: false, replay: false, slow: false, countdown: false,
+               record: false, retry: true, next: true });
+
+  // 加一个播放录音按钮
+  const playRecordingBtn = document.getElementById('shadow-play-recording-btn');
+  if (playRecordingBtn) {
+    playRecordingBtn.style.display = '';
+    playRecordingBtn.onclick = () => {
+      const url = URL.createObjectURL(blob);
+      userAudio = new Audio(url);
+      // 同时重播这句台词的画面
+      video.currentTime = line.start;
+      video.muted = true;
+      video.play();
+      userAudio.onended = () => {
+        URL.revokeObjectURL(url);
+        userAudio = null;
+        video.pause();
+        video.muted = false;
+        video.currentTime = line.start;
+      };
+      userAudio.play();
+    };
+  }
 }
 
 // ─── Finished modal ───────────────────────────────────────────────────────────
@@ -242,7 +260,10 @@ function onTimeUpdate() {
   // Phase triggers
   if (phase === 'demo') {
     const line = CHIHIRO_LINES[currentIdx];
-    if (t >= line.end) onDemoDone();
+    if (t >= line.end) {
+      phase = 'awaiting-done';
+      onDemoDone();
+    }
   } else if (phase === 'recording') {
     const line = CHIHIRO_LINES[currentIdx];
     if (t >= line.end) stopRecording();
@@ -251,6 +272,14 @@ function onTimeUpdate() {
 
 // ─── Button wiring ────────────────────────────────────────────────────────────
 function wireButtons() {
+  // Clear before rebinding to prevent duplicate handlers across resets
+  replayBtn.onclick = null;
+  slowBtn.onclick = null;
+  recordBtn.onclick = null;
+  retryBtn.onclick = null;
+  nextBtn.onclick = null;
+  playMyVersionBtn.onclick = null;
+
   replayBtn.onclick = () => {
     if (phase !== 'await-record') return;
     const line = CHIHIRO_LINES[currentIdx];
@@ -287,20 +316,23 @@ function wireButtons() {
   };
 
   nextBtn.onclick = () => {
+    if (phase !== 'after-record' && phase !== 'await-record') return;
     if (userAudio) { userAudio.pause(); userAudio = null; }
+    video.pause();
     const nextIdx = currentIdx + 1;
     if (nextIdx >= CHIHIRO_LINES.length) {
       showFinished();
     } else {
+      const resumeFrom = CHIHIRO_LINES[currentIdx].end; // continue from where recording ended
       currentIdx = nextIdx;
       phase = 'demo';
-      const line = CHIHIRO_LINES[nextIdx];
       video.muted = false;
       video.playbackRate = 1;
-      video.currentTime = line.start;
-      video.play();
+      video.currentTime = resumeFrom;
+      setSubtitle(null);
       setPhaseUI({ demoRow: false, replay: false, slow: false, countdown: false,
                    record: false, retry: false, next: false });
+      video.play();
     }
   };
 
@@ -316,13 +348,20 @@ function resetAndInit() {
   if (userAudio) { userAudio.pause(); userAudio = null; }
   if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
   initDOM();
-  video.src = './frontend/public/assets/spirited-away-scene1.mp4';
   video.muted = false;
-  video.currentTime = 0;
   video.removeEventListener('timeupdate', onTimeUpdate);
   video.addEventListener('timeupdate', onTimeUpdate);
   wireButtons();
-  startDemo(0);
+
+  const SRC = './frontend/public/assets/spirited-away-scene1.mp4';
+  if (!video.src.includes('spirited-away-scene1.mp4')) {
+    // First load — src not yet set, wait for metadata before seeking
+    video.src = SRC;
+    video.addEventListener('loadedmetadata', () => startDemo(0), { once: true });
+  } else {
+    // Already loaded — seek directly, no reload
+    startDemo(0);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -334,10 +373,16 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Re-initialise every time the page becomes active
+  // Re-initialise every time the page becomes active; clean up on exit
   const observer = new MutationObserver(() => {
     if (page.classList.contains('active')) {
       resetAndInit();
+    } else {
+      if (video) { video.pause(); video.currentTime = 0; }
+      if (userAudio) { userAudio.pause(); userAudio = null; }
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+      if (myVersionCleanup) { myVersionCleanup(); myVersionCleanup = null; }
+      phase = 'idle';
     }
   });
   observer.observe(page, { attributes: true, attributeFilter: ['class'] });
