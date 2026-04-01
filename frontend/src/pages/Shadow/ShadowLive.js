@@ -82,7 +82,7 @@ function startDemo(idx) {
                record: false, retry: false, next: false });
 
   const line = CHIHIRO_LINES[idx];
-  video.muted = true;
+  video.muted = false;
   video.playbackRate = 1;
   video.currentTime = line.start;
   video.play();
@@ -167,6 +167,8 @@ function playUserRecording(blob) {
   userAudio.onended = () => {
     URL.revokeObjectURL(url);
     userAudio = null;
+    const line = CHIHIRO_LINES[currentIdx];
+    video.currentTime = line.start;
     setPhaseUI({ demoRow: false, replay: false, slow: false, countdown: false,
                  record: false, retry: true, next: true });
   };
@@ -290,7 +292,15 @@ function wireButtons() {
     if (nextIdx >= CHIHIRO_LINES.length) {
       showFinished();
     } else {
-      startDemo(nextIdx);
+      currentIdx = nextIdx;
+      phase = 'demo';
+      const line = CHIHIRO_LINES[nextIdx];
+      video.muted = false;
+      video.playbackRate = 1;
+      video.currentTime = line.start;
+      video.play();
+      setPhaseUI({ demoRow: false, replay: false, slow: false, countdown: false,
+                   record: false, retry: false, next: false });
     }
   };
 
@@ -302,7 +312,7 @@ function init() {
   initDOM();
   if (!video) return;
 
-  video.src = '/frontend/public/assets/spirited-away-scene1.mp4';
+  video.src = './frontend/public/assets/videos/spirited-away-scene1.mp4';
   video.muted = true;
   video.addEventListener('timeupdate', onTimeUpdate);
 
