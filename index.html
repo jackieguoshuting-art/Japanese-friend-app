@@ -959,15 +959,13 @@
 
     <!-- Video / scene area -->
     <div class="shadow-video-wrap">
-      <video class="shadow-video-iframe" controls playsinline>
-        <source src="/frontend/public/assets/shadow-scene.mov" type="video/quicktime">
-      </video>
+      <video id="shadow-video" class="shadow-video-iframe" playsinline muted></video>
     </div>
 
     <!-- Multi-layer subtitles (Figma 83:1424) -->
     <div class="slv-subtitles" id="slv-subtitles">
-      <div class="slv-sub-jp" id="slv-sub-jp">お父さん、ここ変だよ。戻ろうよ。</div>
-      <div class="slv-sub-en" id="slv-sub-en">Dad, this place is strange. Let's go back.</div>
+      <div class="slv-sub-jp" id="shadow-subtitle-ja"></div>
+      <div class="slv-sub-en" id="shadow-subtitle-en"></div>
     </div>
 
     <!-- Bottom control area: waveform row + button row -->
@@ -993,19 +991,32 @@
         <div class="slv-wave-bar" style="--delay:0.20s"></div>
       </div>
 
+      <!-- Replay / slow / countdown row -->
+      <div class="slv-controls" id="shadow-demo-controls" style="display:none;">
+        <button class="slv-ctrl-btn" id="shadow-replay-btn">
+          <span class="slv-ctrl-icon">▶</span>
+          <span class="slv-ctrl-lbl">REPLAY</span>
+        </button>
+        <div id="shadow-countdown" style="display:none;font-size:2.4rem;font-weight:700;color:#fff;min-width:2rem;text-align:center;"></div>
+        <button class="slv-ctrl-btn" id="shadow-slow-btn">
+          <span class="slv-ctrl-icon">🐢</span>
+          <span class="slv-ctrl-lbl">SLOW</span>
+        </button>
+      </div>
+
       <!-- Row 2: RETRY | Record | NEXT -->
       <div class="slv-controls">
-        <button class="slv-ctrl-btn" onclick="shadowRetry()">
+        <button class="slv-ctrl-btn" id="shadow-retry-btn" style="display:none;">
           <span class="slv-ctrl-icon">↺</span>
           <span class="slv-ctrl-lbl">RETRY</span>
         </button>
         <div class="slv-record-wrap">
-          <button class="slv-record-btn" id="shadow-record-btn" onclick="slvCycleRecord(this)">
+          <button class="slv-record-btn" id="shadow-record-btn">
             <span class="slv-rec-icon">🎙</span>
           </button>
           <span class="slv-rec-label" id="slv-rec-label">TAP TO RECORD</span>
         </div>
-        <button class="slv-ctrl-btn" onclick="shadowNext()">
+        <button class="slv-ctrl-btn" id="shadow-next-btn" style="display:none;">
           <span class="slv-ctrl-icon">→</span>
           <span class="slv-ctrl-lbl">NEXT</span>
         </button>
@@ -1039,7 +1050,7 @@
   </div><!-- /slv-body -->
 
   <!-- Finished modal (hidden by default) -->
-  <div class="slv-finished-modal" id="slv-finished-modal" style="display:none;">
+  <div class="slv-finished-modal" id="shadow-finished-modal" style="display:none;">
     <div class="slv-finished-card">
       <div class="slv-finished-emoji">🎉</div>
       <div class="slv-finished-title">FINISHED!</div>
@@ -1048,7 +1059,7 @@
         <span class="slv-score-num">4</span>
         <span class="slv-score-unit">/ 4 シーン</span>
       </div>
-      <button class="slv-play-version-btn" onclick="shadowPlay()">▶ Play My Version</button>
+      <button class="slv-play-version-btn" id="shadow-playmyversion-btn">▶ Play My Version</button>
       <button class="slv-back-btn" onclick="go('shadow-scenes')">← Back to Episodes</button>
     </div>
   </div>
@@ -1276,6 +1287,7 @@
   <script type="module" src="./frontend/src/pages/Call/Call.js"></script>
   <script type="module" src="./frontend/src/pages/Text/Text.js"></script>
   <script type="module" src="./frontend/src/pages/Shadow/Shadow.js"></script>
+  <script type="module" src="./frontend/src/pages/Shadow/ShadowLive.js"></script>
   <script type="module" src="./frontend/src/pages/Listen/Listen.js"></script>
   <script type="module" src="./frontend/src/app.js"></script>
 </body>
