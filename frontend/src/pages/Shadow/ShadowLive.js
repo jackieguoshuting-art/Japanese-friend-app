@@ -312,7 +312,7 @@ function init() {
   initDOM();
   if (!video) return;
 
-  video.src = './frontend/public/assets/videos/spirited-away-scene1.mp4';
+  video.src = './frontend/public/assets/spirited-away-scene1.mp4';
   video.muted = true;
   video.addEventListener('timeupdate', onTimeUpdate);
 
