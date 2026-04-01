@@ -254,7 +254,7 @@ function wireButtons() {
   replayBtn.onclick = () => {
     if (phase !== 'await-record') return;
     const line = CHIHIRO_LINES[currentIdx];
-    video.muted = true;
+    video.muted = false;
     video.playbackRate = 1;
     video.currentTime = line.start;
     video.play();
@@ -266,7 +266,7 @@ function wireButtons() {
   slowBtn.onclick = () => {
     if (phase !== 'await-record') return;
     const line = CHIHIRO_LINES[currentIdx];
-    video.muted = true;
+    video.muted = false;
     video.playbackRate = 0.75;
     video.currentTime = line.start;
     video.play();
@@ -307,15 +307,20 @@ function wireButtons() {
   playMyVersionBtn.onclick = () => playMyVersion();
 }
 
-// ─── Initialise when page becomes active ─────────────────────────────────────
-function init() {
+// ─── Reset and initialise ─────────────────────────────────────────────────────
+function resetAndInit() {
+  currentIdx = 0;
+  phase = 'idle';
+  recordings = {};
+  audioChunks = [];
+  if (userAudio) { userAudio.pause(); userAudio = null; }
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
   initDOM();
-  if (!video) return;
-
   video.src = './frontend/public/assets/spirited-away-scene1.mp4';
-  video.muted = true;
+  video.muted = false;
+  video.currentTime = 0;
+  video.removeEventListener('timeupdate', onTimeUpdate);
   video.addEventListener('timeupdate', onTimeUpdate);
-
   wireButtons();
   startDemo(0);
 }
@@ -325,15 +330,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!page) return;
 
   if (page.classList.contains('active')) {
-    init();
+    resetAndInit();
     return;
   }
 
-  // Wait for the router to activate this page
+  // Re-initialise every time the page becomes active
   const observer = new MutationObserver(() => {
     if (page.classList.contains('active')) {
-      observer.disconnect();
-      init();
+      resetAndInit();
     }
   });
   observer.observe(page, { attributes: true, attributeFilter: ['class'] });
