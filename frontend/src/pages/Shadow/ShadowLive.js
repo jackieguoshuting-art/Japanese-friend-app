@@ -43,19 +43,29 @@ function initDOM() {
 }
 
 // ─── UI helpers ───────────────────────────────────────────────────────────────
-function setSubtitle(line) {
+function setSubtitle(line, currentTime) {
   if (!line) {
-    subtitleJa.textContent = '';
-    subtitleEn.textContent = '';
-    subtitleJa.style.color = '';
-    subtitleEn.style.color = '';
+    if (subtitleJa) subtitleJa.innerHTML = '';
+    if (subtitleEn) subtitleEn.textContent = '';
     return;
   }
-  subtitleJa.textContent = line.ja;
-  subtitleEn.textContent = line.en;
-  const color = line.speaker === 'chihiro' ? '#4a90e2' : '#888';
-  subtitleJa.style.color = color;
-  subtitleEn.style.color = color;
+
+  // 英文字幕直接显示
+  if (subtitleEn) subtitleEn.textContent = line.en;
+
+  // 日文字幕逐字高亮
+  const chars = line.ja.split('');
+  const duration = line.end - line.start;
+  const elapsed = (currentTime != null ? currentTime : line.start) - line.start;
+  const progress = Math.min(elapsed / duration, 1);
+  const highlightCount = Math.floor(chars.length * progress);
+
+  const color = line.speaker === 'chihiro' ? '#002FA7' : '#888';
+  const highlightColor = line.speaker === 'chihiro' ? '#FF8FAB' : '#aaa';
+
+  subtitleJa.innerHTML = chars.map((char, i) =>
+    `<span style="color:${i < highlightCount ? highlightColor : color};transition:color 0.1s;">${char}</span>`
+  ).join('');
 }
 
 function show(el)  { if (el) el.style.display = ''; }
@@ -207,22 +217,38 @@ function playMyVersion() {
   setPhaseUI({ demoRow: false, replay: false, slow: false, countdown: false,
                record: false, retry: false, next: false });
 
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const audioCtx = new AudioContext();
   const played = new Set();
 
-  function checkMyVersion() {
+  async function checkMyVersion() {
     const t = video.currentTime;
     for (let i = 0; i < CHIHIRO_LINES.length; i++) {
       const line = CHIHIRO_LINES[i];
       if (!played.has(i) && t >= line.start && t < line.end && recordings[i]) {
         played.add(i);
-        video.muted = true;
-        const url = URL.createObjectURL(recordings[i]);
-        const a = new Audio(url);
-        a.onended = () => {
-          URL.revokeObjectURL(url);
-          video.muted = false;
+
+        // 把用户录音解码
+        const arrayBuffer = await recordings[i].arrayBuffer();
+        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+        // 创建音源节点
+        const source = audioCtx.createBufferSource();
+        source.buffer = audioBuffer;
+
+        // 降低视频原声音量（不完全静音，保留背景音）
+        video.volume = 0.15;
+
+        // 用户声音正常音量播放
+        const gainNode = audioCtx.createGain();
+        gainNode.gain.value = 1.2;
+        source.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        source.start(0);
+        source.onended = () => {
+          video.volume = 1.0;
         };
-        a.play();
       }
     }
   }
@@ -230,20 +256,24 @@ function playMyVersion() {
   function onEnded() {
     video.removeEventListener('timeupdate', checkMyVersion);
     video.removeEventListener('ended', onEnded);
+    video.volume = 1.0;
+    audioCtx.close();
     if (finishedModal) finishedModal.style.display = 'flex';
     phase = 'idle';
   }
 
-  // Store cleanup so retry can cancel it
   myVersionCleanup = () => {
     video.removeEventListener('timeupdate', checkMyVersion);
     video.removeEventListener('ended', onEnded);
+    video.volume = 1.0;
+    audioCtx.close();
   };
 
   video.addEventListener('timeupdate', checkMyVersion);
   video.addEventListener('ended', onEnded);
 
   video.muted = false;
+  video.volume = 1.0;
   video.playbackRate = 1;
   video.currentTime = 0;
   video.play();
@@ -255,7 +285,7 @@ function onTimeUpdate() {
 
   // Subtitle sync
   const active = TIMELINE.find(l => t >= l.start && t < l.end) || null;
-  setSubtitle(active);
+  setSubtitle(active, t);
 
   // Phase triggers
   if (phase === 'demo') {
