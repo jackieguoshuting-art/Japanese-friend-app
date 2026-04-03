@@ -82,6 +82,11 @@ Difficulty: ${difficulty}
 `.trim();
 }
 
+export function resetSession() {
+  session.turnCount = 0;
+  session.startedAt = Date.now();
+}
+
 export function endSession() {
   console.log('session_end', { turnCount: session.turnCount });
 }

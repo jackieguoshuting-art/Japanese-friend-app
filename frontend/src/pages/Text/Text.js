@@ -3,16 +3,9 @@ import { getDailyTopic } from '../../features/topics.js';
 import { getCharacterMemory } from '../../features/memory.js';
 import { getClaudeReply } from '../../services/claude.service.js';
 import { yukiConfig } from '../../characters/yuki/yuki.config.js';
-import { renConfig } from '../../characters/ren/ren.config.js';
-import { hanaConfig } from '../../characters/hana/hana.config.js';
-import { initImageButton, compressImage } from '../../features/imageInput.js';
-
-const characterMap = {
-  yuki: yukiConfig,
-  ren: renConfig,
-  hana: hanaConfig,
-  mio: yukiConfig,
-};
+import { initImageButton } from '../../features/imageInput.js';
+import { resetSession } from '../../features/chat.js';
+import { characterMap } from '../../characters/index.js';
 
 let textHistory = [];
 let _pendingImage = null; // { base64, mediaType, dataUrl }
@@ -183,6 +176,7 @@ async function initTextPageForChar() {
   if (!list) return;
   list.innerHTML = '';
   textHistory = [];
+  resetSession();
   if (window._convHistory) window._convHistory.length = 0;
 
   const characterId = appState.activeCharacter || 'yuki';
@@ -262,5 +256,4 @@ async function initTextPageForChar() {
   }
 }
 
-window.initTextPage = initTextPage;
-window.initTextPageForChar = initTextPageForChar;
+export { initTextPage, initTextPageForChar };

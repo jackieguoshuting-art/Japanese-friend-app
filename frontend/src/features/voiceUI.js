@@ -19,6 +19,8 @@ async function naturalizeVoiceText(text) {
 export function initVoiceButton({ voiceBtnId, onSend, onCancel }) {
   const btn = document.getElementById(voiceBtnId);
   if (!btn) return;
+  if (btn.dataset.voiceInit) return;
+  btn.dataset.voiceInit = '1';
 
   // ── 覆盖层 ──────────────────────────────────────────────
   const overlay = document.createElement('div');

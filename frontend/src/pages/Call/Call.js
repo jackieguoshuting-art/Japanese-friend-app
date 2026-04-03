@@ -4,21 +4,13 @@ import { initVoiceButton } from '../../features/voiceUI.js';
 import { initImageButton } from '../../features/imageInput.js';
 import { getDailyTopic } from '../../features/topics.js';
 import { getCharacterMemory, appendMemory } from '../../features/memory.js';
-import { yukiConfig } from '../../characters/yuki/yuki.config.js';
-import { renConfig } from '../../characters/ren/ren.config.js';
-import { hanaConfig } from '../../characters/hana/hana.config.js';
 import { getClaudeReply } from '../../services/claude.service.js';
-import { getRandomFallbackReply } from '../../features/chat.js';
+import { getRandomFallbackReply, resetSession } from '../../features/chat.js';
 import { save } from '../../core/storage.js';
+import { characterMap } from '../../characters/index.js';
+import { yukiConfig } from '../../characters/yuki/yuki.config.js';
 
 let _callHistory = [];
-
-const characterMap = {
-  yuki: yukiConfig,
-  ren:  renConfig,
-  hana: hanaConfig,
-  mio:  yukiConfig,
-};
 
 const CALL_CAPTION_KEY = 'callCaptionMode';
 
@@ -87,6 +79,8 @@ function appendChatMessage(role, ja, en, id) {
 }
 
 async function triggerOpeningMessage() {
+  _callHistory = [];
+  resetSession();
   const characterId = appState.activeCharacter || 'yuki';
   const character = characterMap[characterId] || yukiConfig;
 
@@ -286,9 +280,11 @@ function initCallInput() {
   });
 }
 
-window.appendChatMessage = appendChatMessage;
-window.triggerOpeningMessage = triggerOpeningMessage;
-window.initCallInput = initCallInput;
-window.applyCallCaptionMode = applyCallCaptionMode;
-window.getCallCaptionMode = getCallCaptionMode;
-window.toggleCallCaptionMode = toggleCallCaptionMode;
+export {
+  appendChatMessage,
+  triggerOpeningMessage,
+  initCallInput,
+  applyCallCaptionMode,
+  getCallCaptionMode,
+  toggleCallCaptionMode,
+};

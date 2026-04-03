@@ -98,78 +98,88 @@ function callAnthropic(payload) {
   });
 }
 
+// ── API route handlers ──
+
+function readBody(req) {
+  return new Promise((resolve) => {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', () => resolve(body));
+  });
+}
+
+async function handleVoiceFormat(req, res) {
+  let raw = '';
+  try {
+    const { text } = JSON.parse(await readBody(req));
+    if (!text) { res.writeHead(200); res.end(JSON.stringify({ formatted: '' })); return; }
+    const result = await callAnthropic({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 200,
+      system: 'You are a Japanese casual text formatter. Output ONLY the reformatted Japanese text — no explanation, no quotes, no JSON.',
+      messages: [{
+        role: 'user',
+        content: `Reformat this speech recognition transcript as a natural casual Japanese text message.\n- Add punctuation (。！？…) where it fits naturally\n- Add emoji (😊😂👍✨🤔 etc.) when the emotion calls for it\n- Add casual tone markers (笑、ね〜、よ、な〜、えー) where natural\n- Keep the exact same meaning — do not invent new content\n- Output ONLY the reformatted text\n\nTranscript: ${text}`
+      }]
+    });
+    raw = result.status === 200
+      ? (JSON.parse(result.raw).content?.[0]?.text?.trim() || text)
+      : text;
+  } catch { raw = ''; }
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ formatted: raw }));
+}
+
+async function handleChat(req, res) {
+  try {
+    const { prompt, messages, systemPrompt } = JSON.parse(await readBody(req));
+    const result = await callAnthropic({
+      model:      'claude-sonnet-4-20250514',
+      max_tokens: 512,
+      system:     (systemPrompt || 'You are a friendly Japanese AI friend.') + "\n\nYou MUST reply in this exact JSON format with no extra text outside the JSON:\n{\"replyJa\": \"日本語の返事\", \"replyEn\": \"English translation\", \"memoryCandidate\": \"\"}\nDo not add markdown, code blocks, or any text before or after the JSON.\n" +
+        "VOCAB_MARKUP in replyJa (required, dense): wrap almost EVERY noun and EVERY lexical verb in [[surface as written|ひらがな reading|concise English gloss]]. Also wrap meaningful い-adjectives and な-adjectives used as predicates. No spaces inside [[ ]]. Inside JSON strings escape any double-quote as \\\". " +
+        "Skip marking ONLY: particles (は を に が の と も や か ね よ さ へ で から まで より って), interjections with no lexical content, and bare です／ます／だ when they add no new lemma. " +
+        "Mark inflected verbs (た てる ない られる etc.) as one span covering the whole spoken form when one lemma. Merge compound nouns as one span when natural. " +
+        "Goal: at least ~80% of all nouns and verbs in the sentence should appear inside [[|]], not just one or two words.",
+      messages:   messages && Array.isArray(messages) ? messages : [{ role: 'user', content: prompt }],
+    });
+
+    if (result.status !== 200) {
+      res.writeHead(result.status, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Anthropic error', detail: result.raw }));
+      return;
+    }
+
+    const text = JSON.parse(result.raw).content?.[0]?.text || '';
+    console.log('[DEBUG] Claude raw text:', text);
+    const cleanText = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+    let parsed;
+    try { parsed = JSON.parse(cleanText); }
+    catch { parsed = { replyJa: cleanText, replyEn: '', memoryCandidate: '' }; }
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(parsed));
+  } catch (e) {
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: e.message }));
+  }
+}
+
+// ── Route dispatcher ──
+const routes = {
+  'POST /api/voice-format': handleVoiceFormat,
+  'POST /api/chat':         handleChat,
+};
+
 // ── Server ──
 const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
   if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
-  if (req.method === 'POST' && req.url === '/api/voice-format') {
-    let body = '';
-    req.on('data', c => body += c);
-    req.on('end', async () => {
-      let raw = '';
-      try {
-        const { text } = JSON.parse(body);
-        if (!text) { res.writeHead(200); res.end(JSON.stringify({ formatted: '' })); return; }
-        const result = await callAnthropic({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 200,
-          system: 'You are a Japanese casual text formatter. Output ONLY the reformatted Japanese text — no explanation, no quotes, no JSON.',
-          messages: [{
-            role: 'user',
-            content: `Reformat this speech recognition transcript as a natural casual Japanese text message.\n- Add punctuation (。！？…) where it fits naturally\n- Add emoji (😊😂👍✨🤔 etc.) when the emotion calls for it\n- Add casual tone markers (笑、ね〜、よ、な〜、えー) where natural\n- Keep the exact same meaning — do not invent new content\n- Output ONLY the reformatted text\n\nTranscript: ${text}`
-          }]
-        });
-        if (result.status === 200) {
-          raw = JSON.parse(result.raw).content?.[0]?.text?.trim() || text;
-        } else {
-          raw = text;
-        }
-      } catch { raw = ''; }
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ formatted: raw }));
-    });
-    return;
-  }
-
-  if (req.method === 'POST' && req.url === '/api/chat') {
-    let body = '';
-    req.on('data', c => body += c);
-    req.on('end', async () => {
-      try {
-        const { prompt, messages, systemPrompt } = JSON.parse(body);
-        const result = await callAnthropic({
-          model:      'claude-sonnet-4-20250514',
-          max_tokens: 512,
-          system:     (systemPrompt || 'You are a friendly Japanese AI friend.') + "\n\nYou MUST reply in this exact JSON format with no extra text outside the JSON:\n{\"replyJa\": \"日本語の返事\", \"replyEn\": \"English translation\", \"memoryCandidate\": \"\"}\nDo not add markdown, code blocks, or any text before or after the JSON.\n" +
-            "VOCAB_MARKUP in replyJa (required, dense): wrap almost EVERY noun and EVERY lexical verb in [[surface as written|ひらがな reading|concise English gloss]]. Also wrap meaningful い-adjectives and な-adjectives used as predicates. No spaces inside [[ ]]. Inside JSON strings escape any double-quote as \\\". " +
-            "Skip marking ONLY: particles (は を に が の と も や か ね よ さ へ で から まで より って), interjections with no lexical content, and bare です／ます／だ when they add no new lemma. " +
-            "Mark inflected verbs (た てる ない られる etc.) as one span covering the whole spoken form when one lemma. Merge compound nouns as one span when natural. " +
-            "Goal: at least ~80% of all nouns and verbs in the sentence should appear inside [[|]], not just one or two words.",
-          messages:   messages && Array.isArray(messages) ? messages : [{ role: 'user', content: prompt }],
-        });
-
-        if (result.status !== 200) {
-          res.writeHead(result.status, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Anthropic error', detail: result.raw }));
-          return;
-        }
-
-        const text = JSON.parse(result.raw).content?.[0]?.text || '';
-        console.log('[DEBUG] Claude raw text:', text);
-        const cleanText = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
-        let parsed;
-        try { parsed = JSON.parse(cleanText); }
-        catch { parsed = { replyJa: cleanText, replyEn: '', memoryCandidate: '' }; }
-
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(parsed));
-      } catch (e) {
-        res.writeHead(500, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: e.message }));
-      }
-    });
+  const routeKey = `${req.method} ${req.url.split('?')[0]}`;
+  if (routes[routeKey]) {
+    routes[routeKey](req, res);
     return;
   }
 
