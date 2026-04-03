@@ -822,18 +822,20 @@ button.caption-btn {
 #pg-text .txt-send-btn:disabled { opacity: 0.4; cursor: default; }
 
 /* ── Call character scene ── */
+/* ── Character: full-bleed bottom layer ── */
 .call-char-scene {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
   overflow: hidden;
 }
 
 .call-char-bg {
   position: absolute;
   inset: 0;
-  background: url('./frontend/public/assets/characters/yuki/yuki-bg.jpg') center/cover no-repeat;
-  filter: blur(2px) brightness(0.7);
+  background: url('/frontend/public/assets/characters/yuki/yuki-bg.jpg') center/cover no-repeat;
+  filter: brightness(0.85);
+  z-index: 1;
 }
 
 .call-char-sprite {
@@ -841,22 +843,16 @@ button.caption-btn {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  height: 95%;
+  height: 82%;
   width: auto;
+  min-width: unset;
   object-fit: contain;
-  object-position: bottom;
+  object-position: center bottom;
   z-index: 2;
 }
 
-/* ── Fix: char-area needs explicit size for call-char-scene to fill ── */
-.vc-char-area {
-  position: relative;
-  width: 100%;
-  align-self: stretch;
-}
-.call-char-scene {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
+/* ── UI layers float above character ── */
+.vc-header   { position: relative; z-index: 10; }
+.vc-main     { position: relative; z-index: 10; pointer-events: none; }
+.vc-main > * { pointer-events: auto; }
+.vc-controls { position: relative; z-index: 10; }

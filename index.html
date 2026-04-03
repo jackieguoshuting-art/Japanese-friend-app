@@ -412,16 +412,16 @@
     </button>
   </header>
 
-  <!-- Main: pixel character + wave viz + caption area -->
+  <!-- Character: full-bleed behind all UI -->
+  <div class="call-char-scene">
+    <div class="call-char-bg"></div>
+    <img src="/frontend/public/assets/characters/yuki/yuki-idle.png"
+         id="yuki-live2d"
+         class="call-char-sprite">
+  </div>
+
+  <!-- Main: wave viz + caption area -->
   <div class="vc-main">
-    <div class="vc-char-area">
-      <div class="call-char-scene">
-        <div class="call-char-bg"></div>
-        <img src="/frontend/public/assets/characters/yuki/yuki-idle.png"
-             id="yuki-live2d"
-             class="call-char-sprite">
-      </div>
-    </div>
     <div id="wave-viz" class="vc-wave-viz" aria-hidden="true">
       <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
       <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>

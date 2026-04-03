@@ -846,3 +846,13 @@ body { background:#040810; }
   cursor: pointer;
   margin-top: 4px;
 }
+
+#pg-call .call-input-area,
+#pg-call .chat-msg,
+#pg-call #chat-list,
+#pg-call .call-header,
+#pg-call .vc-caption-area,
+#pg-call .ctrl {
+  position: relative;
+  z-index: 10;
+}
