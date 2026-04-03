@@ -104,6 +104,35 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
+  if (req.method === 'POST' && req.url === '/api/voice-format') {
+    let body = '';
+    req.on('data', c => body += c);
+    req.on('end', async () => {
+      let raw = '';
+      try {
+        const { text } = JSON.parse(body);
+        if (!text) { res.writeHead(200); res.end(JSON.stringify({ formatted: '' })); return; }
+        const result = await callAnthropic({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 200,
+          system: 'You are a Japanese casual text formatter. Output ONLY the reformatted Japanese text — no explanation, no quotes, no JSON.',
+          messages: [{
+            role: 'user',
+            content: `Reformat this speech recognition transcript as a natural casual Japanese text message.\n- Add punctuation (。！？…) where it fits naturally\n- Add emoji (😊😂👍✨🤔 etc.) when the emotion calls for it\n- Add casual tone markers (笑、ね〜、よ、な〜、えー) where natural\n- Keep the exact same meaning — do not invent new content\n- Output ONLY the reformatted text\n\nTranscript: ${text}`
+          }]
+        });
+        if (result.status === 200) {
+          raw = JSON.parse(result.raw).content?.[0]?.text?.trim() || text;
+        } else {
+          raw = text;
+        }
+      } catch { raw = ''; }
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ formatted: raw }));
+    });
+    return;
+  }
+
   if (req.method === 'POST' && req.url === '/api/chat') {
     let body = '';
     req.on('data', c => body += c);

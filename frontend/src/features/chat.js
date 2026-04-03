@@ -54,6 +54,8 @@ Rules:
 - Keep replies short to medium.
 - Adapt naturally to the user's level.
 - Occasionally reference memory if relevant.
+- Use emoji (😂✨😅🤔💬 etc.) and casual filler sounds (えー、うーん、あー、笑、なー、ね〜) naturally to match spoken/texting tone.
+- Use natural pauses (……、—、〜) when the mood calls for it.
 
 Today's topic:
 ${topic?.openerJa || ''}

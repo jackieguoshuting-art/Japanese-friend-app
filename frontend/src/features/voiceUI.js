@@ -1,6 +1,21 @@
 import { initVoiceInput } from './stt.js';
 import { stopSpeaking } from './tts.js';
 
+async function naturalizeVoiceText(text) {
+  try {
+    const res = await fetch('/api/voice-format', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    if (!res.ok) return text;
+    const data = await res.json();
+    return data.formatted || text;
+  } catch {
+    return text;
+  }
+}
+
 export function initVoiceButton({ voiceBtnId, onSend, onCancel }) {
   const btn = document.getElementById(voiceBtnId);
   if (!btn) return;
@@ -122,10 +137,15 @@ export function initVoiceButton({ voiceBtnId, onSend, onCancel }) {
     overlay.style.display = 'none';
     try { recognition?.stop(); } catch {}
 
-    if (action === 'send' && lastTranscript) {
-      onSend(lastTranscript, false);
-    } else if (action === 'toText' && lastTranscript) {
-      onSend(lastTranscript, true);
+    if ((action === 'send' || action === 'toText') && lastTranscript) {
+      const isText = action === 'toText';
+      const hint = overlay.querySelector('#voice-hint');
+      if (hint) hint.textContent = '处理中…';
+      overlay.style.display = 'flex'; // 短暂保留覆盖层显示进度
+      naturalizeVoiceText(lastTranscript).then(formatted => {
+        overlay.style.display = 'none';
+        onSend(formatted, isText);
+      });
     } else if (action === 'cancel') {
       onCancel?.();
     }
