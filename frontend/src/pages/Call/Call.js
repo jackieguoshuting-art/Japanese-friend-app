@@ -1,6 +1,7 @@
 import { appState } from '../../core/state.js';
 import { speakJapanese, stopSpeaking } from '../../features/tts.js';
 import { initVoiceButton } from '../../features/voiceUI.js';
+import { initImageButton } from '../../features/imageInput.js';
 import { getDailyTopic } from '../../features/topics.js';
 import { getCharacterMemory, appendMemory } from '../../features/memory.js';
 import { yukiConfig } from '../../characters/yuki/yuki.config.js';
@@ -239,6 +240,49 @@ function initCallInput() {
       sendMessage();
     },
     onCancel: () => {}
+  });
+
+  initImageButton({
+    btnId: 'call-image-btn',
+    onImage: async (img) => {
+      // Show image bubble in chat
+      const list = document.getElementById('chat-list');
+      if (list) {
+        const msg = document.createElement('div');
+        msg.className = 'chat-msg chat-msg-user';
+        msg.innerHTML = `<div class="chat-bubble"><img src="${img.dataUrl}" style="max-width:180px;border-radius:10px;display:block;"></div>`;
+        list.appendChild(msg);
+        list.scrollTop = list.scrollHeight;
+      }
+      const characterId = appState.activeCharacter || 'yuki';
+      const character = characterMap[characterId] || yukiConfig;
+      const caption = 'この画像どう思う？';
+      _callHistory.push({ role: 'user', text: caption });
+      appendChatMessage('yuki', '……', '', 'chat-loading');
+      try {
+        const apiMessages = [
+          ..._callHistory.slice(0, -1).map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.text })),
+          { role: 'user', content: [
+            { type: 'image', source: { type: 'base64', media_type: img.mediaType, data: img.base64 } },
+            { type: 'text', text: caption }
+          ]}
+        ];
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: apiMessages, systemPrompt: character.systemPrompt })
+        });
+        document.getElementById('chat-loading')?.remove();
+        const data = await res.json();
+        const replyJa = data.replyJa || '……';
+        appendChatMessage('yuki', replyJa, data.replyEn || '');
+        speakJapanese(replyJa);
+        _callHistory.push({ role: 'assistant', text: replyJa });
+      } catch {
+        document.getElementById('chat-loading')?.remove();
+        appendChatMessage('yuki', 'ちょっと待って', 'One sec...');
+      }
+    }
   });
 }
 

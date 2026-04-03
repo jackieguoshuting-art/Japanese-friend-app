@@ -5,6 +5,7 @@ import { getClaudeReply } from '../../services/claude.service.js';
 import { yukiConfig } from '../../characters/yuki/yuki.config.js';
 import { renConfig } from '../../characters/ren/ren.config.js';
 import { hanaConfig } from '../../characters/hana/hana.config.js';
+import { initImageButton, compressImage } from '../../features/imageInput.js';
 
 const characterMap = {
   yuki: yukiConfig,
@@ -14,12 +15,55 @@ const characterMap = {
 };
 
 let textHistory = [];
+let _pendingImage = null; // { base64, mediaType, dataUrl }
 
 function initTextPage() {
   const list = document.getElementById('text-chat-list');
   const input = document.getElementById('text-input');
   const btn = document.getElementById('text-send-btn');
   if (!list || !input || !btn) return;
+
+  // ── Image preview area ──────────────────────────────
+  function showImagePreview(dataUrl) {
+    let preview = document.getElementById('text-image-preview');
+    if (!preview) return;
+    preview.style.display = 'flex';
+    preview.innerHTML = `
+      <img src="${dataUrl}" style="height:56px;border-radius:8px;object-fit:cover;">
+      <button id="text-image-preview-remove" style="background:rgba(0,0,0,0.5);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:12px;cursor:pointer;margin-left:6px;flex-shrink:0;">✕</button>`;
+    document.getElementById('text-image-preview-remove')?.addEventListener('click', clearImagePreview);
+  }
+
+  function clearImagePreview() {
+    _pendingImage = null;
+    const preview = document.getElementById('text-image-preview');
+    if (preview) { preview.innerHTML = ''; preview.style.display = 'none'; }
+  }
+
+  function addImageMsg(dataUrl, caption) {
+    const now = new Date();
+    const ts = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+    const row = document.createElement('div');
+    row.className = 'text-msg-row user';
+    const safe = caption ? `<div style="margin-top:4px;font-size:12px;opacity:0.85;">${window.escapeHtml?.(caption) ?? caption}</div>` : '';
+    row.innerHTML = `
+      <span class="text-timestamp">${ts}</span>
+      <div class="text-bubble user" style="padding:6px;">
+        <img src="${dataUrl}" style="max-width:180px;border-radius:8px;display:block;">${safe}
+      </div>`;
+    list.appendChild(row);
+    list.scrollTop = list.scrollHeight;
+  }
+
+  // ── Camera button ────────────────────────────────────
+  initImageButton({
+    btnId: 'text-camera-btn',
+    onImage: (data) => {
+      _pendingImage = data;
+      showImagePreview(data.dataUrl);
+      input.focus();
+    }
+  });
 
   function addMsg(role, text, furigana) {
     const now = new Date();
@@ -63,14 +107,52 @@ function initTextPage() {
   }
 
   async function send() {
-    const msg = input.value.trim(); if (!msg) return;
+    const msg = input.value.trim();
+    if (!msg && !_pendingImage) return;
     input.value = '';
+
+    const characterId = appState.activeCharacter || 'yuki';
+    const character = characterMap[characterId] || yukiConfig;
+
+    if (_pendingImage) {
+      const img = _pendingImage;
+      _pendingImage = null;
+      clearImagePreview();
+      const caption = msg || 'この画像どう思う？';
+      addImageMsg(img.dataUrl, msg || '');
+      const userContent = [
+        { type: 'image', source: { type: 'base64', media_type: img.mediaType, data: img.base64 } },
+        { type: 'text', text: caption }
+      ];
+      // Build API messages: history (text-only) + current image turn
+      const apiMessages = [
+        ...textHistory.map(m => ({ role: m.role, content: m.content })),
+        { role: 'user', content: userContent }
+      ];
+      textHistory.push({ role: 'user', content: caption });
+      addTyping();
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ messages: apiMessages, systemPrompt: character.systemPrompt || window.YUKI_SYSTEM_PROMPT })
+        });
+        const data = await res.json();
+        removeTyping();
+        const replyJa = data.replyJa || data.text || '...';
+        addMsg('yuki', replyJa, data.replyEn || '');
+        textHistory.push({ role: 'assistant', content: replyJa });
+      } catch {
+        removeTyping();
+        addMsg('yuki', 'ごめん、ちょっと待って…', 'Sorry, one moment...');
+      }
+      return;
+    }
+
     addMsg('user', msg);
     textHistory.push({ role: 'user', content: msg });
     addTyping();
     try {
-      const characterId = appState.activeCharacter || 'yuki';
-      const character = characterMap[characterId] || yukiConfig;
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
@@ -81,7 +163,7 @@ function initTextPage() {
       const replyJa = data.replyJa || data.text || '...';
       addMsg('yuki', replyJa, data.replyEn || '');
       textHistory.push({ role: 'assistant', content: replyJa });
-    } catch(e) {
+    } catch {
       removeTyping();
       addMsg('yuki', 'ごめん、ちょっと待って…', 'Sorry, one moment...');
     }
