@@ -62,11 +62,34 @@
 - `#pg-call` 是唯一活跃通话页，`id="chat-list"` / `id="call-text-input"` / `id="call-send-btn"` 都在这里
 - 页面显示隐藏不要在单独页面 CSS 里写 `display:flex`，统一靠 `.page.active`
 
-## 待做
-- Ren/Hana/Mio 开场白改回真实日语（当前是调试用 1/2/3）
-- server.js 加词汇标记指令
+## 今日新增功能（2026-04-03）
+
+### Video Call 页 — 语音功能
+- 新增 `frontend/src/features/tts.js`：Web Speech API 日语朗读，Yuki 每次回复自动开口说话
+- 新增 `frontend/src/features/stt.js`：语音识别模块（continuous 模式，支持长句识别）
+- 新增 `frontend/src/features/voiceUI.js`：微信式长按🎤录音 UI，支持波形动画、滑左取消、滑右转文字发送
+- 新增 `/api/voice-format` 端点（Haiku）：语音转录后自动添加标点/emoji/语气词，使输入更自然
+- 修复 `frontend/src/pages/Call/Call.js`：对话历史正确传递给 Claude API（之前每次都传空数组导致 Yuki 失去上下文）
+
+### 底部导航栏
+- 修复 Home 页导航栏样式与其他页面不一致的问题
+- 修复 Home 页导航栏需要滚动才出现（改为 sticky 定位）
+
+## 待修复 / 待优化（积压问题）
+
+### Yuki Prompt 问题
+1. 不要问用户具体地址或隐私信息（如问"どこに住んでるの？"）
+2. 用户为日语道歉或出错时，要鼓励而不是推脱说"僕、先生じゃないから"
+
+### 其他待做
+- Summary 页面 UI
+- Listen 页面 UI
+- server.js 加词汇标记
+- Ren / Hana / Mio 完整 prompt（开场白改回真实日语，当前调试用 1/2/3）
 - Mio 角色 config（当前复用 yukiConfig）
-- 图片/语音功能
+- ElevenLabs TTS 升级（当前为 Web Speech API）
+- 图片发送功能
+- Yuki 动画（等立绘拆分）
 
 ## 稳定存档点（git commits）
 - `de69454` — Text message 手账风格 + SVG icon 输入栏完整重建（当前最新）
