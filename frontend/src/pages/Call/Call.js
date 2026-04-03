@@ -1,5 +1,6 @@
 import { appState } from '../../core/state.js';
 import { speakJapanese, stopSpeaking } from '../../features/tts.js';
+import { initVoiceButton } from '../../features/voiceUI.js';
 import { getDailyTopic } from '../../features/topics.js';
 import { getCharacterMemory, appendMemory } from '../../features/memory.js';
 import { yukiConfig } from '../../characters/yuki/yuki.config.js';
@@ -220,6 +221,15 @@ function initCallInput() {
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
   initCallCaptionControl();
   window.addEventListener('beforeunload', stopSpeaking);
+
+  initVoiceButton({
+    voiceBtnId: 'call-voice-btn',
+    onSend: (text, asText) => {
+      input.value = text;
+      sendMessage();
+    },
+    onCancel: () => {}
+  });
 }
 
 window.appendChatMessage = appendChatMessage;

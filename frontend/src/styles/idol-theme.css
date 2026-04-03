@@ -856,3 +856,55 @@ body { background:#040810; }
   position: relative;
   z-index: 10;
 }
+
+#voice-bubble {
+  background: #1a1a2e;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 20px 28px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 260px;
+}
+#voice-wave { display: block; }
+#voice-hint {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  min-height: 1.4em;
+  text-align: center;
+  max-width: 220px;
+  word-break: break-all;
+}
+#voice-actions {
+  display: flex;
+  gap: 14px;
+}
+#voice-cancel, #voice-send, #voice-to-text {
+  border: none;
+  border-radius: 50px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+#voice-cancel {
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.7);
+}
+#voice-send {
+  background: #0047ff;
+  color: #fff;
+  font-weight: 700;
+}
+#voice-to-text {
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.7);
+}
+#call-voice-btn.recording {
+  transform: scale(1.15);
+  transition: transform 0.1s;
+  filter: brightness(1.3);
+}
