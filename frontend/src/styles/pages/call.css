@@ -820,3 +820,43 @@ button.caption-btn {
 
 #pg-text .txt-send-btn:active  { transform: scale(0.92); }
 #pg-text .txt-send-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* ── Call character scene ── */
+.call-char-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.call-char-bg {
+  position: absolute;
+  inset: 0;
+  background: url('./frontend/public/assets/characters/yuki/yuki-bg.jpg') center/cover no-repeat;
+  filter: blur(2px) brightness(0.7);
+}
+
+.call-char-sprite {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 95%;
+  width: auto;
+  object-fit: contain;
+  object-position: bottom;
+  z-index: 2;
+}
+
+/* ── Fix: char-area needs explicit size for call-char-scene to fill ── */
+.vc-char-area {
+  position: relative;
+  width: 100%;
+  align-self: stretch;
+}
+.call-char-scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}

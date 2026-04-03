@@ -83,6 +83,7 @@
             <div class="home-polaroid">
               <div class="home-polaroid-tape"></div>
               <div class="home-polaroid-photo">
+                <!-- TODO: 可替换为立绘 <img> 元素，参考 pg-call 里的 yuki-live2d 做法 -->
                 <canvas id="home-char-canvas" width="72" height="110"></canvas>
               </div>
               <div class="home-polaroid-foot">
@@ -414,7 +415,12 @@
   <!-- Main: pixel character + wave viz + caption area -->
   <div class="vc-main">
     <div class="vc-char-area">
-      <canvas id="call-char-canvas" width="72" height="110"></canvas>
+      <div class="call-char-scene">
+        <div class="call-char-bg"></div>
+        <img src="/frontend/public/assets/characters/yuki/yuki-idle.png"
+             id="yuki-live2d"
+             class="call-char-sprite">
+      </div>
     </div>
     <div id="wave-viz" class="vc-wave-viz" aria-hidden="true">
       <div class="wbar"></div><div class="wbar"></div><div class="wbar"></div>
