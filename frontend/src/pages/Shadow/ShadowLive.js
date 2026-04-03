@@ -40,6 +40,8 @@ function initDOM() {
   demoControls     = document.getElementById('shadow-demo-controls');
   finishedModal    = document.getElementById('shadow-finished-modal');
   playMyVersionBtn = document.getElementById('shadow-playmyversion-btn');
+  // eslint-disable-next-line no-unused-vars
+  const transcriptList = document.getElementById('shadow-transcript-list');
 }
 
 // ─── UI helpers ───────────────────────────────────────────────────────────────
@@ -83,6 +85,30 @@ function setPhaseUI(cfg) {
   if (retryBtn)     retryBtn.style.display       = cfg.retry   ? '' : 'none';
   if (nextBtn)      nextBtn.style.display        = cfg.next    ? '' : 'none';
 }
+
+// ─── Transcript ──────────────────────────────────────────────────────────────
+function renderTranscript() {
+  const list = document.getElementById('shadow-transcript-list');
+  if (!list) return;
+  list.innerHTML = TIMELINE.map((line, i) => `
+    <div class="shadow-transcript-item ${line.speaker === 'chihiro' ? 'chihiro' : 'other'}"
+         id="transcript-${i}"
+         onclick="shadowJumpToLine(${i})">
+      <span class="transcript-speaker">${line.speaker === 'chihiro' ? '千寻' : '妈妈'}</span>
+      <span class="transcript-ja">${line.ja}</span>
+      <span class="transcript-en">${line.en}</span>
+    </div>
+  `).join('');
+}
+
+window.shadowJumpToLine = function(timelineIdx) {
+  const line = TIMELINE[timelineIdx];
+  if (line.speaker !== 'chihiro') return;
+  const chihiroIdx = CHIHIRO_LINES.findIndex(l => l.start === line.start);
+  if (chihiroIdx === -1) return;
+  if (userAudio) { userAudio.pause(); userAudio = null; }
+  startDemo(chihiroIdx);
+};
 
 // ─── Demo (show chihiro line, muted) ─────────────────────────────────────────
 function startDemo(idx) {
@@ -287,6 +313,16 @@ function onTimeUpdate() {
   const active = TIMELINE.find(l => t >= l.start && t < l.end) || null;
   setSubtitle(active, t);
 
+  // Transcript highlight + scroll
+  const activeIdx = TIMELINE.findIndex(l => t >= l.start && t < l.end);
+  if (activeIdx !== -1) {
+    document.querySelectorAll('.shadow-transcript-item').forEach((el, i) => {
+      el.classList.toggle('active', i === activeIdx);
+    });
+    const activeEl = document.getElementById('transcript-' + activeIdx);
+    if (activeEl) activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   // Phase triggers
   if (phase === 'demo') {
     const line = CHIHIRO_LINES[currentIdx];
@@ -382,6 +418,7 @@ function resetAndInit() {
   video.removeEventListener('timeupdate', onTimeUpdate);
   video.addEventListener('timeupdate', onTimeUpdate);
   wireButtons();
+  renderTranscript();
 
   const SRC = './frontend/public/assets/spirited-away-scene1.mp4';
   if (!video.src.includes('spirited-away-scene1.mp4')) {

@@ -1866,3 +1866,49 @@
   object-fit: cover;
   display: block;
 }
+
+/* ── Shadow Live Transcript ── */
+.shadow-transcript-item {
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 4px;
+  transition: background 0.2s;
+}
+.shadow-transcript-item.chihiro {
+  background: rgba(0,47,167,0.06);
+  border-left: 3px solid #002FA7;
+}
+.shadow-transcript-item.other {
+  background: rgba(0,0,0,0.03);
+  border-left: 3px solid #ccc;
+}
+.shadow-transcript-item.active {
+  background: rgba(0,47,167,0.15) !important;
+}
+.shadow-transcript-item.chihiro.active {
+  background: rgba(255,143,171,0.2) !important;
+  border-left: 3px solid #FF8FAB;
+}
+.transcript-speaker {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: #999;
+  display: block;
+  margin-bottom: 2px;
+}
+.transcript-ja {
+  font-size: 13px;
+  color: #0A0A0A;
+  display: block;
+  margin-bottom: 2px;
+}
+.transcript-en {
+  font-size: 11px;
+  color: #888;
+  display: block;
+}
+.shadow-transcript-item.chihiro .transcript-ja {
+  color: #002FA7;
+  font-weight: 600;
+}
