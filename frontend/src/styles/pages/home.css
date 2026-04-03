@@ -408,6 +408,28 @@
 .home-feat-listen { background: #ff8e9b; }
 
 /* ─── Bottom Nav (same style as shadow) ────────────────────────────────── */
+/* Sticky bottom with wave arch over HOME (1st item, center ~12.5%) */
+#pg-home .bottom-nav {
+  position: sticky;
+  bottom: 0;
+  background: #002fa7 !important;
+  border-top: none !important;
+  clip-path: polygon(
+    0% 100%,
+    0% 30%,
+    0% 9%, 7% 3%, 12.5% 0%, 18% 3%, 23% 9%, 27% 19%, 31% 30%,
+    100% 30%,
+    100% 100%
+  ) !important;
+  height: 72px !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: space-around !important;
+  padding: 0 8px 10px !important;
+  flex-shrink: 0 !important;
+  z-index: 10;
+}
+
 #pg-home .bottom-nav .nav-item {
   display: flex !important;
   flex-direction: column !important;
