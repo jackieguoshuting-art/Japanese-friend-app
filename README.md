@@ -75,7 +75,43 @@
 - 修复 Home 页导航栏样式与其他页面不一致的问题
 - 修复 Home 页导航栏需要滚动才出现（改为 sticky 定位）
 
-## 待修复 / 待优化（积压问题）
+## 架构重构计划（按优先级 × 风险排序）
+
+> 分三批执行，每批改完测试后再做下一批。window.* 全局挂载暂不动（HTML onclick 依赖），
+> 但 bridge.js 会把它们集中到一处，消除散落各模块的问题。
+
+### 第一批（极低风险，一次提交）
+| # | 项目 | 说明 |
+|---|------|------|
+| 1 | `_callHistory` 切页清空 | 现在就在出 bug，快速导航会带着上次历史 |
+| 2 | `characters/index.js` 统一 characterMap | 现在 Call.js / Text.js 各写一份，加新角色必须改两处 |
+| 3 | `bridge.js` 集中 window.* 挂载 | 纯移动代码，10 行内，让 HTML↔JS 接缝一目了然 |
+| 4 | `session.turnCount` 加 reset | Text/Call 共用同一计数器，新对话开始时应归零 |
+| 5 | voiceUI overlay 重复 append 防护 | 加存在性检查，防止重复初始化时叠加 DOM |
+| 6 | imageInput popup 改成独立实例 | 当前单例共享，三个以上按钮会竞态 |
+| 7 | server.js route dispatcher | 纯整理，再加 2-3 个 API 端点前做 |
+
+### 第二批（中风险，改完测所有导航栏页面）
+| # | 项目 | 说明 |
+|---|------|------|
+| 8 | 底部导航 CSS 去重（5份→1份） | 已出过不同步 bug，各页面保留自己的弧度位置差异 |
+| 9 | `initTextPage` / `initTextPageForChar` 合并 | 加 `reset` 参数区分，消除职责重叠 |
+
+### 第三批（中高风险，单独提交，改完专测 Summary）
+| # | 项目 | 说明 |
+|---|------|------|
+| 10 | `core/conversationStore.js` 统一三套历史 | **Summary 现在就是错的**：读 `_convHistory` 但 Call 存 `_callHistory`，两套互不通 |
+
+> ⚠️ 第三批注意：三套格式不同（text/content 字段名、role 值 yuki vs assistant），
+> 统一时需规范化。改完测试路径：打完电话 → 结束通话 → Summary 对话记录是否正确显示。
+
+### 暂不动的（高风险低收益）
+- `window.*` 全局挂载本身不移除——HTML `onclick="endCall()"` 等直接依赖，改了静默失效
+- 用 `bridge.js` 集中管理代替彻底清除
+
+---
+
+## 待修复 / 待优化（功能层面）
 
 ### Yuki Prompt 问题
 1. 不要问用户具体地址或隐私信息（如问"どこに住んでるの？"）
@@ -88,7 +124,6 @@
 - Ren / Hana / Mio 完整 prompt（开场白改回真实日语，当前调试用 1/2/3）
 - Mio 角色 config（当前复用 yukiConfig）
 - ElevenLabs TTS 升级（当前为 Web Speech API）
-- 图片发送功能
 - Yuki 动画（等立绘拆分）
 
 ## 稳定存档点（git commits）
