@@ -314,7 +314,7 @@ button.caption-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   padding: 16px 24px 0;
   overflow: hidden;
 }
@@ -339,13 +339,12 @@ button.caption-btn {
 /* Caption area */
 .vc-caption-area {
   width: 100%;
-  margin-bottom: 8px;
-  background: rgba(0, 0, 0, 0.32);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 18px;
-  padding: 12px 14px;
+  margin-top: auto;
+  margin-bottom: 12px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0 4px;
   box-sizing: border-box;
   overflow-y: auto;
   max-height: 160px;
@@ -355,45 +354,64 @@ button.caption-btn {
 .vc-caption-area::-webkit-scrollbar { display: none; }
 .vc-caption-area[data-caption="off"] { display: none; }
 
-/* chat-msg items inside caption area */
+/* chat-msg items inside caption area — same scrapbook style as pg-text */
 .vc-caption-area .chat-msg {
   display: flex;
+  align-items: flex-end;
   gap: 8px;
   margin-bottom: 8px;
-  background: transparent;
-  border: none;
-  box-shadow: none;
+  max-width: 85%;
 }
 .vc-caption-area .chat-msg:last-child { margin-bottom: 0; }
-.vc-caption-area .chat-bubble {
-  font-size: 13px;
-  line-height: 1.5;
-  font-family: 'Noto Sans JP', 'Be Vietnam Pro', sans-serif;
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 0;
-}
+.vc-caption-area .chat-msg-yuki { align-self: flex-start; }
+.vc-caption-area .chat-msg-user { align-self: flex-end; flex-direction: row-reverse; margin-left: auto; }
 .vc-caption-area .chat-dot { display: none; }
-.vc-caption-area .chat-ja {
+
+.vc-caption-area .chat-bubble {
+  padding: 10px 14px;
+  font-size: 14px;
+  line-height: 1.55;
+  font-family: 'Noto Sans JP', 'Be Vietnam Pro', sans-serif;
+  position: relative;
+}
+.vc-caption-area .chat-msg-yuki .chat-bubble {
+  background: #fff;
+  color: #1a1c1c;
+  border: 1.5px solid #002FA7;
+  border-radius: 16px 16px 16px 0;
+  box-shadow: 2px 2px 0 rgba(0,47,167,0.12);
+}
+.vc-caption-area .chat-msg-user .chat-bubble {
+  background: #002FA7;
   color: #fff;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
 }
+
+.vc-caption-area .chat-ja { color: inherit; text-shadow: none; }
 .vc-caption-area .chat-en {
-  color: rgba(255, 255, 255, 0.65);
   font-size: 11px;
+  color: rgba(0, 0, 0, 0.45);
   font-style: italic;
-  margin-top: 2px;
+  margin-top: 3px;
+  line-height: 1.4;
+  text-shadow: none;
 }
+.vc-caption-area .chat-msg-user .chat-en { color: rgba(255,255,255,0.6); }
+
 /* Hide English in ja-only mode */
 .vc-caption-area[data-caption="ja"] .chat-en { display: none; }
 
 /* Vocab words in caption area */
 .vc-caption-area .vocab-word {
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.6);
+  border-bottom: 1px dashed rgba(0, 47, 167, 0.5);
   cursor: pointer;
-  color: inherit;
 }
-.vc-caption-area .vocab-word:active { background: rgba(255, 255, 255, 0.15); }
+.vc-caption-area .chat-msg-user .vocab-word {
+  border-bottom-color: rgba(255, 255, 255, 0.5);
+}
+.vc-caption-area .vocab-word:active { background: rgba(0, 47, 167, 0.1); }
 
 /* ── Controls overlay ── */
 .vc-controls {
