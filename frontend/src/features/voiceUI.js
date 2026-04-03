@@ -85,6 +85,15 @@ export function initVoiceButton({ voiceBtnId, onSend, onCancel }) {
     onResult: () => {}
   });
 
+  // 浏览器有时会因超时策略自动停止 continuous 模式，检测到时重启
+  if (recognition) {
+    recognition.onend = () => {
+      if (recording) {
+        try { recognition.start(); } catch {}
+      }
+    };
+  }
+
   // ── 开始 / 停止 ──────────────────────────────────────────
   let recording = false;
 
