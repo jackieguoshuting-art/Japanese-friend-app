@@ -1,4 +1,5 @@
 import { appState } from '../../core/state.js';
+import { speakJapanese, stopSpeaking } from '../../features/tts.js';
 import { getDailyTopic } from '../../features/topics.js';
 import { getCharacterMemory, appendMemory } from '../../features/memory.js';
 import { yukiConfig } from '../../characters/yuki/yuki.config.js';
@@ -127,6 +128,7 @@ async function triggerOpeningMessage() {
     localStorage.setItem(YUKI_OPENING_HISTORY_KEY, JSON.stringify(recentUpdated));
     const randomOpening = yukiOpenings[chosen];
     appendChatMessage('yuki', randomOpening.ja, randomOpening.en);
+    speakJapanese(randomOpening.ja);
     window._convHistory?.push({ role: 'yuki', text: randomOpening.ja });
     return;
   }
@@ -140,6 +142,7 @@ async function triggerOpeningMessage() {
   if (fixedOpenings[characterId]) {
     const o = fixedOpenings[characterId];
     appendChatMessage('yuki', o.ja, o.en);
+    speakJapanese(o.ja);
     window._convHistory?.push({ role: 'yuki', text: o.ja });
     return;
   }
@@ -156,10 +159,12 @@ async function triggerOpeningMessage() {
     document.getElementById('chat-loading')?.remove();
     const replyJa = reply.replyJa || 'よ';
     appendChatMessage('yuki', replyJa, reply.replyEn || '');
+    speakJapanese(replyJa);
     window._convHistory?.push({ role: 'yuki', text: replyJa });
   } catch {
     document.getElementById('chat-loading')?.remove();
     appendChatMessage('yuki', 'よ', 'Hey');
+    speakJapanese('よ');
     window._convHistory?.push({ role: 'yuki', text: 'よ' });
   }
 }
@@ -193,6 +198,7 @@ function initCallInput() {
       document.getElementById('chat-loading')?.remove();
       const replyJa = reply.replyJa || '……';
       appendChatMessage('yuki', replyJa, reply.replyEn || '');
+      speakJapanese(replyJa);
       window._convHistory?.push({ role: 'yuki', text: replyJa });
       if (reply.memoryCandidate) {
         appendMemory(characterId, { factJa: reply.memoryCandidate, source: 'conversation' });
@@ -202,6 +208,7 @@ function initCallInput() {
       document.getElementById('chat-loading')?.remove();
       const fallback = getRandomFallbackReply();
       appendChatMessage('yuki', fallback.replyJa, fallback.replyEn);
+      speakJapanese(fallback.replyJa);
       window._convHistory?.push({ role: 'yuki', text: fallback.replyJa });
     } finally {
       btn.disabled = false;
@@ -212,6 +219,7 @@ function initCallInput() {
   btn.addEventListener('click', sendMessage);
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
   initCallCaptionControl();
+  window.addEventListener('beforeunload', stopSpeaking);
 }
 
 window.appendChatMessage = appendChatMessage;
