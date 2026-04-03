@@ -321,10 +321,8 @@
   font-family: 'Space Grotesk', sans-serif;
 }
 
-/* TALK — active highlight */
-#pg-friends .bottom-nav .fr-nav-talk {
-  margin-bottom: 4px;
-}
+/* Talk item — active ring highlight */
+#pg-friends .bottom-nav .fr-nav-talk { margin-bottom: 4px; }
 .fr-nav-ring {
   width: 40px;
   height: 40px;
@@ -335,9 +333,7 @@
   justify-content: center;
   box-shadow: 0 0 0 1.5px rgba(255,255,255,0.45);
 }
-#pg-friends .bottom-nav .fr-nav-talk .nav-icon-img {
-  opacity: 1;
-}
+#pg-friends .bottom-nav .fr-nav-talk .nav-icon-img { opacity: 1; }
 #pg-friends .bottom-nav .fr-nav-talk .nav-lbl {
   color: #fff !important;
   font-family: 'ABeeZee', sans-serif;

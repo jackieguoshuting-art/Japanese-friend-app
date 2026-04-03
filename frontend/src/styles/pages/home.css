@@ -407,55 +407,52 @@
 
 .home-feat-listen { background: #ff8e9b; }
 
-/* ─── Bottom Nav ────────────────────────────────── */
-.home-nav {
-  position: sticky;
-  bottom: 0;
-  width: 100%;
-  height: 112px;
-  background: #002FA7;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  padding: 0 32px 24px;
-  box-sizing: border-box;
-  -webkit-mask-image: url('https://www.figma.com/api/mcp/asset/5426e8f1-2c38-4eaa-8385-bf062a38fb6a');
-  mask-image: url('https://www.figma.com/api/mcp/asset/5426e8f1-2c38-4eaa-8385-bf062a38fb6a');
-  -webkit-mask-size: 100% 112px;
-  mask-size: 100% 112px;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: 0 0;
-  mask-position: 0 0;
-}
-
-.home-nav .nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
+/* ─── Bottom Nav (same style as shadow) ────────────────────────────────── */
+#pg-home .bottom-nav .nav-item {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 3px !important;
+  opacity: 1 !important;
   cursor: pointer;
 }
-
-.home-nav .nav-icon-img {
+#pg-home .bottom-nav .nav-icon {
+  background: none !important;
+  box-shadow: none !important;
+  font-size: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+}
+#pg-home .bottom-nav .nav-icon-img {
   display: block;
   opacity: 0.6;
   filter: brightness(0) invert(1);
 }
-
-.home-nav .nav-item.active .nav-icon-img {
-  opacity: 1;
-  filter: brightness(0) invert(1);
-}
-
-.home-nav .nav-lbl {
-  font-size: 10px;
-  letter-spacing: -0.5px;
+#pg-home .bottom-nav .nav-lbl {
+  color: rgba(255,255,255,0.6) !important;
+  font-size: 9px !important;
+  letter-spacing: 0.7px;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.6);
+  font-family: 'Space Grotesk', sans-serif;
 }
 
-.home-nav .nav-item.active .nav-lbl {
+/* Home item — active ring highlight */
+#pg-home .bottom-nav .hm-nav-home { margin-bottom: 4px; }
+.hm-nav-ring {
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.14);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 1.5px rgba(255,255,255,0.45);
+}
+#pg-home .bottom-nav .hm-nav-home .nav-icon-img { opacity: 1; }
+#pg-home .bottom-nav .hm-nav-home .nav-lbl {
+  color: #fff !important;
   font-family: 'ABeeZee', sans-serif;
-  color: #fff;
+  font-weight: 700;
 }
