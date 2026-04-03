@@ -106,8 +106,49 @@ window.shadowJumpToLine = function(timelineIdx) {
   if (line.speaker !== 'chihiro') return;
   const chihiroIdx = CHIHIRO_LINES.findIndex(l => l.start === line.start);
   if (chihiroIdx === -1) return;
-  if (userAudio) { userAudio.pause(); userAudio = null; }
-  startDemo(chihiroIdx);
+
+  if (recordings[chihiroIdx]) {
+    const modal = document.getElementById('shadow-jump-modal');
+    const replayJumpBtn = document.getElementById('shadow-jump-replay-btn');
+    const rerecordJumpBtn = document.getElementById('shadow-jump-rerecord-btn');
+    const cancelJumpBtn = document.getElementById('shadow-jump-cancel-btn');
+
+    if (modal) {
+      modal.style.display = 'flex';
+
+      replayJumpBtn.onclick = () => {
+        modal.style.display = 'none';
+        const blob = recordings[chihiroIdx];
+        const url = URL.createObjectURL(blob);
+        userAudio = new Audio(url);
+        video.currentTime = line.start;
+        video.muted = true;
+        video.play();
+        userAudio.onended = () => {
+          URL.revokeObjectURL(url);
+          userAudio = null;
+          video.pause();
+          video.muted = false;
+          video.currentTime = line.start;
+        };
+        userAudio.play();
+      };
+
+      rerecordJumpBtn.onclick = () => {
+        modal.style.display = 'none';
+        delete recordings[chihiroIdx];
+        if (userAudio) { userAudio.pause(); userAudio = null; }
+        startDemo(chihiroIdx);
+      };
+
+      cancelJumpBtn.onclick = () => {
+        modal.style.display = 'none';
+      };
+    }
+  } else {
+    if (userAudio) { userAudio.pause(); userAudio = null; }
+    startDemo(chihiroIdx);
+  }
 };
 
 // ─── Demo (show chihiro line, muted) ─────────────────────────────────────────
@@ -320,7 +361,7 @@ function onTimeUpdate() {
       el.classList.toggle('active', i === activeIdx);
     });
     const activeEl = document.getElementById('transcript-' + activeIdx);
-    if (activeEl) activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (activeEl) activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   // Phase triggers

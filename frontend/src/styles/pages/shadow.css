@@ -1912,3 +1912,37 @@
   color: #002FA7;
   font-weight: 600;
 }
+
+/* ── Shadow Live Transcript scroll + active zoom ── */
+#shadow-transcript-list {
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  padding: 80px 12px;
+}
+.shadow-transcript-item {
+  transition: all 0.3s ease;
+  opacity: 0.45;
+  transform: scale(0.92);
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+.shadow-transcript-item.active {
+  opacity: 1 !important;
+  transform: scale(1.05) !important;
+  background: rgba(0,47,167,0.12) !important;
+}
+.shadow-transcript-item.chihiro.active {
+  background: rgba(255,143,171,0.25) !important;
+  border-left: 3px solid #FF8FAB !important;
+}
+.shadow-transcript-item.active .transcript-ja {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: #002FA7 !important;
+}
+.shadow-transcript-item.active .transcript-en {
+  font-size: 12px !important;
+  color: #555 !important;
+}
