@@ -237,35 +237,7 @@
 }
 
 /* ── Bottom Nav (same style as shadow) ─────────────────────────────── */
-#pg-listen .bottom-nav .nav-item {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  gap: 3px !important;
-  opacity: 1 !important;
-  cursor: pointer;
-}
-#pg-listen .bottom-nav .nav-icon {
-  background: none !important;
-  box-shadow: none !important;
-  font-size: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 20px;
-}
-#pg-listen .bottom-nav .nav-icon-img {
-  display: block;
-  opacity: 0.6;
-  filter: brightness(0) invert(1);
-}
-#pg-listen .bottom-nav .nav-lbl {
-  color: rgba(255,255,255,0.6) !important;
-  font-size: 9px !important;
-  letter-spacing: 0.7px;
-  text-transform: uppercase;
-  font-family: 'Space Grotesk', sans-serif;
-}
+
 
 /* Listen item — active ring highlight */
 #pg-listen .bottom-nav .ls-nav-listen { margin-bottom: 4px; }

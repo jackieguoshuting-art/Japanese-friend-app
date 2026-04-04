@@ -3,6 +3,7 @@ import { getCharacterMemory } from './memory.js';
 import { yukiConfig } from '../characters/yuki/yuki.config.js';
 import { renConfig } from '../characters/ren/ren.config.js';
 import { hanaConfig } from '../characters/hana/hana.config.js';
+import { resetCallHistory } from '../core/conversationStore.js';
 
 const characterMap = {
   yuki: yukiConfig,
@@ -21,7 +22,7 @@ let charIndex = 0;
 
 function setActiveCharacter(characterId) {
   appState.activeCharacter = characterId;
-  if (window._convHistory) window._convHistory.length = 0;
+  resetCallHistory();
   const character = characterMap[characterId] || yukiConfig;
   const displayName = { yuki: 'Yuki', ren: 'Ren', hana: 'Hana', mio: 'Mio' }[characterId] || character.name;
   const memory = getCharacterMemory(characterId);
@@ -44,10 +45,16 @@ function setActiveCharacter(characterId) {
   if (summaryAva) summaryAva.textContent = emoji;
   const memAva = document.querySelector('.mem-ava');
   if (memAva) memAva.textContent = emoji;
+  const isPrimarilyJapanese = (s) => {
+    if (!s) return false;
+    const jp = (s.match(/[\u3040-\u30ff\u4e00-\u9fff]/g) || []).length;
+    return jp >= 4 && jp / s.length > 0.3;
+  };
+  const validMemory = memory.find(m => isPrimarilyJapanese(m.factJa));
   const memText = document.querySelector('.memory-card .mem-text');
-  if (memText) memText.textContent = memory[0]?.factJa || '「アメリカに住んでるって言ってたね」';
+  if (memText) memText.textContent = validMemory ? `「${validMemory.factJa}」` : '「まだ何も覚えていないよ」';
   const memEn = document.querySelector('.memory-card .mem-en');
-  if (memEn) memEn.textContent = memory[0]?.factEn || `"You mentioned you live in America" — saved to ${character.name}'s memory ✦`;
+  if (memEn) memEn.textContent = validMemory ? `Saved to ${character.name}'s memory ✦` : 'No memories yet.';
   window.initWordTooltips?.();
 }
 

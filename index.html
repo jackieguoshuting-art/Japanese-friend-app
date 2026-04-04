@@ -185,7 +185,8 @@
         </div>
         <div class="nav-lbl">Home</div>
       </div>
-      <div class="nav-item" onclick="go('friends')">
+      <div class="nav-item" onclick="go('friends')" style="position:relative;">
+        <span class="talk-badge" style="display:none;position:absolute;top:4px;right:4px;width:8px;height:8px;background:#ff3b30;border-radius:50%;"></span>
         <div class="nav-icon"><img class="nav-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M3 3h14v11h-6l-4 4v-4H3z' fill='black'/%3E%3C/svg%3E" width="20" height="20" alt=""></div>
         <div class="nav-lbl">Talk</div>
       </div>
@@ -591,7 +592,8 @@
         <div class="nav-icon"><img class="nav-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='18' viewBox='0 0 16 18'%3E%3Cpath d='M8 1L1 8v9h5v-5h4v5h5V8z' fill='black'/%3E%3C/svg%3E" width="16" height="18" alt=""></div>
         <div class="nav-lbl">Home</div>
       </div>
-      <div class="nav-item sum-nav-talk" onclick="go('friends')">
+      <div class="nav-item sum-nav-talk" onclick="go('friends')" style="position:relative;">
+        <span class="talk-badge" style="display:none;position:absolute;top:4px;right:4px;width:8px;height:8px;background:#ff3b30;border-radius:50%;"></span>
         <div class="sum-nav-ring">
           <div class="nav-icon"><img class="nav-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M3 3h14v11h-6l-4 4v-4H3z' fill='black'/%3E%3C/svg%3E" width="20" height="20" alt=""></div>
         </div>
@@ -678,7 +680,8 @@
         <div class="nav-icon"><img class="nav-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='18' viewBox='0 0 16 18'%3E%3Cpath d='M8 1L1 8v9h5v-5h4v5h5V8z' fill='black'/%3E%3C/svg%3E" width="16" height="18" alt=""></div>
         <div class="nav-lbl">Home</div>
       </div>
-      <div class="nav-item" onclick="go('friends')">
+      <div class="nav-item" onclick="go('friends')" style="position:relative;">
+        <span class="talk-badge" style="display:none;position:absolute;top:4px;right:4px;width:8px;height:8px;background:#ff3b30;border-radius:50%;"></span>
         <div class="nav-icon"><img class="nav-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M3 3h14v11h-6l-4 4v-4H3z' fill='black'/%3E%3C/svg%3E" width="20" height="20" alt=""></div>
         <div class="nav-lbl">Talk</div>
       </div>
@@ -1169,7 +1172,8 @@
       <div class="nav-icon"><img class="nav-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='18' viewBox='0 0 16 18'%3E%3Cpath d='M8 1L1 8v9h5v-5h4v5h5V8z' fill='black'/%3E%3C/svg%3E" width="16" height="18" alt=""></div>
       <div class="nav-lbl">Home</div>
     </div>
-    <div class="nav-item" onclick="go('friends')">
+    <div class="nav-item" onclick="go('friends')" style="position:relative;">
+      <span class="talk-badge" style="display:none;position:absolute;top:4px;right:4px;width:8px;height:8px;background:#ff3b30;border-radius:50%;"></span>
       <div class="nav-icon"><img class="nav-icon-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M3 3h14v11h-6l-4 4v-4H3z' fill='black'/%3E%3C/svg%3E" width="20" height="20" alt=""></div>
       <div class="nav-lbl">Talk</div>
     </div>
@@ -1206,6 +1210,9 @@
       </div>
     </header>
   </div>
+
+  <!-- Topic suggestion pills (populated by JS) -->
+  <div id="txt-topic-bar"></div>
 
   <!-- Notebook Chat Stream (populated by JS) -->
   <div class="text-chat-area" id="text-chat-list"></div>

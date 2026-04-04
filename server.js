@@ -132,11 +132,13 @@ async function handleVoiceFormat(req, res) {
 
 async function handleChat(req, res) {
   try {
-    const { prompt, messages, systemPrompt } = JSON.parse(await readBody(req));
+    const { prompt, messages, systemPrompt, isProactive } = JSON.parse(await readBody(req));
     const result = await callAnthropic({
       model:      'claude-sonnet-4-20250514',
       max_tokens: 512,
-      system:     (systemPrompt || 'You are a friendly Japanese AI friend.') + "\n\nYou MUST reply in this exact JSON format with no extra text outside the JSON:\n{\"replyJa\": \"日本語の返事\", \"replyEn\": \"English translation\", \"memoryCandidate\": \"\"}\nDo not add markdown, code blocks, or any text before or after the JSON.\n" +
+      system:     (systemPrompt || 'You are a friendly Japanese AI friend.') +
+        (isProactive ? '\n\n今から友達に自分から一言送る。挨拶じゃなく、自分の生活の一コマを自然にシェアする感じで。50文字以内。30%の確率で [image: 画像の説明] を含めること。' : '') +
+        "\n\nYou MUST reply in this exact JSON format with no extra text outside the JSON:\n{\"replyJa\": \"日本語の返事\", \"replyEn\": \"English translation\", \"memoryCandidate\": \"ユーザーが明かした具体的な個人情報（趣味・仕事・住んでいる場所・好き嫌いなど）を短い日本語で。新情報がなければ空文字\"}\nDo not add markdown, code blocks, or any text before or after the JSON.\n" +
         "VOCAB_MARKUP in replyJa (required, dense): wrap almost EVERY noun and EVERY lexical verb in [[surface as written|ひらがな reading|concise English gloss]]. Also wrap meaningful い-adjectives and な-adjectives used as predicates. No spaces inside [[ ]]. Inside JSON strings escape any double-quote as \\\". " +
         "Skip marking ONLY: particles (は を に が の と も や か ね よ さ へ で から まで より って), interjections with no lexical content, and bare です／ます／だ when they add no new lemma. " +
         "Mark inflected verbs (た てる ない られる etc.) as one span covering the whole spoken form when one lemma. Merge compound nouns as one span when natural. " +
@@ -155,7 +157,17 @@ async function handleChat(req, res) {
     const cleanText = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
     let parsed;
     try { parsed = JSON.parse(cleanText); }
-    catch { parsed = { replyJa: cleanText, replyEn: '', memoryCandidate: '' }; }
+    catch {
+      // Claude sometimes prepends text before the JSON block (common with image inputs).
+      // Try to extract the first {...} object from the raw text.
+      const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        try { parsed = JSON.parse(jsonMatch[0]); }
+        catch { parsed = { replyJa: cleanText, replyEn: '', memoryCandidate: '' }; }
+      } else {
+        parsed = { replyJa: cleanText, replyEn: '', memoryCandidate: '' };
+      }
+    }
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(parsed));
@@ -165,10 +177,60 @@ async function handleChat(req, res) {
   }
 }
 
+async function handleTTS(req, res) {
+  try {
+    const { text } = JSON.parse(await readBody(req));
+    const voiceId  = env.YUKI_VOICE_ID;
+    const elevenKey = env.ELEVENLABS_API_KEY;
+    if (!voiceId || !elevenKey) {
+      res.writeHead(503, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'TTS not configured' }));
+      return;
+    }
+    const body = JSON.stringify({
+      text,
+      model_id: 'eleven_v3',
+      voice_settings: { stability: 0.5, similarity_boost: 0.75, style: 0.2, speed: 0.9 },
+    });
+    const { status: elevenStatus, chunks } = await new Promise((resolve, reject) => {
+      const r2 = https.request({
+        hostname: 'api.elevenlabs.io',
+        path:     `/v1/text-to-speech/${voiceId}`,
+        method:   'POST',
+        headers: {
+          'xi-api-key':     elevenKey,
+          'Content-Type':   'application/json',
+          'Content-Length': Buffer.byteLength(body),
+        },
+      }, (r) => {
+        const bufs = [];
+        r.on('data', c => bufs.push(c));
+        r.on('end', () => resolve({ status: r.statusCode, chunks: bufs }));
+      });
+      r2.on('error', reject);
+      r2.write(body);
+      r2.end();
+    });
+    const buf = Buffer.concat(chunks);
+    if (elevenStatus !== 200) {
+      console.error('[TTS] ElevenLabs error', elevenStatus, buf.toString('utf8'));
+      res.writeHead(502, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'ElevenLabs API error', status: elevenStatus, detail: buf.toString('utf8') }));
+      return;
+    }
+    res.writeHead(200, { 'Content-Type': 'audio/mpeg', 'Content-Length': buf.length });
+    res.end(buf);
+  } catch (e) {
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: e.message }));
+  }
+}
+
 // ── Route dispatcher ──
 const routes = {
-  'POST /api/voice-format': handleVoiceFormat,
-  'POST /api/chat':         handleChat,
+  'POST /api/voice-format': handleVoiceFormat, // STT 文本润色 → { formatted }
+  'POST /api/chat':         handleChat,         // 主聊天接口 → { replyJa, replyEn, memoryCandidate }
+  'POST /api/tts':          handleTTS,          // ElevenLabs TTS → audio/mpeg
 };
 
 // ── Server ──

@@ -1,5 +1,6 @@
 import { go } from './core/router.js';
 import { appState } from './core/state.js';
+import { getCallHistory } from './core/conversationStore.js';
 import { getDailyTopic } from './features/topics.js';
 import { appendMemory, getCharacterMemory } from './features/memory.js';
 import { yukiConfig } from './characters/yuki/yuki.config.js';
@@ -8,6 +9,9 @@ import { hanaConfig } from './characters/hana/hana.config.js';
 import { getClaudeReply } from './services/claude.service.js';
 import { getRandomFallbackReply } from './features/chat.js';
 import { save, load } from './core/storage.js';
+import { shouldSendProactive, markProactiveSent, generateProactiveMessage } from './features/proactiveMessage.js';
+import { showInAppNotification } from './features/inAppNotification.js';
+import { showTalkBadge } from './features/badge.js';
 
 const characterMap = {
   yuki: yukiConfig,
@@ -16,9 +20,7 @@ const characterMap = {
   mio:  yukiConfig,
 };
 
-// Tracks messages for the current call session
-const conversationHistory = [];
-window._convHistory = conversationHistory;
+// Call conversation history is now managed by core/conversationStore.js
 
 // moved to frontend/src/features/ui.js: spawnStars
 
@@ -54,12 +56,13 @@ function renderConversationSummary() {
   recap.hidden = false;
   const content = document.getElementById('conv-recap-content');
   if (content) {
+    const stripVocabMarkup = (t) => t.replace(/\[\[([^|[\]]+)\|[^\]]+\]\]/g, '$1');
     content.innerHTML = `
       <div class="conv-recap-inner">
         ${history.map((m) => `
           <div class="conv-msg ${m.role === 'user' ? 'conv-msg-user' : 'conv-msg-yuki'}">
             <div class="conv-speaker">${m.role === 'user' ? 'あなた' : charName}</div>
-            <div class="conv-text">${m.text}</div>
+            <div class="conv-text">${m.role === 'user' ? (window.escapeHtml?.(m.text) ?? m.text) : stripVocabMarkup(m.text)}</div>
           </div>
         `).join('')}
       </div>
@@ -80,8 +83,13 @@ function renderMemoryCard() {
   const charName    = (characterMap[characterId] || yukiConfig).name;
   if (memTitle) memTitle.textContent = `${charName} の記憶 · ${charName} will remember this`;
 
+  const isPrimarilyJapanese = (s) => {
+    if (!s) return false;
+    const jp = (s.match(/[\u3040-\u30ff\u4e00-\u9fff]/g) || []).length;
+    return jp >= 4 && jp / s.length > 0.3;
+  };
   const yukiMemory = load('yukiMemory', null);
-  if (yukiMemory) {
+  if (yukiMemory && isPrimarilyJapanese(yukiMemory)) {
     memText.textContent = `「${yukiMemory}」`;
     if (memEn) memEn.textContent = `Saved to ${charName}'s memory ✦`;
   } else {
@@ -100,7 +108,8 @@ function initBottomNav() {
 }
 
 window.endCall = function () {
-  try { save('lastConversation', conversationHistory); } catch (e) { console.warn('endCall save:', e); }
+  try { window.stopSpeaking?.(); } catch (e) { /* ignore */ }
+  try { save('lastConversation', getCallHistory()); } catch (e) { console.warn('endCall save:', e); }
   try { renderConversationSummary(); } catch (e) { console.warn('endCall renderSummary:', e); }
   try { renderMemoryCard(); } catch (e) { console.warn('endCall renderMemory:', e); }
   go('summary');
@@ -126,9 +135,10 @@ function init() {
   window.initWordTooltips?.();
 
   document.querySelector('.btn-return')?.addEventListener('click', () => go('friends'));
-  document.querySelector('.btn-end-top')?.addEventListener('click', () => go('friends'));
+  document.querySelector('.btn-end-top')?.addEventListener('click', () => { window.stopSpeaking?.(); go('friends'); });
   document.querySelector('.ctrl .end-call')?.parentElement?.addEventListener('click', () => {
-    save('lastConversation', conversationHistory);
+    window.stopSpeaking?.();
+    save('lastConversation', getCallHistory());
     renderConversationSummary();
     renderMemoryCard();
     go('summary');
@@ -150,9 +160,41 @@ init();
 
 window.YUKI_SYSTEM_PROMPT = yukiConfig.systemPrompt;
 
-// moved to frontend/src/pages/Text/Text.js: initTextPage
-window.initTextPage?.();
-
-// moved to frontend/src/pages/Text/Text.js: initTextPageForChar
+// moved to frontend/src/pages/Text/Text.js: initTextPage + initTextPageForChar
+// (initTextPage is called internally by initTextPageForChar — no standalone call needed)
 
 // moved to frontend/src/features/vocab.js
+
+// ── Proactive message check on page switch ──
+let _proactiveTimer = null;
+const _origGo = window.go;
+window.go = function(pageName) {
+  _origGo(pageName);
+  if (pageName !== 'text') {
+    clearTimeout(_proactiveTimer);
+    _proactiveTimer = setTimeout(async () => {
+      const characterId = appState.activeCharacter || 'yuki';
+      if (!shouldSendProactive(characterId)) return;
+      const character = characterMap[characterId] || yukiConfig;
+      const memory = getCharacterMemory(characterId);
+      try {
+        markProactiveSent(characterId);
+        const data = await generateProactiveMessage(character, memory);
+        const replyJa = data.replyJa || data.text || '';
+        if (!replyJa) return;
+        showTalkBadge();
+        showInAppNotification({
+          characterName: character.name || characterId,
+          message: replyJa,
+          onClick: () => {
+            _origGo('friends');
+            setTimeout(() => {
+              _origGo('text');
+              window.initTextPageForChar?.();
+            }, 300);
+          },
+        });
+      } catch { /* ignore */ }
+    }, 3000);
+  }
+};

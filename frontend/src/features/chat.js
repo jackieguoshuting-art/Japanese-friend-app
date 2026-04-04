@@ -73,7 +73,7 @@ Return JSON with:
 {
   "replyJa": "...",
   "replyEn": "...",
-  "memoryCandidate": "..."
+  "memoryCandidate": "ユーザーが明かした具体的な個人情報（趣味・仕事・住んでいる場所・好き嫌いなど）を短い日本語で。新情報がなければ空文字"
 }
 In replyJa, mark vocabulary DENSELY for the app UI: wrap almost EVERY noun and EVERY lexical verb (and meaningful い/な adjective predicates) as [[surface|ひらがな|English gloss]] — no spaces inside brackets.
 Skip ONLY particles (は を に が の と も や か ね よ さ へ で から まで より って), empty fillers, and bare です／ます／だ with no new lemma. Mark whole inflected verb forms as one span when one lemma. Compound nouns = one span. Aim for ~80%+ of nouns/verbs marked, not just one or two.

@@ -1,20 +1,87 @@
 import { appState } from '../../core/state.js';
-import { getDailyTopic } from '../../features/topics.js';
-import { getCharacterMemory } from '../../features/memory.js';
-import { getClaudeReply } from '../../services/claude.service.js';
+import { getCharacterMemory, appendMemory } from '../../features/memory.js';
+import { save } from '../../core/storage.js';
 import { yukiConfig } from '../../characters/yuki/yuki.config.js';
 import { initImageButton } from '../../features/imageInput.js';
 import { resetSession } from '../../features/chat.js';
 import { characterMap } from '../../characters/index.js';
+import {
+  getTextHistory,
+  appendTextHistory,
+} from '../../features/textHistory.js';
+import {
+  shouldSendProactive,
+  markProactiveSent,
+  generateProactiveMessage,
+} from '../../features/proactiveMessage.js';
+import { hideTalkBadge } from '../../features/badge.js';
 
-let textHistory = [];
+const TOPICS = [
+  'そういえば、最近どんな音楽聴いてる？',
+  '今日なんか良いことあった？',
+  '最近ハマってるものある？',
+  'ねえ、休みの日って何してる？',
+  '最近見た映画とかドラマある？',
+  '今日のご飯なに食べた？',
+  'そういえば、猫派？犬派？',
+  '最近ちょっと疲れてない？',
+  '行ってみたい場所ってある？',
+  'もし明日休みだったら何する？',
+  '最近読んだ本とかある？',
+  'お気に入りのカフェとかある？',
+  '最近なんかハッピーなことあった？',
+  '冬と夏、どっちが好き？',
+  'そういえば、趣味ってなんだっけ？',
+];
+
 let _pendingImage = null; // { base64, mediaType, dataUrl }
+
+function pickTopics(count = 2) {
+  const shuffled = [...TOPICS].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
+
+function renderTopicBar(sendFn) {
+  const bar = document.getElementById('txt-topic-bar');
+  if (!bar) return;
+  let current = pickTopics(2);
+
+  function renderPills() {
+    bar.innerHTML = '';
+    current.forEach(t => {
+      const btn = document.createElement('button');
+      btn.className = 'txt-topic-pill';
+      btn.textContent = t;
+      btn.addEventListener('click', () => {
+        const input = document.getElementById('text-input');
+        if (input) input.value = t;
+        sendFn();
+      });
+      bar.appendChild(btn);
+    });
+    const refresh = document.createElement('button');
+    refresh.className = 'txt-topic-refresh';
+    refresh.textContent = '↻';
+    refresh.title = '別のトピック';
+    refresh.addEventListener('click', () => {
+      current = pickTopics(2);
+      renderPills();
+    });
+    bar.appendChild(refresh);
+  }
+
+  renderPills();
+}
 
 function initTextPage() {
   const list = document.getElementById('text-chat-list');
   const input = document.getElementById('text-input');
   const btn = document.getElementById('text-send-btn');
   if (!list || !input || !btn) return;
+
+  const characterId = appState.activeCharacter || 'yuki';
+  const character = characterMap[characterId] || yukiConfig;
+  const initials = { yuki: '悠', ren: '蓮', hana: '花', mio: '緒' }[characterId] || '悠';
 
   // ── Image preview area ──────────────────────────────
   function showImagePreview(dataUrl) {
@@ -34,8 +101,7 @@ function initTextPage() {
   }
 
   function addImageMsg(dataUrl, caption) {
-    const now = new Date();
-    const ts = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+    const ts = fmtTime(new Date());
     const row = document.createElement('div');
     row.className = 'text-msg-row user';
     const safe = caption ? `<div style="margin-top:4px;font-size:12px;opacity:0.85;">${window.escapeHtml?.(caption) ?? caption}</div>` : '';
@@ -58,14 +124,16 @@ function initTextPage() {
     }
   });
 
-  function addMsg(role, text, furigana) {
-    const now = new Date();
-    const ts = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  function fmtTime(date) {
+    return date.getHours().toString().padStart(2,'0') + ':' + date.getMinutes().toString().padStart(2,'0');
+  }
+
+  function addMsg(role, text, furigana, timestamp) {
+    const ts = timestamp ? fmtTime(new Date(timestamp)) : fmtTime(new Date());
     const row = document.createElement('div');
     row.className = 'text-msg-row ' + role;
     if (role === 'yuki') {
-      const initials = { yuki: '悠', ren: '蓮', hana: '花', mio: '緒' }[appState.activeCharacter] || '悠';
-      const msgId = 'msg-' + Date.now();
+      const msgId = 'msg-' + Date.now() + '-' + Math.random().toString(36).slice(2);
       row.innerHTML = `
         <div class="text-mini-avatar">${initials}</div>
         <div>
@@ -91,7 +159,7 @@ function initTextPage() {
   function addTyping() {
     const row = document.createElement('div');
     row.className = 'text-msg-row yuki'; row.id = 'text-typing';
-    row.innerHTML = '<div class="text-mini-avatar">悠</div><div class="text-bubble yuki text-typing"><div class="text-dot"></div><div class="text-dot"></div><div class="text-dot"></div></div>';
+    row.innerHTML = `<div class="text-mini-avatar">${initials}</div><div class="text-bubble yuki text-typing"><div class="text-dot"></div><div class="text-dot"></div><div class="text-dot"></div></div>`;
     list.appendChild(row); list.scrollTop = list.scrollHeight;
   }
 
@@ -99,13 +167,27 @@ function initTextPage() {
     const el = document.getElementById('text-typing'); if (el) el.remove();
   }
 
+  function buildSystemPrompt() {
+    const base = character.systemPrompt || window.YUKI_SYSTEM_PROMPT || '';
+    const memory = getCharacterMemory(characterId);
+    if (!memory.length) return base;
+    const memBlock = memory.map(m => `- ${m.factJa || m.fact || m}`).join('\n');
+    return base + '\n\nユーザーについて覚えていること（会話で自然に活かすこと）:\n' + memBlock;
+  }
+
+  function saveMemoryCandidate(data) {
+    const candidate = data.memoryCandidate;
+    const isPrimarilyJapanese = (s) => { const jp = (s.match(/[\u3040-\u30ff\u4e00-\u9fff]/g)||[]).length; return jp >= 4 && jp/s.length > 0.3; };
+    if (candidate && isPrimarilyJapanese(candidate)) {
+      appendMemory(characterId, { factJa: candidate, source: 'text' });
+      save('yukiMemory', candidate);
+    }
+  }
+
   async function send() {
     const msg = input.value.trim();
     if (!msg && !_pendingImage) return;
     input.value = '';
-
-    const characterId = appState.activeCharacter || 'yuki';
-    const character = characterMap[characterId] || yukiConfig;
 
     if (_pendingImage) {
       const img = _pendingImage;
@@ -117,24 +199,25 @@ function initTextPage() {
         { type: 'image', source: { type: 'base64', media_type: img.mediaType, data: img.base64 } },
         { type: 'text', text: caption }
       ];
-      // Build API messages: history (text-only) + current image turn
+      const history = getTextHistory(characterId);
       const apiMessages = [
-        ...textHistory.map(m => ({ role: m.role, content: m.content })),
+        ...history.slice(-20).map(m => ({ role: m.role === 'yuki' ? 'assistant' : m.role, content: m.content })),
         { role: 'user', content: userContent }
       ];
-      textHistory.push({ role: 'user', content: caption });
+      appendTextHistory(characterId, 'user', caption);
       addTyping();
       try {
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ messages: apiMessages, systemPrompt: character.systemPrompt || window.YUKI_SYSTEM_PROMPT })
+          body: JSON.stringify({ messages: apiMessages, systemPrompt: buildSystemPrompt() })
         });
         const data = await res.json();
         removeTyping();
         const replyJa = data.replyJa || data.text || '...';
         addMsg('yuki', replyJa, data.replyEn || '');
-        textHistory.push({ role: 'assistant', content: replyJa });
+        appendTextHistory(characterId, 'assistant', replyJa);
+        saveMemoryCandidate(data);
       } catch {
         removeTyping();
         addMsg('yuki', 'ごめん、ちょっと待って…', 'Sorry, one moment...');
@@ -143,19 +226,25 @@ function initTextPage() {
     }
 
     addMsg('user', msg);
-    textHistory.push({ role: 'user', content: msg });
+    appendTextHistory(characterId, 'user', msg);
     addTyping();
     try {
+      const history = getTextHistory(characterId);
+      const apiMessages = history.slice(-20).map(m => ({
+        role: m.role === 'yuki' ? 'assistant' : m.role,
+        content: m.content,
+      }));
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ messages: textHistory, systemPrompt: character.systemPrompt || window.YUKI_SYSTEM_PROMPT })
+        body: JSON.stringify({ messages: apiMessages, systemPrompt: buildSystemPrompt() })
       });
       const data = await res.json();
       removeTyping();
       const replyJa = data.replyJa || data.text || '...';
       addMsg('yuki', replyJa, data.replyEn || '');
-      textHistory.push({ role: 'assistant', content: replyJa });
+      appendTextHistory(characterId, 'assistant', replyJa);
+      saveMemoryCandidate(data);
     } catch {
       removeTyping();
       addMsg('yuki', 'ごめん、ちょっと待って…', 'Sorry, one moment...');
@@ -165,23 +254,26 @@ function initTextPage() {
   btn.addEventListener('click', send);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
 
-  if (list.children.length === 0) {
-    addMsg('yuki', 'あ、来てくれた！元気だった？', 'Ah, you came! How have you been?');
-    textHistory.push({ role: 'assistant', content: 'あ、来てくれた！元気だった？' });
-  }
+  // Render topic bar
+  renderTopicBar(send);
+
+  // Expose send for programmatic use
+  window._textSend = send;
+
+  // Return addMsg so initTextPageForChar can use it for restoring history
+  return { addMsg };
 }
 
 async function initTextPageForChar() {
   const list = document.getElementById('text-chat-list');
   if (!list) return;
   list.innerHTML = '';
-  textHistory = [];
   resetSession();
-  if (window._convHistory) window._convHistory.length = 0;
 
   const characterId = appState.activeCharacter || 'yuki';
   const character = characterMap[characterId] || yukiConfig;
 
+  // Update header
   const headerAvatar = document.querySelector('.text-avatar');
   const headerName = document.querySelector('.text-header-name');
   const headerSub = document.querySelector('.text-header-sub');
@@ -192,68 +284,41 @@ async function initTextPageForChar() {
   if (headerName) headerName.textContent = fullName;
   if (headerSub) headerSub.innerHTML = `<span class="text-online-label">オンライン</span> · ${location}`;
 
-  const fixedOpenings = {
-    ren:  { ja: '1', en: '1' },
-    hana: { ja: '2', en: '2' },
-    mio:  { ja: '3', en: '3' },
-  };
+  // Clear badge
+  hideTalkBadge();
 
-  const now = new Date();
-  const ts = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  // Init input binding first to get addMsg
+  const { addMsg } = initTextPage() || {};
 
-  function addTextMsg(ja, en) {
-    const row = document.createElement('div');
-    row.className = 'text-msg-row yuki';
-    const initials = { yuki: '悠', ren: '蓮', hana: '花', mio: '緒' }[characterId] || '悠';
-    const msgId = 'msg-' + Date.now();
-    row.innerHTML = `
-      <div class="text-mini-avatar">${initials}</div>
-      <div>
-        <div class="text-bubble yuki" id="${msgId}" onclick="toggleTranslation('${msgId}')" style="cursor:pointer;">
-          ${window.parseVocabMarkup?.(ja) ?? ja}
-          <div class="msg-translation" id="tr-${msgId}" style="display:none;">
-            <div class="translation-divider"></div>
-            <div class="translation-text">${en || ''}</div>
-          </div>
-        </div>
-        <div class="tap-hint">TAP TO TRANSLATE</div>
-      </div>
-      <span class="text-timestamp">${ts}</span>`;
-    list.appendChild(row);
-    list.scrollTop = list.scrollHeight;
+  if (!addMsg) return;
+
+  // Restore history from localStorage
+  const history = getTextHistory(characterId);
+  history.forEach(entry => {
+    const role = entry.role === 'assistant' ? 'yuki' : entry.role;
+    addMsg(role, entry.content, entry.replyEn || '', entry.timestamp);
+  });
+
+  // Check if proactive message should be generated
+  if (shouldSendProactive(characterId)) {
+    markProactiveSent(characterId);
+    try {
+      const memory = getCharacterMemory(characterId);
+      const data = await generateProactiveMessage(character, memory);
+      const replyJa = data.replyJa || data.text || '';
+      if (replyJa) {
+        // Timestamp: 1–8 hours ago
+        const hoursAgo = Math.floor(Math.random() * 7 + 1);
+        const pastTs = Date.now() - hoursAgo * 60 * 60 * 1000;
+        addMsg('yuki', replyJa, data.replyEn || '', pastTs);
+        appendTextHistory(characterId, 'assistant', replyJa);
+      }
+    } catch {
+      // Silently ignore proactive generation failure
+    }
   }
 
-  if (fixedOpenings[characterId]) {
-    const o = fixedOpenings[characterId];
-    addTextMsg(o.ja, o.en);
-    window._convHistory?.push({ role: 'yuki', text: o.ja });
-    initTextPage();
-    return;
-  }
-
-  // yuki (and fallback): call Claude
-  const typingRow = document.createElement('div');
-  typingRow.className = 'text-msg-row yuki'; typingRow.id = 'text-typing-open';
-  typingRow.innerHTML = '<div class="text-mini-avatar">悠</div><div class="text-bubble yuki text-typing"><div class="text-dot"></div><div class="text-dot"></div><div class="text-dot"></div></div>';
-  list.appendChild(typingRow); list.scrollTop = list.scrollHeight;
-
-  try {
-    const reply = await getClaudeReply({
-      character,
-      topic:   getDailyTopic(new Date(), characterId),
-      memory:  getCharacterMemory(characterId),
-      history: [],
-      userText: '[START]',
-    });
-    document.getElementById('text-typing-open')?.remove();
-    const replyJa = reply.replyJa || 'よ';
-    addTextMsg(replyJa, reply.replyEn || '');
-    window._convHistory?.push({ role: 'yuki', text: replyJa });
-  } catch {
-    document.getElementById('text-typing-open')?.remove();
-    addTextMsg('よ', 'Hey');
-    window._convHistory?.push({ role: 'yuki', text: 'よ' });
-  }
+  list.scrollTop = list.scrollHeight;
 }
 
 export { initTextPage, initTextPageForChar };

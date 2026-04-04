@@ -9,8 +9,12 @@ import { getRandomFallbackReply, resetSession } from '../../features/chat.js';
 import { save } from '../../core/storage.js';
 import { characterMap } from '../../characters/index.js';
 import { yukiConfig } from '../../characters/yuki/yuki.config.js';
-
-let _callHistory = [];
+import {
+  resetCallHistory,
+  pushCallMessage,
+  getCallApiHistory,
+  getCallApiMessages,
+} from '../../core/conversationStore.js';
 
 const CALL_CAPTION_KEY = 'callCaptionMode';
 
@@ -74,12 +78,13 @@ function appendChatMessage(role, ja, en, id) {
     msg.innerHTML = `<div class="chat-dot"></div><div class="chat-bubble"><div class="chat-ja">${jaHtml}</div>${enBlock}</div>`;
   }
   list.appendChild(msg);
-  list.scrollTop = list.scrollHeight;
+  const captionArea = document.getElementById('call-caption-area');
+  if (captionArea) captionArea.scrollTop = captionArea.scrollHeight;
   applyCallCaptionMode();
 }
 
 async function triggerOpeningMessage() {
-  _callHistory = [];
+  resetCallHistory();
   resetSession();
   const characterId = appState.activeCharacter || 'yuki';
   const character = characterMap[characterId] || yukiConfig;
@@ -127,8 +132,7 @@ async function triggerOpeningMessage() {
     const randomOpening = yukiOpenings[chosen];
     appendChatMessage('yuki', randomOpening.ja, randomOpening.en);
     speakJapanese(randomOpening.ja);
-    _callHistory.push({ role: 'assistant', text: randomOpening.ja });
-    window._convHistory?.push({ role: 'yuki', text: randomOpening.ja });
+    pushCallMessage('yuki', randomOpening.ja);
     return;
   }
 
@@ -142,8 +146,7 @@ async function triggerOpeningMessage() {
     const o = fixedOpenings[characterId];
     appendChatMessage('yuki', o.ja, o.en);
     speakJapanese(o.ja);
-    _callHistory.push({ role: 'assistant', text: o.ja });
-    window._convHistory?.push({ role: 'yuki', text: o.ja });
+    pushCallMessage('yuki', o.ja);
     return;
   }
 
@@ -153,21 +156,19 @@ async function triggerOpeningMessage() {
       character,
       topic:   getDailyTopic(new Date(), characterId),
       memory:  getCharacterMemory(characterId),
-      history: _callHistory.slice(-10),
+      history: getCallApiHistory().slice(-10),
       userText: '[START]',
     });
     document.getElementById('chat-loading')?.remove();
     const replyJa = reply.replyJa || 'よ';
     appendChatMessage('yuki', replyJa, reply.replyEn || '');
     speakJapanese(replyJa);
-    _callHistory.push({ role: 'assistant', text: replyJa });
-    window._convHistory?.push({ role: 'yuki', text: replyJa });
+    pushCallMessage('yuki', replyJa);
   } catch {
     document.getElementById('chat-loading')?.remove();
     appendChatMessage('yuki', 'よ', 'Hey');
     speakJapanese('よ');
-    _callHistory.push({ role: 'assistant', text: 'よ' });
-    window._convHistory?.push({ role: 'yuki', text: 'よ' });
+    pushCallMessage('yuki', 'よ');
   }
 }
 
@@ -185,8 +186,7 @@ function initCallInput() {
     const characterId = appState.activeCharacter || 'yuki';
     const character   = characterMap[characterId] || yukiConfig;
 
-    _callHistory.push({ role: 'user', text: text });
-    window._convHistory?.push({ role: 'user', text });
+    pushCallMessage('user', text);
     appendChatMessage('user', text, '');
     appendChatMessage('yuki', '……', '', 'chat-loading');
 
@@ -195,16 +195,15 @@ function initCallInput() {
         character,
         topic:    getDailyTopic(new Date(), characterId),
         memory:   getCharacterMemory(characterId),
-        history:  _callHistory.slice(-10),
+        history:  getCallApiHistory().slice(-10),
         userText: text,
       });
       document.getElementById('chat-loading')?.remove();
       const replyJa = reply.replyJa || '……';
       appendChatMessage('yuki', replyJa, reply.replyEn || '');
       speakJapanese(replyJa);
-      _callHistory.push({ role: 'assistant', text: replyJa });
-      window._convHistory?.push({ role: 'yuki', text: replyJa });
-      if (reply.memoryCandidate) {
+      pushCallMessage('yuki', replyJa);
+      if (reply.memoryCandidate && ((s) => { const jp = (s.match(/[\u3040-\u30ff\u4e00-\u9fff]/g)||[]).length; return jp >= 4 && jp/s.length > 0.3; })(reply.memoryCandidate)) {
         appendMemory(characterId, { factJa: reply.memoryCandidate, source: 'conversation' });
         save('yukiMemory', reply.memoryCandidate);
       }
@@ -213,8 +212,7 @@ function initCallInput() {
       const fallback = getRandomFallbackReply();
       appendChatMessage('yuki', fallback.replyJa, fallback.replyEn);
       speakJapanese(fallback.replyJa);
-      _callHistory.push({ role: 'assistant', text: fallback.replyJa });
-      window._convHistory?.push({ role: 'yuki', text: fallback.replyJa });
+      pushCallMessage('yuki', fallback.replyJa);
     } finally {
       btn.disabled = false;
       input.focus();
@@ -225,7 +223,7 @@ function initCallInput() {
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
   initCallCaptionControl();
   window.addEventListener('beforeunload', stopSpeaking);
-  window.addEventListener('pagehide', () => { _callHistory = []; });
+  window.addEventListener('pagehide', () => { resetCallHistory(); });
 
   initVoiceButton({
     voiceBtnId: 'call-voice-btn',
@@ -251,11 +249,11 @@ function initCallInput() {
       const characterId = appState.activeCharacter || 'yuki';
       const character = characterMap[characterId] || yukiConfig;
       const caption = 'この画像どう思う？';
-      _callHistory.push({ role: 'user', text: caption });
+      pushCallMessage('user', caption);
       appendChatMessage('yuki', '……', '', 'chat-loading');
       try {
         const apiMessages = [
-          ..._callHistory.slice(0, -1).map(m => ({ role: m.role === 'assistant' ? 'assistant' : 'user', content: m.text })),
+          ...getCallApiMessages({ excludeLast: 1 }),
           { role: 'user', content: [
             { type: 'image', source: { type: 'base64', media_type: img.mediaType, data: img.base64 } },
             { type: 'text', text: caption }
@@ -271,7 +269,7 @@ function initCallInput() {
         const replyJa = data.replyJa || '……';
         appendChatMessage('yuki', replyJa, data.replyEn || '');
         speakJapanese(replyJa);
-        _callHistory.push({ role: 'assistant', text: replyJa });
+        pushCallMessage('yuki', replyJa);
       } catch {
         document.getElementById('chat-loading')?.remove();
         appendChatMessage('yuki', 'ちょっと待って', 'One sec...');
@@ -288,3 +286,5 @@ export {
   getCallCaptionMode,
   toggleCallCaptionMode,
 };
+
+window.stopSpeaking = stopSpeaking;

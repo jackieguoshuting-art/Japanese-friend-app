@@ -204,7 +204,7 @@ async function startRecording() {
                record: false, retry: false, next: false });
 
   const line = CHIHIRO_LINES[currentIdx];
-  video.muted = false;
+  video.muted = true;
   video.playbackRate = 1;
   video.currentTime = line.start;
 
