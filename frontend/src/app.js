@@ -109,6 +109,7 @@ function initBottomNav() {
 
 window.endCall = function () {
   try { window.stopSpeaking?.(); } catch (e) { /* ignore */ }
+  try { window.resetYukiToIdle?.(); } catch (e) { /* ignore */ }
   try { save('lastConversation', getCallHistory()); } catch (e) { console.warn('endCall save:', e); }
   try { renderConversationSummary(); } catch (e) { console.warn('endCall renderSummary:', e); }
   try { renderMemoryCard(); } catch (e) { console.warn('endCall renderMemory:', e); }

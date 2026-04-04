@@ -83,8 +83,9 @@
             <div class="home-polaroid">
               <div class="home-polaroid-tape"></div>
               <div class="home-polaroid-photo">
-                <!-- TODO: 可替换为立绘 <img> 元素，参考 pg-call 里的 yuki-live2d 做法 -->
-                <canvas id="home-char-canvas" width="72" height="110"></canvas>
+                <img src="/frontend/public/assets/characters/yuki/yuki-photo.jpg"
+                     id="home-char-canvas"
+                     style="width:72px;height:110px;object-fit:cover;object-position:top;display:block;">
               </div>
               <div class="home-polaroid-foot">
                 <div class="home-polaroid-line"></div>
@@ -409,9 +410,8 @@
   <!-- Character: full-bleed behind all UI -->
   <div class="call-char-scene">
     <div class="call-char-bg"></div>
-    <img src="/frontend/public/assets/characters/yuki/yuki-idle.png"
-         id="yuki-live2d"
-         class="call-char-sprite">
+    <video id="yuki-animation" autoplay loop muted playsinline
+           class="call-char-sprite"></video>
   </div>
 
   <!-- Main: wave viz + caption area -->

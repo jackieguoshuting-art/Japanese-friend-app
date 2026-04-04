@@ -3,6 +3,11 @@
    精准覆盖版，基于实际CSS文件
    ============================================ */
 
+/* ── Yuki 动画立绘 ── */
+#yuki-animation {
+  background: transparent;
+}
+
 /* ── 动画 ── */
 @keyframes sway {
   0%,100%{opacity:.12} 50%{opacity:.28}

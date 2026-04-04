@@ -1,5 +1,6 @@
 import { appState } from '../../core/state.js';
 import { speakJapanese, stopSpeaking } from '../../features/tts.js';
+import { initYukiAnimation, setEmotion, resetToIdle } from '../../features/yukiAnimation.js';
 import { initVoiceButton } from '../../features/voiceUI.js';
 import { initImageButton } from '../../features/imageInput.js';
 import { getDailyTopic } from '../../features/topics.js';
@@ -86,6 +87,8 @@ function appendChatMessage(role, ja, en, id) {
 async function triggerOpeningMessage() {
   resetCallHistory();
   resetSession();
+  const videoEl = document.getElementById('yuki-animation');
+  if (videoEl) initYukiAnimation(videoEl);
   const characterId = appState.activeCharacter || 'yuki';
   const character = characterMap[characterId] || yukiConfig;
 
@@ -182,6 +185,7 @@ function initCallInput() {
     if (!text) return;
     input.value = '';
     btn.disabled = true;
+    resetToIdle();
 
     const characterId = appState.activeCharacter || 'yuki';
     const character   = characterMap[characterId] || yukiConfig;
@@ -202,6 +206,7 @@ function initCallInput() {
       const replyJa = reply.replyJa || '……';
       appendChatMessage('yuki', replyJa, reply.replyEn || '');
       speakJapanese(replyJa);
+      setEmotion(reply.emotion || 'idle');
       pushCallMessage('yuki', replyJa);
       if (reply.memoryCandidate && ((s) => { const jp = (s.match(/[\u3040-\u30ff\u4e00-\u9fff]/g)||[]).length; return jp >= 4 && jp/s.length > 0.3; })(reply.memoryCandidate)) {
         appendMemory(characterId, { factJa: reply.memoryCandidate, source: 'conversation' });
@@ -223,7 +228,7 @@ function initCallInput() {
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
   initCallCaptionControl();
   window.addEventListener('beforeunload', stopSpeaking);
-  window.addEventListener('pagehide', () => { resetCallHistory(); });
+  window.addEventListener('pagehide', () => { resetCallHistory(); resetToIdle(); });
 
   initVoiceButton({
     voiceBtnId: 'call-voice-btn',
@@ -288,3 +293,4 @@ export {
 };
 
 window.stopSpeaking = stopSpeaking;
+window.resetYukiToIdle = resetToIdle;
