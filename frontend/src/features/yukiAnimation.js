@@ -155,3 +155,4 @@ export function detectEmotion(tag) {
   };
   return map[tag] || 'idle';
 }
+
