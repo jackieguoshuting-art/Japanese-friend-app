@@ -88,9 +88,9 @@ function renderMemoryCard() {
     const jp = (s.match(/[\u3040-\u30ff\u4e00-\u9fff]/g) || []).length;
     return jp >= 4 && jp / s.length > 0.3;
   };
-  const yukiMemory = load('yukiMemory', null);
-  if (yukiMemory && isPrimarilyJapanese(yukiMemory)) {
-    memText.textContent = `「${yukiMemory}」`;
+  const sessionMemory = window.getSessionMemory?.() || null;
+  if (sessionMemory && isPrimarilyJapanese(sessionMemory)) {
+    memText.textContent = `「${sessionMemory}」`;
     if (memEn) memEn.textContent = `Saved to ${charName}'s memory ✦`;
   } else {
     memText.textContent = '「まだ何も覚えていないよ」';

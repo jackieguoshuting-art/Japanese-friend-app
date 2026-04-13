@@ -1,66 +1,108 @@
+const BASE = '/assets/characters/yuki/animations';
+
 const EMOTIONS = {
-  idle:         '/frontend/public/assets/characters/yuki/animations/idle.webm',
-  happy:        '/frontend/public/assets/characters/yuki/animations/happy.webm',
-  smile:        '/frontend/public/assets/characters/yuki/animations/smile.webm',
-  surprised:    '/frontend/public/assets/characters/yuki/animations/surprised.webm',
-  'lean-smile': '/frontend/public/assets/characters/yuki/animations/lean-smile.webm',
+  idle: {
+    type: 'loop',
+    src: `${BASE}/Yuki表情过渡/idle.webm`,
+  },
+  happy: {
+    type: 'in-loop',
+    inSrc:   `${BASE}/Yuki表情过渡/happy.webm`,
+    loopSrc: `${BASE}/Yuki表情单一循环/happy-loop.webm`,
+  },
+  smile: {
+    type: 'in-loop',
+    inSrc:   `${BASE}/Yuki表情过渡/smile.webm`,
+    loopSrc: `${BASE}/Yuki表情单一循环/smile-loop.webm`,
+  },
+  surprised: {
+    type: 'once',
+    src: `${BASE}/Yuki表情过渡/surprised.webm`,
+  },
+  shy: {
+    type: 'once',
+    src: `${BASE}/Yuki表情过渡/shy.webm`,
+  },
+  'lean-smile': {
+    type: 'once',
+    src: `${BASE}/Yuki表情过渡/lean-smile.webm`,
+  },
 };
 
 let currentEmotion = 'idle';
-let front = null;  // currently visible video
-let back  = null;  // preloading in background
+let currentPhase   = 'loop';   // 'in' | 'loop' | 'once'
+let front = null;
+let back  = null;
 
-function swapNow() {
-  back.style.opacity  = '1';
-  front.style.opacity = '0';
-  [front, back] = [back, front];
-}
+// ── helpers ──────────────────────────────────────────────
 
-function loadAndPlay(el, src, loop, onReady) {
-  el.loop  = loop;
-  el.muted = true;
-  el.src   = src;
-  el.load();
-  el.addEventListener('canplay', function handler() {
-    el.removeEventListener('canplay', handler);
-    onReady();
+function loadAndSwap(src, loop, onSwapped) {
+  back.loop  = loop;
+  back.muted = true;
+  back.src   = src;
+  back.load();
+  back.addEventListener('canplay', function handler() {
+    back.removeEventListener('canplay', handler);
+    back.play();
+    back.style.opacity  = '1';
+    front.style.opacity = '0';
+    [front, back] = [back, front];
+    if (onSwapped) onSwapped();
   });
 }
 
 function playIdle() {
   currentEmotion = 'idle';
-  // back is already playing idle in background — swap directly, no reload
+  currentPhase   = 'loop';
+  const { src } = EMOTIONS.idle;
+  // if back is already playing idle, skip reload
   if (back.readyState >= 2 && back.src.includes('idle.webm')) {
     back.loop = true;
     back.play();
-    swapNow();
+    back.style.opacity  = '1';
+    front.style.opacity = '0';
+    [front, back] = [back, front];
     return;
   }
-  loadAndPlay(back, EMOTIONS.idle, true, () => {
-    back.play();
-    swapNow();
-  });
+  loadAndSwap(src, true);
 }
+
+function onEnded() {
+  // only act when the playing video is 'front' (the visible one)
+  if (this !== front) return;
+
+  if (currentEmotion === 'idle') return;
+
+  const def = EMOTIONS[currentEmotion];
+  if (!def) { playIdle(); return; }
+
+  if (def.type === 'in-loop' && currentPhase === 'in') {
+    currentPhase = 'loop';
+    loadAndSwap(def.loopSrc, true);
+  } else {
+    playIdle();
+  }
+}
+
+// ── exports ──────────────────────────────────────────────
 
 export function initYukiAnimation(primaryVideoEl) {
   front = primaryVideoEl;
+  front.style.opacity = '1';
+  front.style.display = 'block';
 
-  // create back video dynamically, same class/position as front
   back = document.createElement('video');
   back.className   = front.className;
   back.muted       = true;
-  back.playsinline = true;
+  back.playsInline = true;
   back.style.opacity = '0';
-  front.style.opacity = '1';
-  front.style.display = 'block';
   front.insertAdjacentElement('afterend', back);
 
-  const onEnded = () => { if (currentEmotion !== 'idle') playIdle(); };
-  front.addEventListener('ended', onEnded);
-  back.addEventListener('ended', onEnded);
+  front.addEventListener('ended', onEnded.bind(front));
+  back.addEventListener('ended',  onEnded.bind(back));
 
-  // start idle on front
-  front.src  = EMOTIONS.idle;
+  // start idle
+  front.src  = EMOTIONS.idle.src;
   front.loop = true;
   front.muted = true;
   front.play();
@@ -68,29 +110,48 @@ export function initYukiAnimation(primaryVideoEl) {
 
 export function setEmotion(emotion) {
   if (!front) return;
-  if (emotion === currentEmotion) return;
-  if (!emotion || emotion === 'idle') {
-    playIdle();
-    return;
-  }
+  const def = EMOTIONS[emotion];
+  if (!def) return;
+  if (emotion === currentEmotion && currentPhase === 'loop') return;
+
   currentEmotion = emotion;
-  loadAndPlay(back, EMOTIONS[emotion] || EMOTIONS.idle, false, () => {
-    back.play();
-    swapNow();
-  });
+
+  if (def.type === 'loop') {
+    currentPhase = 'loop';
+    loadAndSwap(def.src, true);
+  } else if (def.type === 'in-loop') {
+    currentPhase = 'in';
+    loadAndSwap(def.inSrc, false);
+  } else {
+    // once
+    currentPhase = 'once';
+    loadAndSwap(def.src, false);
+  }
+}
+
+export function onUserSpeak() {
+  if (!front) return;
+  const def = EMOTIONS[currentEmotion];
+  if (!def) return;
+  // in-loop currently looping → return to idle
+  if (def.type === 'in-loop' && currentPhase === 'loop') {
+    playIdle();
+  }
+  // 'once' currently playing → let it finish naturally (do nothing)
 }
 
 export function resetToIdle() {
-  setEmotion('idle');
+  playIdle();
 }
 
-export function detectEmotion(emotionTag) {
+export function detectEmotion(tag) {
   const map = {
-    happy: 'happy',
-    smile: 'smile',
-    surprised: 'surprised',
+    happy:        'happy',
+    smile:        'smile',
+    surprised:    'surprised',
+    shy:          'shy',
     'lean-smile': 'lean-smile',
-    idle: 'idle',
+    idle:         'idle',
   };
-  return map[emotionTag] || 'idle';
+  return map[tag] || 'idle';
 }

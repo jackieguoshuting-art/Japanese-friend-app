@@ -63,8 +63,8 @@
   background: #fff;
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  padding: 32px 16px 32px;
+  gap: 20px;
+  padding: 24px 16px 24px;
 }
 
 /* ─── Card Section (with absolute arrows) ───────── */
@@ -132,7 +132,7 @@
 }
 
 .home-section-head--mt {
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .home-section-label {
@@ -156,23 +156,26 @@
 .home-card-general {
   display: flex;
   gap: 16px;
-  min-height: 192px;
+  align-items: flex-start;
 }
 
 /* Polaroid photo */
 .home-polaroid {
   position: relative;
-  width: 89px;
+  width: 120px;
+  height: 162px;
   flex-shrink: 0;
   background: #fff;
   border: 1px solid #f3f4f6;
-  padding: 9px;
+  padding: 8px 8px 0 8px;
   box-sizing: border-box;
   box-shadow: 3px 6px 16px rgba(0, 0, 0, 0.28), 0 2px 4px rgba(0, 0, 0, 0.12);
   display: flex;
   flex-direction: column;
   transform: rotate(-3deg);
   transform-origin: center bottom;
+  margin-left: -30px;
+  margin-top: -4px;
 }
 
 .home-polaroid-tape {
@@ -195,7 +198,6 @@
   border: 1px solid #0047ff;
   border-radius: 2px;
   overflow: hidden;
-  min-height: 120px;
 }
 
 #home-char-canvas {
@@ -203,7 +205,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: top center;
   display: block;
 }
@@ -286,32 +288,17 @@
   justify-content: space-between;
 }
 
-.home-field-bday-dots {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.home-bd-sub {
+.home-bd-badge {
   font-family: 'Be Vietnam Pro', sans-serif;
-  font-size: 8px;
-  color: rgba(0, 71, 255, 0.5);
-  line-height: 12px;
-}
-
-.home-card-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 700;
+  color: #0047ff;
+  border: 1.5px solid #a5c0ff;
+  border-radius: 9999px;
+  padding: 2px 9px;
   background: #dce8ff;
-  border: 1px solid #a5c0ff;
-  display: inline-block;
-  flex-shrink: 0;
-}
-
-.home-card-dot.filled {
-  background: #a5c0ff;
-  border-color: #0047ff;
+  letter-spacing: 1px;
+  white-space: nowrap;
 }
 
 /* ─── More Information (two-column) ─────────────── */

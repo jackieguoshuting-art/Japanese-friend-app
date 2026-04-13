@@ -1,6 +1,6 @@
 import { appState } from '../../core/state.js';
 import { speakJapanese, stopSpeaking } from '../../features/tts.js';
-import { initYukiAnimation, setEmotion, resetToIdle } from '../../features/yukiAnimation.js';
+import { initYukiAnimation, setEmotion, resetToIdle, onUserSpeak } from '../../features/yukiAnimation.js';
 import { initVoiceButton } from '../../features/voiceUI.js';
 import { initImageButton } from '../../features/imageInput.js';
 import { getDailyTopic } from '../../features/topics.js';
@@ -187,6 +187,7 @@ function initCallInput() {
     if (!text) return;
     input.value = '';
     btn.disabled = true;
+    onUserSpeak();
     resetToIdle();
 
     const characterId = appState.activeCharacter || 'yuki';
