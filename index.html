@@ -84,8 +84,7 @@
               <div class="home-polaroid-tape"></div>
               <div class="home-polaroid-photo">
                 <img src="/frontend/public/assets/characters/yuki/yuki-photo.jpg"
-                     id="home-char-canvas"
-                     style="width:72px;height:110px;object-fit:cover;object-position:top;display:block;">
+                     id="home-char-canvas">
               </div>
               <div class="home-polaroid-foot">
                 <div class="home-polaroid-line"></div>
@@ -109,14 +108,7 @@
               <div class="home-field-bday">
                 <div class="home-field-bday-top">
                   <div class="home-field-label">BIRTHDAY</div>
-                  <div class="home-field-bday-dots">
-                    <span class="home-bd-sub">MM</span>
-                    <span class="home-card-dot filled"></span>
-                    <span class="home-card-dot filled"></span>
-                    <span class="home-bd-sub">DD</span>
-                    <span class="home-card-dot"></span>
-                    <span class="home-card-dot"></span>
-                  </div>
+                  <span class="home-bd-badge" id="dossier-birthday">08.13</span>
                 </div>
                 <div class="home-divider"></div>
               </div>
@@ -411,7 +403,9 @@
   <div class="call-char-scene">
     <div class="call-char-bg"></div>
     <video id="yuki-animation" autoplay loop muted playsinline
-           class="call-char-sprite"></video>
+           class="call-char-sprite" style="display:none;"></video>
+    <video id="yuki-animation-b" muted playsinline
+           class="call-char-sprite" style="display:none;"></video>
   </div>
 
   <!-- Main: wave viz + caption area -->

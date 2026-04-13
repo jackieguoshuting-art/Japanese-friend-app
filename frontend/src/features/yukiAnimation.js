@@ -7,24 +7,77 @@ const EMOTIONS = {
 };
 
 let currentEmotion = 'idle';
-let videoEl = null;
+let front = null;  // currently visible video
+let back  = null;  // preloading in background
 
-export function initYukiAnimation(videoElement) {
-  videoEl = videoElement;
-  videoEl.src = EMOTIONS.idle;
-  videoEl.loop = true;
-  videoEl.autoplay = true;
-  videoEl.muted = true;
-  videoEl.play();
+function swapNow() {
+  back.style.opacity  = '1';
+  front.style.opacity = '0';
+  [front, back] = [back, front];
+}
+
+function loadAndPlay(el, src, loop, onReady) {
+  el.loop  = loop;
+  el.muted = true;
+  el.src   = src;
+  el.load();
+  el.addEventListener('canplay', function handler() {
+    el.removeEventListener('canplay', handler);
+    onReady();
+  });
+}
+
+function playIdle() {
+  currentEmotion = 'idle';
+  // back is already playing idle in background — swap directly, no reload
+  if (back.readyState >= 2 && back.src.includes('idle.webm')) {
+    back.loop = true;
+    back.play();
+    swapNow();
+    return;
+  }
+  loadAndPlay(back, EMOTIONS.idle, true, () => {
+    back.play();
+    swapNow();
+  });
+}
+
+export function initYukiAnimation(primaryVideoEl) {
+  front = primaryVideoEl;
+
+  // create back video dynamically, same class/position as front
+  back = document.createElement('video');
+  back.className   = front.className;
+  back.muted       = true;
+  back.playsinline = true;
+  back.style.opacity = '0';
+  front.style.opacity = '1';
+  front.style.display = 'block';
+  front.insertAdjacentElement('afterend', back);
+
+  const onEnded = () => { if (currentEmotion !== 'idle') playIdle(); };
+  front.addEventListener('ended', onEnded);
+  back.addEventListener('ended', onEnded);
+
+  // start idle on front
+  front.src  = EMOTIONS.idle;
+  front.loop = true;
+  front.muted = true;
+  front.play();
 }
 
 export function setEmotion(emotion) {
-  if (!videoEl) return;
+  if (!front) return;
   if (emotion === currentEmotion) return;
+  if (!emotion || emotion === 'idle') {
+    playIdle();
+    return;
+  }
   currentEmotion = emotion;
-  videoEl.src = EMOTIONS[emotion] || EMOTIONS.idle;
-  videoEl.loop = true;
-  videoEl.play();
+  loadAndPlay(back, EMOTIONS[emotion] || EMOTIONS.idle, false, () => {
+    back.play();
+    swapNow();
+  });
 }
 
 export function resetToIdle() {

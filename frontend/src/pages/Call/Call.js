@@ -18,6 +18,7 @@ import {
 } from '../../core/conversationStore.js';
 
 const CALL_CAPTION_KEY = 'callCaptionMode';
+let sessionMemoryCandidate = null;
 
 function getCallCaptionMode() {
   return localStorage.getItem(CALL_CAPTION_KEY) || 'bilingual';
@@ -87,6 +88,7 @@ function appendChatMessage(role, ja, en, id) {
 async function triggerOpeningMessage() {
   resetCallHistory();
   resetSession();
+  sessionMemoryCandidate = null;
   const videoEl = document.getElementById('yuki-animation');
   if (videoEl) initYukiAnimation(videoEl);
   const characterId = appState.activeCharacter || 'yuki';
@@ -210,7 +212,7 @@ function initCallInput() {
       pushCallMessage('yuki', replyJa);
       if (reply.memoryCandidate && ((s) => { const jp = (s.match(/[\u3040-\u30ff\u4e00-\u9fff]/g)||[]).length; return jp >= 4 && jp/s.length > 0.3; })(reply.memoryCandidate)) {
         appendMemory(characterId, { factJa: reply.memoryCandidate, source: 'conversation' });
-        save('yukiMemory', reply.memoryCandidate);
+        sessionMemoryCandidate = reply.memoryCandidate;
       }
     } catch {
       document.getElementById('chat-loading')?.remove();
@@ -294,3 +296,4 @@ export {
 
 window.stopSpeaking = stopSpeaking;
 window.resetYukiToIdle = resetToIdle;
+window.getSessionMemory = () => sessionMemoryCandidate;
