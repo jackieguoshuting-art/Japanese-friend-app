@@ -115,13 +115,11 @@
   position: absolute;
   z-index: 30;
   width: 240px;
-  background: rgba(6,9,24,0.95);
-  border: 1px solid rgba(0,47,167,0.5);
+  background: #fff;
+  border: none;
   border-radius: 16px;
   padding: 15px 16px 16px;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow: 0 8px 32px rgba(0,47,167,0.18), 0 2px 8px rgba(0,0,0,0.1);
   opacity: 0;
   transform: translateY(6px);
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -136,7 +134,7 @@
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: rgba(255,255,255,0.3);
+  color: rgba(0,47,167,0.45);
   text-transform: uppercase;
   margin-bottom: 8px;
 }
@@ -151,7 +149,7 @@
 .scene-popup-title-ja {
   font-size: 24px;
   font-weight: 700;
-  color: #fff;
+  color: #001a6e;
   line-height: 1.2;
 }
 
@@ -161,8 +159,8 @@
   margin-top: 4px;
 }
 
-.scene-star { font-size: 10px; color: rgba(255,255,255,0.15); }
-.scene-star.on { color: #002FA7; text-shadow: 0 0 6px rgba(0,47,167,0.8); }
+.scene-star { font-size: 10px; color: rgba(0,47,167,0.15); }
+.scene-star.on { color: #002FA7; }
 
 .scene-popup-title-en {
   font-size: 9px;
@@ -176,9 +174,9 @@
 .scene-popup-desc {
   font-size: 12px;
   line-height: 1.6;
-  color: rgba(255,255,255,0.5);
+  color: rgba(0,20,80,0.6);
   font-style: italic;
-  border-left: 2px solid rgba(0,47,167,0.5);
+  border-left: 2px solid #002FA7;
   padding-left: 9px;
   margin-bottom: 13px;
 }
@@ -211,9 +209,9 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.04);
-  color: rgba(255,255,255,0.4);
+  border: 1px solid rgba(0,47,167,0.2);
+  background: rgba(0,47,167,0.05);
+  color: rgba(0,47,167,0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -223,8 +221,8 @@
 }
 
 .scene-popup-bookmark:hover {
-  color: #fff;
-  border-color: rgba(255,255,255,0.4);
+  color: #002FA7;
+  border-color: rgba(0,47,167,0.5);
 }
 
 .scene-popup-arrow {
@@ -235,7 +233,7 @@
   width: 0; height: 0;
   border-left: 7px solid transparent;
   border-right: 7px solid transparent;
-  border-top: 8px solid rgba(0,47,167,0.5);
+  border-top: 8px solid #fff;
 }
 
 #pg-scene .scene-header {
