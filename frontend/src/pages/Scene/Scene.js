@@ -123,27 +123,37 @@ function initPan() {
     if (!layer) {
       layer = document.createElement('div');
       layer.id = 'scene-building-layer';
-      layer.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;';
+      layer.style.position = 'absolute';
+      layer.style.top = '0';
+      layer.style.left = '0';
+      layer.style.pointerEvents = 'none';
+      layer.style.overflow = 'visible';
       wrap.appendChild(layer);
-      BUILDING_DEFS.forEach(function(d) {
-        var el = document.getElementById(d.id);
-        if (el) layer.appendChild(el);
-      });
     }
     layer.style.width  = iw + 'px';
     layer.style.height = ih + 'px';
 
-    BUILDING_DEFS.forEach(function(d) {
+    var defs = [
+      { id: 'building-station',  cx: 1414, cy: 3035, w: 806, h: 747 },
+      { id: 'building-izakaya',  cx: 2737, cy: 2572, w: 511, h: 796 },
+      { id: 'building-minimart', cx: 3257, cy: 3133, w: 383, h: 630 },
+    ];
+
+    defs.forEach(function(d) {
       var el = document.getElementById(d.id);
       if (!el) return;
-      var x = d.cx - d.w / 2;
-      var y = d.cy - d.h / 2;
+      if (el.parentElement !== layer) layer.appendChild(el);
+      var scale = 1.6;
+      var displayW = (d.w / ORIG_W) * iw * scale;
+      var displayH = (d.h / ORIG_H) * ih * scale;
+      var left = ((d.cx - d.w/2) / ORIG_W) * iw - (displayW - (d.w/ORIG_W)*iw) / 2;
+      var top  = ((d.cy - d.h/2) / ORIG_H) * ih - (displayH - (d.h/ORIG_H)*ih) / 2;
       el.style.cssText = [
         'position:absolute',
-        'left:'   + Math.round((x / ORIG_W) * iw) + 'px',
-        'top:'    + Math.round((y / ORIG_H) * ih) + 'px',
-        'width:'  + Math.round((d.w / ORIG_W) * iw * 1.25) + 'px',
-        'height:' + Math.round((d.h / ORIG_H) * ih * 1.25) + 'px',
+        'left:' + Math.round(left) + 'px',
+        'top:'  + Math.round(top)  + 'px',
+        'width:'  + Math.round(displayW) + 'px',
+        'height:' + Math.round(displayH) + 'px',
         'max-width:none!important',
         'pointer-events:auto',
         'cursor:pointer',
