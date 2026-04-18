@@ -113,9 +113,11 @@ function initPan() {
     if (ih > wh) { oy = clamp(oy, wh - ih, 0); } else { oy = 0; }
   }
 
-  img.onload = center;
+  img.onload = function() {
+    setTimeout(center, 50);
+  };
   if (img.complete && img.naturalWidth > 0) {
-    requestAnimationFrame(center);
+    setTimeout(center, 50);
   }
 
   var dragging = false, sx, sy;
