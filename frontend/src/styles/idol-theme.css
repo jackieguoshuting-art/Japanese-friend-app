@@ -960,3 +960,82 @@ body { background:#040810; }
   padding: 4px;
   color: #6366f1;
 }
+
+/* ══════════════════════════════
+   SHADOW LIVE PAGE
+══════════════════════════════ */
+
+/* 隐藏重复字幕卡片 & 波形边框清零（保留自上版本） */
+#pg-shadow-live .slv-current-take {
+  display: none !important;
+}
+#pg-shadow-live .slv-waveform-section {
+  border: none !important;
+  background: transparent !important;
+}
+
+/* ── 各 section 间距 ── */
+#pg-shadow-live .slv-video-section    { padding: 10px 14px 0 !important; }
+#pg-shadow-live .slv-subtitles        { padding: 8px 16px 4px !important; overflow: visible !important; }
+#pg-shadow-live .slv-waveform-section { padding: 4px 20px 4px !important; }
+
+/* ── Issue 1: KTV 字幕允许两行显示 ── */
+#pg-shadow-live #shadow-subtitle-ja,
+#pg-shadow-live .slv-sub-jp {
+  white-space: normal !important;
+  overflow: hidden !important;
+  max-height: none !important;
+  word-break: break-all !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  line-height: 1.5 !important;
+}
+
+/* ── Issue 2: 历史卡片列表填满剩余空间 ── */
+#pg-shadow-live .slv-history {
+  flex: 1 !important;                  /* 撑满 slv-body 剩余高度 */
+  max-height: none !important;
+  min-height: 200px !important;
+  overflow-y: auto !important;
+  padding: 6px 14px 8px !important;
+}
+
+/* ── Issue 3: 底部按钮变大，录音键最大 ── */
+#pg-shadow-live .slv-bottom-nav {
+  height: 96px !important;
+  padding: 0 20px 10px !important;
+}
+#pg-shadow-live .slv-bnav-slot {
+  min-height: 72px !important;
+}
+/* RE-RECORD / NEXT LINE 圆圈 56×56 */
+#pg-shadow-live .slv-bnav-ring {
+  width: 56px !important;
+  height: 56px !important;
+}
+/* 录音键 72×72 */
+#pg-shadow-live .slv-record-btn {
+  width: 72px !important;
+  height: 72px !important;
+}
+/* 中央 wrap 上浮幅度随按钮变大一起增加 */
+#pg-shadow-live .slv-bnav-mic-wrap {
+  transform: translateY(-16px) !important;
+}
+/* Play Take 按钮同步 */
+#pg-shadow-live .slv-playtake-btn {
+  width: 72px !important;
+  height: 72px !important;
+}
+/* Countdown circle 同步 */
+#pg-shadow-live .slv-countdown-circle {
+  width: 72px !important;
+  height: 72px !important;
+  font-size: 1.6rem !important;
+}
+
+/* slv-body 底部留白 = 导航栏高度，防止内容被遮挡 */
+#pg-shadow-live .slv-body {
+  padding-bottom: 96px !important;
+}

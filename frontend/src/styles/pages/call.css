@@ -867,7 +867,7 @@ button.caption-btn {
   object-fit: contain;
   object-position: center bottom;
   z-index: 2;
-  filter: drop-shadow(0 12px 32px rgba(0,0,0,0.55)) drop-shadow(0 0 8px rgba(0,0,0,0.3));
+  /* No transition: hard cut. Overlap logic in JS handles transparent head/tail frames. */
 }
 
 /* ── UI layers float above character ── */

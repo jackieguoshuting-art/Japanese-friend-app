@@ -13,10 +13,10 @@ const characterMap = {
 };
 
 const CHARS = [
-  { name: 'YUKI · 悠生', bodyColor: '#1a3a7a', hairColor: '#2a2a4a', skinColor: '#d4b896', accentColor: '#3060cc' },
-  { name: 'REN · 蓮',    bodyColor: '#0a1a2a', hairColor: '#1a1a2a', skinColor: '#c8a882', accentColor: '#204060' },
-  { name: 'HANA · 花',   bodyColor: '#0a3040', hairColor: '#3a1a1a', skinColor: '#d8b898', accentColor: '#1a7080' },
-  { name: 'MIO · 美緒',  bodyColor: '#0a2a1a', hairColor: '#1a1a10', skinColor: '#c8a878', accentColor: '#186040' },
+  { name: 'YUKI · 悠生', nameEn: 'YUKI', nameJp: '凪原 悠生', bodyColor: '#1a3a7a', hairColor: '#2a2a4a', skinColor: '#d4b896', accentColor: '#3060cc' },
+  { name: 'REN · 蓮',    nameEn: 'REN',  nameJp: '蓮',        bodyColor: '#0a1a2a', hairColor: '#1a1a2a', skinColor: '#c8a882', accentColor: '#204060' },
+  { name: 'HANA · 花',   nameEn: 'HANA', nameJp: '花',        bodyColor: '#0a3040', hairColor: '#3a1a1a', skinColor: '#d8b898', accentColor: '#1a7080' },
+  { name: 'MIO · 美緒',  nameEn: 'MIO',  nameJp: '美緒',      bodyColor: '#0a2a1a', hairColor: '#1a1a10', skinColor: '#c8a878', accentColor: '#186040' },
 ];
 let charIndex = 0;
 
@@ -104,7 +104,7 @@ function drawPixelChar(cfg) {
 function updateCharDisplay() {
   const cfg = CHARS[charIndex];
   const nameTag = document.getElementById('char-name-tag');
-  if (nameTag) nameTag.textContent = cfg.name;
+  if (nameTag) nameTag.innerHTML = `<span class="home-name-en">${cfg.nameEn || cfg.name}</span><span class="home-name-jp">${cfg.nameJp || ''}</span>`;
   drawPixelChar(cfg);
 }
 

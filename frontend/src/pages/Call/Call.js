@@ -89,9 +89,9 @@ async function triggerOpeningMessage() {
   resetCallHistory();
   resetSession();
   sessionMemoryCandidate = null;
-  const videoEl = document.getElementById('yuki-animation');
-  if (videoEl) initYukiAnimation(videoEl);
   const characterId = appState.activeCharacter || 'yuki';
+  const videoEl = document.getElementById('yuki-animation');
+  if (videoEl && characterId === 'yuki') initYukiAnimation(videoEl);
   const character = characterMap[characterId] || yukiConfig;
 
   if (characterId === 'yuki') {
@@ -215,7 +215,8 @@ function initCallInput() {
         appendMemory(characterId, { factJa: reply.memoryCandidate, source: 'conversation' });
         sessionMemoryCandidate = reply.memoryCandidate;
       }
-    } catch {
+    } catch (e) {
+      console.error('[Call] API error:', e);
       document.getElementById('chat-loading')?.remove();
       const fallback = getRandomFallbackReply();
       appendChatMessage('yuki', fallback.replyJa, fallback.replyEn);

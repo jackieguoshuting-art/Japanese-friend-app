@@ -402,9 +402,7 @@
   <!-- Character: full-bleed behind all UI -->
   <div class="call-char-scene">
     <div class="call-char-bg"></div>
-    <video id="yuki-animation" autoplay loop muted playsinline
-           class="call-char-sprite" style="display:none;"></video>
-    <video id="yuki-animation-b" muted playsinline
+    <video id="yuki-animation" muted playsinline
            class="call-char-sprite" style="display:none;"></video>
   </div>
 
@@ -946,33 +944,43 @@
 ══════════════════════════════════════════ -->
 <div id="pg-shadow-live" class="page">
 
-  <!-- ── Top bar: close + progress + ep num ── -->
-  <div class="slv-topbar">
-    <button class="slv-close-btn" onclick="go('shadow-scenes')">✕</button>
-    <div class="slv-prog-wrap">
-      <div class="slv-prog-fill" id="slv-prog-fill" style="width:25%"></div>
+  <!-- ── Fixed header ── -->
+  <header class="slv-topbar">
+    <div class="slv-topbar-left">
+      <button class="slv-close-btn" onclick="go('shadow-scenes')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+      <h1 class="slv-topbar-title">Cinematic<br>Shadowing</h1>
     </div>
-    <div class="slv-ep-num" id="slv-ep-num">EP 1 / 4</div>
-  </div>
+    <div class="slv-topbar-right">
+      <span class="slv-ep-badge" id="slv-ep-num">1 / 4</span>
+      <button class="slv-more-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+      </button>
+    </div>
+  </header>
 
   <!-- ── Scrollable body ── -->
   <div class="slv-body">
 
     <!-- Video / scene area -->
-    <div class="shadow-video-wrap">
-      <video id="shadow-video" class="shadow-video-iframe" playsinline muted></video>
-    </div>
+    <section class="slv-video-section">
+      <div class="slv-video-frame">
+        <video id="shadow-video" class="shadow-video-iframe" playsinline muted></video>
+        <div class="slv-video-prog-bar">
+          <div class="slv-prog-fill" id="slv-prog-fill" style="width:25%"></div>
+        </div>
+      </div>
+    </section>
 
-    <!-- Multi-layer subtitles (Figma 83:1424) -->
-    <div class="slv-subtitles" id="slv-subtitles">
+    <!-- KTV Subtitles (large overflow clip) -->
+    <section class="slv-subtitles" id="slv-subtitles">
       <div class="slv-sub-jp" id="shadow-subtitle-ja"></div>
       <div class="slv-sub-en" id="shadow-subtitle-en"></div>
-    </div>
+    </section>
 
-    <!-- Bottom control area: waveform row + button row -->
-    <div class="slv-bottom">
-
-      <!-- Row 1: Recording waveform -->
+    <!-- Waveform + RECORDING ACTIVE -->
+    <section class="slv-waveform-section">
       <div class="slv-waveform" id="shadow-waveform">
         <div class="slv-wave-bar" style="--delay:0s"></div>
         <div class="slv-wave-bar" style="--delay:0.12s"></div>
@@ -991,77 +999,85 @@
         <div class="slv-wave-bar" style="--delay:0.10s"></div>
         <div class="slv-wave-bar" style="--delay:0.20s"></div>
       </div>
-
-      <!-- Replay / slow / countdown row -->
-      <div class="slv-controls" id="shadow-demo-controls" style="display:none;">
-        <button class="slv-ctrl-btn" id="shadow-replay-btn">
-          <span class="slv-ctrl-icon">▶</span>
-          <span class="slv-ctrl-lbl">REPLAY</span>
-        </button>
-        <div id="shadow-countdown" style="display:none;font-size:2.4rem;font-weight:700;color:#fff;min-width:2rem;text-align:center;"></div>
-        <button class="slv-ctrl-btn" id="shadow-slow-btn">
-          <span class="slv-ctrl-icon">🐢</span>
-          <span class="slv-ctrl-lbl">SLOW</span>
-        </button>
+      <div class="slv-rec-status">
+        <span class="slv-rec-dot"></span>
+        <span class="slv-rec-label" id="slv-rec-label">RECORDING ACTIVE</span>
       </div>
+    </section>
 
-      <!-- Row 2: RETRY | Record | NEXT -->
-      <div class="slv-controls">
-        <button class="slv-ctrl-btn" id="shadow-retry-btn" style="display:none;">
-          <span class="slv-ctrl-icon">↺</span>
-          <span class="slv-ctrl-lbl">RETRY</span>
-        </button>
-        <div class="slv-record-wrap">
-          <button class="slv-record-btn" id="shadow-record-btn">
-            <span class="slv-rec-icon">🎙</span>
-          </button>
-          <span class="slv-rec-label" id="slv-rec-label">TAP TO RECORD</span>
-        </div>
-        <button class="slv-ctrl-btn" id="shadow-next-btn" style="display:none;">
-          <span class="slv-ctrl-icon">→</span>
-          <span class="slv-ctrl-lbl">NEXT</span>
-        </button>
-        <button class="slv-ctrl-btn" id="shadow-play-recording-btn" style="display:none;">
-          <span class="slv-ctrl-icon">▶</span>
-          <span class="slv-ctrl-lbl">听我的录音</span>
-        </button>
+    <!-- Dialogue history cards -->
+    <section class="slv-history" id="shadow-transcript-list"></section>
+
+    <!-- Current take card -->
+    <section class="slv-current-take">
+      <div class="slv-current-take-label">CURRENT_TAKE</div>
+      <p class="slv-current-take-text" id="slv-current-text"></p>
+      <div class="slv-current-take-deco">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0047ff" stroke-width="1.5" opacity="0.5"><path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
       </div>
-
-    </div><!-- /slv-bottom -->
-
-    <!-- Transcript list -->
-    <div class="slv-transcript">
-      <div class="slv-transcript-hdr">台詞リスト · LINES</div>
-      <div class="slv-transcript-list" id="shadow-transcript-list">
-        <div class="slv-titem slv-titem-active">
-          <div class="slv-titem-num">1</div>
-          <div class="slv-titem-text">お父さん、ここ変だよ。戻ろうよ。</div>
-        </div>
-        <div class="slv-titem">
-          <div class="slv-titem-num">2</div>
-          <div class="slv-titem-text">ここで働かせてください！</div>
-        </div>
-        <div class="slv-titem">
-          <div class="slv-titem-num">3</div>
-          <div class="slv-titem-text">千、これ……。あげる。</div>
-        </div>
-        <div class="slv-titem">
-          <div class="slv-titem-num">4</div>
-          <div class="slv-titem-text">一度あったことは忘れないものさ。思い出せないだけで。</div>
-        </div>
-      </div>
-    </div>
+    </section>
 
   </div><!-- /slv-body -->
 
-  <!-- Finished modal (hidden by default) -->
-  <div id="shadow-jump-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:999;align-items:center;justify-content:center;">
-    <div style="background:#fff;border-radius:16px;padding:24px;width:280px;text-align:center;">
-      <div style="font-size:15px;font-weight:700;color:#0A0A0A;margin-bottom:8px;">この台詞に戻る</div>
-      <div style="font-size:12px;color:#888;margin-bottom:20px;">録音が存在します。どうしますか？</div>
-      <button id="shadow-jump-replay-btn" style="width:100%;background:#002FA7;color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;margin-bottom:8px;cursor:pointer;">▶ 録音を再生する</button>
-      <button id="shadow-jump-rerecord-btn" style="width:100%;background:#FF8FAB;color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;margin-bottom:8px;cursor:pointer;">🔄 録音し直す</button>
-      <button id="shadow-jump-cancel-btn" style="width:100%;background:none;border:1px solid #ccc;border-radius:10px;padding:12px;font-size:14px;color:#888;cursor:pointer;">キャンセル</button>
+  <!-- JS reference div (demoControls toggle target, visually inert) -->
+  <div id="shadow-demo-controls" style="display:none;position:absolute;pointer-events:none;"></div>
+
+  <!-- Fixed bottom nav: [Replay/Retry] · [Record/Countdown/PlayTake] · [Slow/Next] -->
+  <nav class="slv-bottom-nav">
+
+    <!-- Left slot: Replay (demo phase) OR Retry (after-record) -->
+    <div class="slv-bnav-slot">
+      <button class="slv-bnav-btn slv-bnav-btn-pink" id="shadow-replay-btn" style="display:none;">
+        <div class="slv-bnav-ring slv-bnav-ring-pink">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        </div>
+        <span class="slv-bnav-lbl">Re-play</span>
+      </button>
+      <button class="slv-bnav-btn slv-bnav-btn-pink" id="shadow-retry-btn" style="display:none;">
+        <div class="slv-bnav-ring slv-bnav-ring-pink">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        </div>
+        <span class="slv-bnav-lbl">Re-record</span>
+      </button>
+    </div>
+
+    <!-- Center: Record button (elevated) OR Countdown OR Play Take -->
+    <div class="slv-bnav-mic-wrap">
+      <button class="slv-record-btn" id="shadow-record-btn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 1 3 3v7a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </button>
+      <div id="shadow-countdown" class="slv-countdown-circle" style="display:none;"></div>
+      <button class="slv-playtake-btn" id="shadow-play-recording-btn" style="display:none;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </button>
+    </div>
+
+    <!-- Right slot: Slow (demo phase) OR Next Line (after-record) -->
+    <div class="slv-bnav-slot">
+      <button class="slv-bnav-btn slv-bnav-btn-outline" id="shadow-slow-btn" style="display:none;">
+        <div class="slv-bnav-ring slv-bnav-ring-outline">
+          <span style="font-size:15px;line-height:1;">🐢</span>
+        </div>
+        <span class="slv-bnav-lbl">Slow</span>
+      </button>
+      <button class="slv-bnav-btn slv-bnav-btn-outline" id="shadow-next-btn" style="display:none;">
+        <div class="slv-bnav-ring slv-bnav-ring-outline">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+        <span class="slv-bnav-lbl">Next Line</span>
+      </button>
+    </div>
+
+  </nav>
+
+  <!-- Jump modal -->
+  <div id="shadow-jump-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:999;align-items:center;justify-content:center;">
+    <div style="background:#1a1c2e;border:1.5px solid #0047ff;border-radius:20px;padding:24px;width:280px;text-align:center;">
+      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;font-family:'Epilogue',sans-serif;letter-spacing:1px;">この台詞に戻る</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:20px;">録音が存在します。どうしますか？</div>
+      <button id="shadow-jump-replay-btn" style="width:100%;background:#0047ff;color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;margin-bottom:8px;cursor:pointer;box-shadow:0 4px 16px rgba(0,71,255,0.4);">▶ 録音を再生する</button>
+      <button id="shadow-jump-rerecord-btn" style="width:100%;background:rgba(253,141,154,0.15);color:#fd8d9a;border:1.5px solid #fd8d9a;border-radius:10px;padding:12px;font-size:14px;font-weight:700;margin-bottom:8px;cursor:pointer;">↺ 録音し直す</button>
+      <button id="shadow-jump-cancel-btn" style="width:100%;background:none;border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:12px;font-size:14px;color:rgba(255,255,255,0.4);cursor:pointer;">キャンセル</button>
     </div>
   </div>
 

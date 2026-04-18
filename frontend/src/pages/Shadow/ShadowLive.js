@@ -47,27 +47,24 @@ function initDOM() {
 // ─── UI helpers ───────────────────────────────────────────────────────────────
 function setSubtitle(line, currentTime) {
   if (!line) {
-    if (subtitleJa) subtitleJa.innerHTML = '';
+    if (subtitleJa) {
+      subtitleJa.textContent = '';
+      subtitleJa.removeAttribute('data-text');
+      subtitleJa.style.removeProperty('--ktv-progress');
+    }
     if (subtitleEn) subtitleEn.textContent = '';
     return;
   }
 
-  // 英文字幕直接显示
   if (subtitleEn) subtitleEn.textContent = line.en;
 
-  // 日文字幕逐字高亮
-  const chars = line.ja.split('');
   const duration = line.end - line.start;
   const elapsed = (currentTime != null ? currentTime : line.start) - line.start;
-  const progress = Math.min(elapsed / duration, 1);
-  const highlightCount = Math.floor(chars.length * progress);
+  const progress = Math.min(Math.max(elapsed / duration, 0), 1);
 
-  const color = line.speaker === 'chihiro' ? '#002FA7' : '#888';
-  const highlightColor = line.speaker === 'chihiro' ? '#FF8FAB' : '#aaa';
-
-  subtitleJa.innerHTML = chars.map((char, i) =>
-    `<span style="color:${i < highlightCount ? highlightColor : color};transition:color 0.1s;">${char}</span>`
-  ).join('');
+  subtitleJa.textContent = line.ja;
+  subtitleJa.setAttribute('data-text', line.ja);
+  subtitleJa.style.setProperty('--ktv-progress', (progress * 100) + '%');
 }
 
 function show(el)  { if (el) el.style.display = ''; }
@@ -161,6 +158,11 @@ function startDemo(idx) {
                record: false, retry: false, next: false });
 
   const line = CHIHIRO_LINES[idx];
+
+  // Update current take card
+  const currentTakeEl = document.getElementById('slv-current-text');
+  if (currentTakeEl) currentTakeEl.textContent = line.ja;
+
   video.muted = false;
   video.playbackRate = 1;
   video.currentTime = line.start;
@@ -325,6 +327,7 @@ function playMyVersion() {
     video.removeEventListener('ended', onEnded);
     video.volume = 1.0;
     audioCtx.close();
+    if (phase === 'after-record' || phase === 'await-record') return;
     if (finishedModal) finishedModal.style.display = 'flex';
     phase = 'idle';
   }
@@ -425,11 +428,27 @@ function wireButtons() {
   nextBtn.onclick = () => {
     if (phase !== 'after-record' && phase !== 'await-record') return;
     if (userAudio) { userAudio.pause(); userAudio = null; }
-    video.pause();
+    // video.pause() 只在非最后一句时执行，最后一句要让视频继续播
     const nextIdx = currentIdx + 1;
     if (nextIdx >= CHIHIRO_LINES.length) {
-      showFinished();
+      // 最后一句：让视频继续播放直到自然结束，播完再弹结算
+      // 不要暂停视频，也不要 setTimeout，让剩余台词（妈妈的话）播完
+      phase = 'finishing';
+      video.muted = false;
+      video.playbackRate = 1;
+      video.currentTime = CHIHIRO_LINES[currentIdx].end;
+      setSubtitle(null);
+      setPhaseUI({ demoRow: false, replay: false, slow: false, countdown: false,
+                   record: false, retry: false, next: false });
+      video.play();
+      // 视频播完后自动弹结算（利用现有的 onTimeUpdate 或新增 ended 监听）
+      const onLastEnded = () => {
+        video.removeEventListener('ended', onLastEnded);
+        showFinished();
+      };
+      video.addEventListener('ended', onLastEnded);
     } else {
+      video.pause();
       const resumeFrom = CHIHIRO_LINES[currentIdx].end; // continue from where recording ended
       currentIdx = nextIdx;
       phase = 'demo';
@@ -454,8 +473,20 @@ function resetAndInit() {
   audioChunks = [];
   if (userAudio) { userAudio.pause(); userAudio = null; }
   if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+  if (myVersionCleanup) { myVersionCleanup(); myVersionCleanup = null; }
   initDOM();
+
+  // Close any open modals from previous session
+  if (finishedModal) finishedModal.style.display = 'none';
+  const jumpModal = document.getElementById('shadow-jump-modal');
+  if (jumpModal) jumpModal.style.display = 'none';
+
+  // Reset progress bar
+  const progFill = document.getElementById('slv-prog-fill');
+  if (progFill) progFill.style.width = '0%';
+
   video.muted = false;
+  video.volume = 1.0;
   video.removeEventListener('timeupdate', onTimeUpdate);
   video.addEventListener('timeupdate', onTimeUpdate);
   wireButtons();

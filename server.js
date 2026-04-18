@@ -39,7 +39,7 @@ const MIME = {
 };
 
 function serveStatic(res, urlPath, req) {
-  const rel  = urlPath === '/' ? 'index.html' : urlPath.split('?')[0];
+  const rel  = urlPath === '/' ? 'index.html' : decodeURIComponent(urlPath.split('?')[0]);
   let   full = path.join(__dirname, rel);
   if (fs.existsSync(full) && fs.statSync(full).isDirectory()) full = path.join(full, 'index.html');
   try {

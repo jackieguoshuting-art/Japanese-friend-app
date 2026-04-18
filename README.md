@@ -1,144 +1,223 @@
-# Japanese Friend App
+# AI Japanese Friend App — 开发文档
 
-## 当前状态（2026-03-26）
-- Call 页面（`id="pg-call"`）✅ 按 Figma node 5:2 完整重建：街景全幅背景 + 毛玻璃 header + 像素角色画布 + 字幕三段切换（OFF / 日本語 / 双語）+ mute/mic/hangup 三键 + 胶囊输入栏
-- Text 页面（`id="pg-text"`）✅ 手账拼贴风格重建：Briefing Bar header（#002FA7 蓝框圆角）+ 气泡错落微旋转 + SVG icon 输入栏（笑脸 + 相机）+ Response Hints 提示胶囊
-- Summary 页面（`id="pg-summary"`）✅ 按 Figma 重建：会话回顾 + 记忆卡片 + 日记卡片
-- 页面路由 ✅ CHAT WITH ME → mode modal → Video Chat（`go('call')`）/ Text Message（`go('text')`）
-- 结束通话 ✅ hangup 按钮 → `endCall()` → save + renderConversationSummary + renderMemoryCard + go('summary')
-- 页面显示/隐藏 ✅ 统一由 `.page { display:none }` / `.page.active { display:flex }` 控制（不再有硬编码 display:flex 覆盖）
-- Yuki text message ✅ 有上下文，发消息用 Yuki prompt
-- Ren / Hana / Mio text message ✅ 开场白显示（调试用 1/2/3），发消息用各自 prompt，标题/头像正确
-- JSON 解析正常 ✅
-- 词汇点击解析前端代码 ✅（server.js 词汇标记待做）
-- Live Shadowing 模块 ✅（Library / Scene / VN / Analysis / Reward 五个视图）
-- Immersive Listening 模块 ✅（Listen hub, 场景播放器）
-- app.js 拆分完成 ✅（UI / character / Call / Text / Shadow / Listen 均已移到独立模块）
-- Friends 页面（`id="pg-friends"`）✅ 按 Figma 重建：剪贴板风格角色卡片（叠放微旋转）+ 软木板装饰区 + Klein blue 波浪底部导航
-- Shadow 库页面（`id="pg-shadow"`）✅ 按 Figma node 61:672 重建：Scrapbook Folder 风格 + 每日挑战卡片 + INDEX 标签作品列表
-- Shadow 关卡页（`id="pg-shadow-scenes"`）✅ 按 Figma node 75:1268 重建：千と千尋の神隠し 四关卡列表 + 点击展开预览 + EPISODES/GALLERY/ARCHIVE/INFO 底部导航
-- Shadow 路由 ✅ 作品卡片点击 → `go('shadow-scenes')`；关卡页返回 → `go('shadow')`
-
-## 文件结构
-
-### [活跃] 现在在用，改动要小心测试
-- `index.html` — 主页面，所有页面都在这里
-- `server.js` — Node.js 服务器，代理 Anthropic API
-- `frontend/src/app.js` — 主逻辑入口；`endCall()` 在此挂载到 window
-- `frontend/src/core/router.js` — 页面路由 `go()`
-- `frontend/src/core/state.js` — 全局状态 appState
-- `frontend/src/features/ui.js` — 星星动画、声波、词汇 tooltip、idol 装饰
-- `frontend/src/features/character.js` — 角色切换、drawPixelChar、mode modal
-- `frontend/src/features/vocab.js` — 词汇标记解析 parseVocabMarkup
-- `frontend/src/pages/Call/Call.js` — 通话消息、开场白、输入绑定
-- `frontend/src/pages/Text/Text.js` — 文字聊天 initTextPage / initTextPageForChar
-- `frontend/src/pages/Shadow/Shadow.js` — Live Shadowing 完整模块
-- `frontend/src/pages/Listen/Listen.js` — Immersive Listening 模块
-- `frontend/src/characters/yuki/yuki.config.js` — Yuki 角色配置和 prompt
-- `frontend/src/characters/ren/ren.config.js` — Ren 角色配置和 prompt
-- `frontend/src/characters/hana/hana.config.js` — Hana 角色配置和 prompt
-- `frontend/src/styles/idol-theme.css` — 全局主题样式
-- `frontend/src/styles/pages/call.css` — Call 页 + Text 页样式（合并在一个文件）
-- `frontend/src/styles/pages/summary.css` — Summary 页样式
-- `frontend/src/styles/pages/home.css` — Home 页样式
-
-### [预留] 将来会用，现在不要动
-- `frontend/src/components/` — 以后加角色卡片、词汇卡片用
-- `frontend/src/store/` — 以后多角色状态管理用
-- `backend/` — 以后加用户系统、存档功能用
-
-## 开发规则
-- 新角色 → `frontend/src/characters/角色名/`
-- 新页面逻辑 → `frontend/src/pages/页面名/`
-- API 调用 → `frontend/src/services/`
-- 样式 → `frontend/src/styles/pages/页面名.css`
-- 不要再往 app.js 里加新功能，只修改现有功能
-- server.js 只负责转发请求，不包含角色逻辑
-- 角色 prompt 全部在各自的 config.js 里
-- 每次改完必须 git commit
-- 改一个功能测试一个功能，不要同时改多处
-- 跨模块共享状态用 `window.*` globals（避免 ES module 循环引用）
-- 对话历史通过 `window._convHistory` 共享（app.js 里的 conversationHistory 同一引用）
-- `#pg-call` 是唯一活跃通话页，`id="chat-list"` / `id="call-text-input"` / `id="call-send-btn"` 都在这里
-- 页面显示隐藏不要在单独页面 CSS 里写 `display:flex`，统一靠 `.page.active`
-
-## 今日新增功能（2026-04-03）
-
-### Video Call 页 — 语音功能
-- 新增 `frontend/src/features/tts.js`：Web Speech API 日语朗读，Yuki 每次回复自动开口说话
-- 新增 `frontend/src/features/stt.js`：语音识别模块（continuous 模式，支持长句识别）
-- 新增 `frontend/src/features/voiceUI.js`：微信式长按🎤录音 UI，支持波形动画、滑左取消、滑右转文字发送
-- 新增 `/api/voice-format` 端点（Haiku）：语音转录后自动添加标点/emoji/语气词，使输入更自然
-- 修复 `frontend/src/pages/Call/Call.js`：对话历史正确传递给 Claude API（之前每次都传空数组导致 Yuki 失去上下文）
-
-### 底部导航栏
-- 修复 Home 页导航栏样式与其他页面不一致的问题
-- 修复 Home 页导航栏需要滚动才出现（改为 sticky 定位）
-
-## 架构重构计划（按优先级 × 风险排序）
-
-> 分三批执行，每批改完测试后再做下一批。window.* 全局挂载暂不动（HTML onclick 依赖），
-> 但 bridge.js 会把它们集中到一处，消除散落各模块的问题。
-
-### 第一批（极低风险，一次提交）
-| # | 项目 | 说明 |
-|---|------|------|
-| 1 | `_callHistory` 切页清空 | 现在就在出 bug，快速导航会带着上次历史 |
-| 2 | `characters/index.js` 统一 characterMap | 现在 Call.js / Text.js 各写一份，加新角色必须改两处 |
-| 3 | `bridge.js` 集中 window.* 挂载 | 纯移动代码，10 行内，让 HTML↔JS 接缝一目了然 |
-| 4 | `session.turnCount` 加 reset | Text/Call 共用同一计数器，新对话开始时应归零 |
-| 5 | voiceUI overlay 重复 append 防护 | 加存在性检查，防止重复初始化时叠加 DOM |
-| 6 | imageInput popup 改成独立实例 | 当前单例共享，三个以上按钮会竞态 |
-| 7 | server.js route dispatcher | 纯整理，再加 2-3 个 API 端点前做 |
-
-### 第二批（中风险，改完测所有导航栏页面）
-| # | 项目 | 说明 |
-|---|------|------|
-| 8 | 底部导航 CSS 去重（5份→1份） | 已出过不同步 bug，各页面保留自己的弧度位置差异 |
-| 9 | `initTextPage` / `initTextPageForChar` 合并 | 加 `reset` 参数区分，消除职责重叠 |
-
-### 第三批（中高风险，单独提交，改完专测 Summary）
-| # | 项目 | 说明 |
-|---|------|------|
-| 10 | `core/conversationStore.js` 统一三套历史 | **Summary 现在就是错的**：读 `_convHistory` 但 Call 存 `_callHistory`，两套互不通 |
-
-> ⚠️ 第三批注意：三套格式不同（text/content 字段名、role 值 yuki vs assistant），
-> 统一时需规范化。改完测试路径：打完电话 → 结束通话 → Summary 对话记录是否正确显示。
-
-### 暂不动的（高风险低收益）
-- `window.*` 全局挂载本身不移除——HTML `onclick="endCall()"` 等直接依赖，改了静默失效
-- 用 `bridge.js` 集中管理代替彻底清除
+## 项目概览
+AI 日语学习陪伴 App，用户通过与 AI 角色对话练习日语。
+- 位置：~/Desktop/japanese-friend-app
+- 启动：npm run dev → http://localhost:3000
+- 技术栈：Node.js/Express、原生 JS 前端、Anthropic Claude API、ElevenLabs TTS API、无框架
 
 ---
 
-## 待修复 / 待优化（功能层面）
+## 文件结构
 
-## 对 Yuki 的待改进项
+```
+frontend/src/
+├── core/
+│   ├── state.js              # 全局状态 appState
+│   ├── storage.js            # 本地存储工具
+│   ├── router.js             # 页面路由 go()
+│   └── conversationStore.js  # 统一对话历史
+├── services/
+│   └── claude.service.js     # Claude API 调用（含 529 自动重试）
+├── features/
+│   ├── topics.js             # 每日话题
+│   ├── memory.js             # 角色记忆（按角色分桶，最多12条）
+│   ├── chat.js               # fallback 回复、resetSession
+│   ├── vocab.js              # 词汇点击翻译
+│   ├── tts.js                # ElevenLabs TTS（fallback Web Speech API）
+│   ├── stt.js                # 语音识别
+│   ├── voiceUI.js            # 微信式长按录音 UI
+│   ├── yukiAnimation.js      # Yuki 动画控制（双缓冲，三种情绪模式）
+│   ├── imageInput.js         # 图片发送
+│   ├── badge.js              # 导航栏未读红点
+│   ├── proactiveMessage.js   # 角色主动消息（32小时触发）
+│   ├── inAppNotification.js  # App 内通知条
+│   └── textHistory.js        # Text 页对话历史持久化
+├── characters/
+│   ├── index.js              # 统一 characterMap（加新角色只改这里）
+│   ├── yuki/yuki.config.js   # Yuki prompt（含 emotion 字段）
+│   ├── ren/ren.config.js
+│   └── hana/hana.config.js
+├── pages/
+│   ├── Call/Call.js          # Video call 逻辑
+│   ├── Text/Text.js          # Text message 逻辑
+│   ├── Shadow/ShadowLive.js  # Shadow 跟读逻辑
+│   └── Listen/Listen.js      # Listen 模块
+├── bridge.js                 # 统一 window.* 全局接口（HTML onclick 专用）
+└── styles/
+    └── idol-theme.css        # 全局主题样式
 
-### 回复节奏 — Streaming 分句（待做）
-现在 Yuki 每次回复是完整一句话，活人感不够强。
-理想效果：像真实朋友发消息一样，边想边发，分多条短句出现，每条之间随机停顿。
-实现方案：server.js 改成 streaming 响应，前端实时接收，遇到句号/换行立刻显示并朗读。
-等 Text 页改造完成、功能稳定后再做。
+frontend/public/assets/characters/yuki/
+├── yuki-idle.png
+├── yuki-bg.jpg
+└── animations/
+    ├── Yuki表情过渡/
+    │   ├── idle.webm
+    │   ├── happy.webm         # 普通→开心（一次性）
+    │   ├── smile.webm         # 普通→微笑（一次性）
+    │   ├── surprised.webm     # 普通→惊讶→回普通
+    │   ├── shy.webm           # 普通→害羞→回普通
+    │   └── lean-smile.webm    # 普通→凑近笑→回普通
+    └── Yuki表情单一循环/
+        ├── happy-loop.webm
+        └── smile-loop.webm
+```
 
-### Prompt 待修复
-1. 不要问用户具体地址或隐私信息（如"どこに住んでるの？"）
-2. 用户为日语道歉或出错时，要鼓励而不是推脱（不要说"僕、先生じゃないから"）
+---
 
-### TTS 升级路线
-- 当前：ElevenLabs v3 + 自建 Yuki 声音 ✅
-- 待优化：Call 页考虑换 Flash v2.5（降低延迟），Text 页保留 v3（音质优先）
+## 页面状态
 
-### 其他待做
-- Summary 页面 UI
-- Listen 页面 UI
-- server.js 加词汇标记
-- Ren / Hana / Mio 完整 prompt（开场白改回真实日语，当前调试用 1/2/3）
-- Mio 角色 config（当前复用 yukiConfig）
-- Yuki 动画（等立绘拆分）
+| 页面 | 路由 | 状态 |
+|------|------|------|
+| Home | #pg-home | ✅ 档案卡片，Yuki 证件照，剪贴感样式 |
+| Friends/Talk | #pg-friends | ✅ 剪贴板风格，角色卡片 |
+| Video Call | #pg-call | ✅ 立绘+背景，字幕，词汇，ElevenLabs TTS，语音输入，情绪动画 |
+| Text Message | #pg-text | ✅ 持久化历史，Topic 按钮，主动消息，通知，未读红点 |
+| Shadow 主页 | #pg-shadow | ✅ 作品列表，每日挑战 |
+| Shadow 关卡 | #pg-shadow-scenes | ✅ 关卡选择 |
+| Shadow 跟读 | #pg-shadow-live | ✅ Cinematic UI，视频+录音+KTV字幕 |
+| Summary | #pg-summary | ✅ 会话回顾+记忆卡片 |
+| Listen | #pg-listen | ⬜ 待做 |
 
-## 稳定存档点（git commits）
-- `de69454` — Text message 手账风格 + SVG icon 输入栏完整重建（当前最新）
-- `3c5f4ff` — 修复结束按钮跳转 + text/call 页面显示冲突
-- `5ead310` — 把新 video call UI 合并到 pg-call，删除多余的 pg-video-call
-- `text-video-working` (tag) — text 和 video 均正常，JSON 解析正常
+---
+
+## Yuki 动画系统
+
+三种情绪类型：
+- **loop**：idle 普通待机循环
+- **in-loop**：过渡动画结束后切换循环（happy、smile）
+- **once**：播放一次自动回 idle（surprised、shy、lean-smile）
+
+emotion 触发标准（Claude API 返回 emotion 字段）：
+- `idle`：默认/普通对话
+- `happy`：开心、兴奋、好消息
+- `smile`：温柔、轻松、正向
+- `surprised`：惊讶、震惊
+- `shy`：用户夸奖 Yuki、说喜欢 Yuki
+- `lean-smile`：俏皮、撒娇、亲近
+
+临时调试（上线前删除）：
+```js
+// TODO: remove before production
+window.setYukiEmotion = setEmotion;
+```
+
+---
+
+## API 接口
+
+| 端点 | 用途 |
+|------|------|
+| POST /api/chat | Claude 对话（含 529 自动重试） |
+| POST /api/tts | ElevenLabs TTS 语音合成 |
+| POST /api/voice-format | 语音识别结果润色（Haiku） |
+
+环境变量（.env）：
+```
+ANTHROPIC_API_KEY=
+ELEVENLABS_API_KEY=
+YUKI_VOICE_ID=
+```
+
+---
+
+## 开发规则
+
+1. 新功能 = 新文件，不碰 app.js
+2. 新角色 → `characters/角色名/角色名.config.js`，注册到 `characters/index.js`
+3. 禁止在模块文件里直接挂载 `window.*`，统一在 `bridge.js` 声明
+4. 新功能禁止新增 `window.*` 挂载
+5. 新页面禁止复制底部导航 CSS
+6. 每条 Claude Code 指令前缀安全头：
+   ```
+   Do not rename existing exports, imports, or public function names...
+   Keep all existing page behavior working.
+   Please do not rewrite unrelated files. Make the smallest safe changes needed.
+   ```
+7. 改完必须 git commit，回滚用 `git revert HEAD`
+8. Commit 信息用中文
+
+---
+
+## Changelog
+
+### 重构进度
+
+#### 第一批 ✅ 完成（2026-04-03）
+- [x] _callHistory 切页清空
+- [x] characters/index.js 统一 characterMap
+- [x] bridge.js 集中 window.* 挂载
+- [x] session.turnCount 加 reset
+- [x] voiceUI overlay 重复 append 防护
+- [x] imageInput popup 独立实例
+- [x] server.js route dispatcher
+
+#### 第二批 ✅ 完成（2026-04-03）
+- [x] 底部导航 CSS 去重
+- [x] initTextPage 合并（自然解决）
+
+#### 第三批 ⬜ 待做（功能稳定后）
+- [ ] conversationStore 统一三套对话历史
+- [ ] Summary 页正确读取 Call 历史
+
+### 功能开发记录
+
+| 日期 | 功能 | 状态 |
+|------|------|------|
+| 2026-04-03 | Video Call 语音输入（长按🎤）| ✅ |
+| 2026-04-03 | Web Speech API TTS | ✅ |
+| 2026-04-03 | 底部导航栏统一修复 | ✅ |
+| 2026-04-04 | ElevenLabs TTS 接入（Yuki 真实声线）| ✅ |
+| 2026-04-04 | Text 页完整改造（持久化/Topic/主动消息/通知/红点）| ✅ |
+| 2026-04-04 | Home 页 Yuki 证件照 + 剪贴感样式 | ✅ |
+| 2026-04-04 | 对话历史上下文修复 | ✅ |
+| 2026-04-06 | Yuki 动画系统（双缓冲+三种情绪模式）| ✅ |
+| 2026-04-06 | Yuki 视频透明底 MOV→WebM | ✅ |
+| 2026-04-06 | emotion 字段接入 yuki.config.js | ✅ |
+| 2026-04-13 | Shadow 页 Cinematic UI（Stitch 设计）| ✅ |
+| 2026-04-13 | API 529 自动重试 | ✅ |
+| 2026-04-14 | Yuki 动画竞态修复（操作队列）| ✅ |
+| 2026-04-14 | Shadow Live CSS 冲突修复（旧规则覆盖新设计）| ✅ |
+| 2026-04-15 | Shadow Live KTV 字幕重叠修复 + 空蓝框删除 | ✅ |
+
+---
+
+## 待做功能
+
+### 功能层面
+- [ ] Listen 页面 UI
+- [ ] server.js 加词汇标记
+- [ ] Ren/Hana/Mio 完整 prompt（当前调试用 1/2/3）
+- [ ] Mio 角色 config（当前复用 yukiConfig）
+- [ ] Shadow 音轨分离（对话+背景音乐分开）
+- [ ] Shadow 录音降噪
+- [ ] ElevenLabs TTS 优化：Call 页换 Flash v2.5
+- [ ] Yuki streaming 分句回复
+- [ ] 图片发送完善
+
+### Shadow 跟读页 — 待做优化
+- [ ] KTV字幕蓝色高亮和浅灰色文字没对齐，有重影问题
+- [ ] KTV字幕需要和台词同步播放完（真正的KTV逐字填充效果，字幕随时间进度填满）
+- [ ] 音频视频背景音分离（对话音轨+背景音乐分开，用户声音完美嵌入）
+- [ ] 按钮大小排版及动效优化（底部三键大小比例、录音键最大、点击动效）
+- [ ] 右上角"1/4"按钮换成白天/黑夜模式切换按钮
+  - 黑夜模式：现有深色风格（默认）
+  - 白天模式：背景变白色，字幕变黑色，其余布局不变
+
+### Yuki Prompt 待修复
+- [ ] 不要问用户地址或隐私信息
+- [ ] 用户日语出错时鼓励，不要推脱
+
+### 画师素材待完成
+- [ ] Yuki 情绪动画补全（happy-in、smile-in 过渡视频）
+- [ ] Ren/Hana/Mio 立绘和动画
+
+---
+
+## 重构计划（Listen 页做完后执行）
+
+1. conversationStore 统一历史
+2. 清理 `window.*` 挂载
+3. 底部导航 CSS 合并
+4. index.html 内联 onclick → addEventListener
+5. server.js 路由层拆分
