@@ -100,8 +100,8 @@ function initPan() {
   function center() {
     var ww = wrap.offsetWidth,  wh = wrap.offsetHeight;
     var iw = img.offsetWidth,   ih = img.offsetHeight;
-    ox = clamp(-(iw - ww) * 0.45, ww - iw, 0);
-    oy = clamp(-(ih - wh) * 0.35, wh - ih, 0);
+    ox = clamp(Math.round(-(iw - ww) * 0.805), ww - iw, 0);
+    oy = clamp(Math.round(-(ih - wh) * 0.448), wh - ih, 0);
     applyTransform();
   }
 
