@@ -19,7 +19,8 @@
 
 .scene-map-img {
   position: absolute;
-  width: 180%;
+  width: 180% !important;
+  max-width: none !important;
   height: auto;
   top: 0;
   left: -40%;
