@@ -1,6 +1,6 @@
 var BUILDING_DEFS = [
   { id: 'building-station',  cx: 1390, cy: 2235, w: 850, h: 890, scene: 'station'  },
-  { id: 'building-izakaya',  cx: 2667, cy: 2242, w: 535, h: 845, scene: 'izakaya'  },
+  { id: 'building-izakaya',  cx: 2687, cy: 2255, w: 560, h: 855, scene: 'izakaya'  },
   { id: 'building-minimart', cx: 3257, cy: 3133, w: 383, h: 630, scene: 'minimart' },
 ];
 var ORIG_W = 5116;
@@ -135,7 +135,7 @@ function initPan() {
 
     var defs = [
       { id: 'building-station',  cx: 1390, cy: 2235, w: 850, h: 890 },
-      { id: 'building-izakaya',  cx: 2667, cy: 2242, w: 535, h: 845 },
+      { id: 'building-izakaya',  cx: 2687, cy: 2255, w: 560, h: 855 },
       { id: 'building-minimart', cx: 3257, cy: 3133, w: 383, h: 630 },
     ];
 
