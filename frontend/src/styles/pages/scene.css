@@ -1,6 +1,7 @@
 #pg-scene {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   background: #060913;
   isolation: isolate;
@@ -8,7 +9,7 @@
 
 .scene-map-wrap {
   position: absolute;
-  inset: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   overflow: hidden;
   cursor: grab;
   z-index: 1;
