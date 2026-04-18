@@ -1,5 +1,7 @@
 # AI Japanese Friend App — 开发文档
 
+⚠️ 开发前必读:docs/NAMING.md — 命名规范(硬规矩)
+
 ## 项目概览
 AI 日语学习陪伴 App，用户通过与 AI 角色对话练习日语。
 - 位置：~/Desktop/japanese-friend-app
@@ -12,6 +14,7 @@ AI 日语学习陪伴 App，用户通过与 AI 角色对话练习日语。
 
 ```
 frontend/src/
+├── app-namespace.js          # 全局命名空间 window.App 入口
 ├── core/
 │   ├── state.js              # 全局状态 appState
 │   ├── storage.js            # 本地存储工具
@@ -136,6 +139,8 @@ YUKI_VOICE_ID=
    ```
 7. 改完必须 git commit，回滚用 `git revert HEAD`
 8. Commit 信息用中文
+9. CSS 前缀、JS 命名空间、localStorage key 前缀、onclick 写法必须遵守 docs/NAMING.md。旧代码后续清理，新代码立刻合规。
+10. 新建 frontend/src/pages/<Module>/ 目录必须同时创建 README.md。老模块 README 补齐见"已知技术债"。
 
 ## 编码原则（Claude Code 必须遵守）
 
@@ -170,6 +175,7 @@ YUKI_VOICE_ID=
 - 底部导航 CSS 五份重复，需合并
 - window.* 全局挂载未完全统一到 bridge.js
 - index.html 内联 onclick 未换成 addEventListener
+- 老模块 README.md 未补齐（Call/Text/Shadow/Listen），Commit 3 统一处理
 
 【上线前必须删除】
 - yukiAnimation.js 末尾：window.setYukiEmotion = setEmotion（调试用）
