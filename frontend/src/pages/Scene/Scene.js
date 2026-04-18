@@ -97,6 +97,7 @@ function closePopup() {
 }
 
 var syncBuildings = function() {};
+var centerMap = function() {};
 
 function initPan() {
   var wrap = document.getElementById('scene-map-wrap');
@@ -207,6 +208,7 @@ function initPan() {
     syncBuildings();
     applyTransform();
   }
+  centerMap = center;
 
   function limit() {
     var ww = wrap.offsetWidth,  wh = wrap.offsetHeight;
@@ -279,21 +281,7 @@ function bind() {
 
   new MutationObserver(function() {
     if (page.classList.contains('active')) {
-      setTimeout(function() {
-        var img = document.getElementById('scene-map-img');
-        var wrap = document.getElementById('scene-map-wrap');
-        if (!img || !wrap) return;
-        var ww = wrap.offsetWidth, wh = wrap.offsetHeight;
-        var iw = img.offsetWidth,  ih = img.offsetHeight;
-        if (iw === 0 || ih === 0) return;
-        var ox = Math.max(ww - iw, Math.min(0, -Math.round((iw - ww) * 0.57)));
-        var oy = Math.max(wh - ih, Math.min(0, -Math.round((ih - wh) * 0.66)));
-        var t = 'translate(' + ox + 'px,' + oy + 'px)';
-        img.style.transform = t;
-        syncBuildings();
-        var layer = document.getElementById('scene-building-layer');
-        if (layer) layer.style.transform = t;
-      }, 50);
+      setTimeout(centerMap, 50);
     } else {
       closePopup();
     }
