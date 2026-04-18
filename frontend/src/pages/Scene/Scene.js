@@ -1,7 +1,7 @@
 var BUILDING_DEFS = [
-  { id: 'building-station',  cx: 1390, cy: 2235, w: 850, h: 890, scene: 'station',  topRatio: 0.35 },
+  { id: 'building-station',  cx: 1390, cy: 2235, w: 850, h: 890, scene: 'station',  topRatio: 0.26 },
   { id: 'building-izakaya',  cx: 2687, cy: 2245, w: 560, h: 855, scene: 'izakaya',  topRatio: 0.15 },
-  { id: 'building-minimart', cx: 3233, cy: 2973, w: 457, h: 700, scene: 'minimart', topRatio: 0.27 },
+  { id: 'building-minimart', cx: 3233, cy: 2973, w: 457, h: 700, scene: 'minimart', topRatio: 0.18 },
 ];
 var ORIG_W = 5116;
 var ORIG_H = 5120;
