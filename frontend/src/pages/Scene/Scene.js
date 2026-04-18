@@ -143,12 +143,15 @@ function initPan() {
       var el = document.getElementById(d.id);
       if (!el) return;
       if (el.parentElement !== layer) layer.appendChild(el);
-      var scale = 1.0;
-      var displayW = (d.w / ORIG_W) * iw * scale;
-      var centerX  = (d.cx / ORIG_W) * iw;
-      var centerY  = (d.cy / ORIG_H) * ih;
-      var left = centerX;
-      var top  = centerY;
+      var scale = 1.15;
+      var baseW = (d.w / ORIG_W) * iw;
+      var baseH = (d.h / ORIG_H) * ih;
+      var displayW = baseW * scale;
+      var displayH = baseH * scale;
+      var originLeft = (d.cx / ORIG_W) * iw;
+      var originTop  = (d.cy / ORIG_H) * ih;
+      var left = originLeft - (displayW - baseW) / 2;
+      var top  = originTop  - (displayH - baseH) / 2;
       el.style.cssText = [
         'position:absolute',
         'left:' + Math.round(left) + 'px',
