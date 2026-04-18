@@ -95,8 +95,8 @@ function initPan() {
   function limit() {
     var ww = wrap.offsetWidth, wh = wrap.offsetHeight;
     var iw = img.offsetWidth,  ih = img.offsetHeight;
-    ox = clamp(ox, ww - iw, 0);
-    oy = clamp(oy, wh - ih, 0);
+    if (iw > ww) { ox = clamp(ox, ww - iw, 0); } else { ox = 0; }
+    if (ih > wh) { oy = clamp(oy, wh - ih, 0); } else { oy = 0; }
   }
 
   wrap.addEventListener('pointerdown', function(e) {
@@ -110,7 +110,7 @@ function initPan() {
     if (!dragging) return;
     ox = e.clientX - sx; oy = e.clientY - sy;
     limit();
-    img.style.transform = 'translate(' + ox + 'px,' + oy + 'px)';
+    img.style.transform = 'translateX(-50%) translate(' + ox + 'px,' + oy + 'px)';
   });
 
   function end() { dragging = false; }
