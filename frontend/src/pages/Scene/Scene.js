@@ -98,8 +98,10 @@ function initPan() {
   }
 
   function center() {
-    ox = -704;
-    oy = -189;
+    var ww = wrap.offsetWidth,  wh = wrap.offsetHeight;
+    var iw = img.offsetWidth,   ih = img.offsetHeight;
+    ox = clamp(-Math.round((iw - ww) * 0.805), ww - iw, 0);
+    oy = clamp(-Math.round((ih - wh) * 0.448), wh - ih, 0);
     applyTransform();
   }
 
