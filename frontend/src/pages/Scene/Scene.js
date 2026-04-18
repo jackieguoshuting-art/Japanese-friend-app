@@ -143,7 +143,7 @@ function initPan() {
       var el = document.getElementById(d.id);
       if (!el) return;
       if (el.parentElement !== layer) layer.appendChild(el);
-      var scale = 2.2;
+      var scale = 1.0;
       var displayW = (d.w / ORIG_W) * iw * scale;
       var centerX  = (d.cx / ORIG_W) * iw;
       var centerY  = (d.cy / ORIG_H) * ih;
