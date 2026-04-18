@@ -147,8 +147,8 @@ function initPan() {
       var displayW = (d.w / ORIG_W) * iw * scale;
       var centerX  = (d.cx / ORIG_W) * iw;
       var centerY  = (d.cy / ORIG_H) * ih;
-      var left = centerX - displayW / 2;
-      var top  = centerY - (displayW * (d.h / d.w)) / 2;
+      var left = centerX;
+      var top  = centerY;
       el.style.cssText = [
         'position:absolute',
         'left:' + Math.round(left) + 'px',
