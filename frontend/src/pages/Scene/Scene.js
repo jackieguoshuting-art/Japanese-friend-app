@@ -142,7 +142,11 @@ function initPan() {
     defs.forEach(function(d) {
       var el = document.getElementById(d.id);
       if (!el) return;
-      if (el.parentElement !== layer) layer.appendChild(el);
+      if (el.parentElement !== layer) {
+        layer.appendChild(el);
+        // re-sync once img has loaded so offsetHeight is accurate
+        if (!el.complete) el.onload = function() { syncBuildings(); };
+      }
       var scale = 1.15;
       var baseW = (d.w / ORIG_W) * iw;
       var baseH = (d.h / ORIG_H) * ih;
@@ -166,10 +170,12 @@ function initPan() {
         'filter:drop-shadow(0 0 8px rgba(255,255,255,0.9)) drop-shadow(0 0 20px rgba(255,255,255,0.5))'
       ].join(';');
       // hit area: 60% size, centered on building
+      // use el.offsetHeight (actual rendered) to handle height:auto PNGs correctly
+      var renderedH = el.offsetHeight || displayH;
       var hitW = Math.round(displayW * 0.6);
-      var hitH = Math.round(displayH * 0.6);
+      var hitH = Math.round(renderedH * 0.6);
       var hitLeft = Math.round(left + (displayW - hitW) / 2);
-      var hitTop  = Math.round(top  + (displayH - hitH) / 2);
+      var hitTop  = Math.round(top  + (renderedH - hitH) / 2);
       var hitId = 'hit-' + d.id;
       var hit = document.getElementById(hitId);
       if (!hit) {
