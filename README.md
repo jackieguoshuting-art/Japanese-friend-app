@@ -137,6 +137,43 @@ YUKI_VOICE_ID=
 7. 改完必须 git commit，回滚用 `git revert HEAD`
 8. Commit 信息用中文
 
+## 编码原则（Claude Code 必须遵守）
+
+【架构原则】
+- 模块化、组件化：每个功能独立文件，职责单一
+- 高内聚低耦合：模块内部紧密，模块之间依赖最少
+- 单一职责：一个函数/模块只做一件事
+
+【代码质量】
+- 简洁高效，可读性优先
+- 禁止过度设计：不要为了"设计感"引入不必要的抽象层
+- 禁止兜底代码：不写"万一出错"的冗余保护逻辑
+- 禁止冗余代码：没有用到的变量、函数、注释一律不写
+- 禁止猜测性代码：不清楚的字段名、接口结构，必须先问清楚再写
+- 复杂逻辑必须提取成有意义命名的函数，禁止内联复杂表达式
+
+【遇到不确定的地方】
+- 不明白需求 → 先问，不要猜
+- 不清楚接口字段 → 先问，不要写一堆猜测性的字段名
+- 不确定影响范围 → 先问，不要擅自改动
+
+## 已知技术债（大重构时处理）
+
+【代码层面】
+- Call.js 第214行：isJapaneseContent 内联函数可读性差，需提取成独立函数
+- Call.js 底部：window.stopSpeaking / resetYukiToIdle / getSessionMemory 未统一到 bridge.js
+- window.escapeHtml?.() 防御性调用过多，说明模块依赖关系不清晰，重构时理清
+
+【架构层面】
+- conversationStore 三套对话历史未统一（Call/Text/Scene 各自维护）
+- Summary 页读不到 Call 历史
+- 底部导航 CSS 五份重复，需合并
+- window.* 全局挂载未完全统一到 bridge.js
+- index.html 内联 onclick 未换成 addEventListener
+
+【上线前必须删除】
+- yukiAnimation.js 末尾：window.setYukiEmotion = setEmotion（调试用）
+
 ---
 
 ## Changelog
