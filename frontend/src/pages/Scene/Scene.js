@@ -1,3 +1,11 @@
+var BUILDING_DEFS = [
+  { id: 'building-station',  cx: 1414, cy: 3035, w: 806, h: 747, scene: 'station'  },
+  { id: 'building-izakaya',  cx: 2737, cy: 2572, w: 511, h: 796, scene: 'izakaya'  },
+  { id: 'building-minimart', cx: 3257, cy: 3133, w: 383, h: 630, scene: 'minimart' },
+];
+var ORIG_W = 5116;
+var ORIG_H = 5120;
+
 const SCENES = {
   station: {
     titleJa: '地下鉄',
@@ -88,6 +96,8 @@ function closePopup() {
   document.querySelectorAll('#pg-scene .scene-building').forEach(function(b) { b.classList.remove('is-active'); });
 }
 
+var syncBuildings = function() {};
+
 function initPan() {
   var wrap = document.getElementById('scene-map-wrap');
   var img  = document.getElementById('scene-map-img');
@@ -98,19 +108,51 @@ function initPan() {
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
   function applyTransform() {
-    img.style.transform = 'translate(' + ox + 'px,' + oy + 'px)';
-    var iw = img.offsetWidth, ih = img.offsetHeight;
-    var ww = wrap.offsetWidth,  wh = wrap.offsetHeight;
-    document.querySelectorAll('#pg-scene .scene-building').forEach(function(b) {
-      var fx = parseFloat(b.style.left) / 100;
-      var fy = parseFloat(b.style.top)  / 100;
-      // building CSS left/top positions it at (fx*ww, fy*wh);
-      // we want it at (ox + fx*iw, oy + fy*ih)
-      var tx = ox + fx * (iw - ww);
-      var ty = oy + fy * (ih - wh);
-      b.style.transform = 'translateX(-50%) translate(' + tx + 'px,' + ty + 'px)';
-    });
+    var t = 'translate(' + ox + 'px,' + oy + 'px)';
+    img.style.transform = t;
+    var layer = document.getElementById('scene-building-layer');
+    if (layer) layer.style.transform = t;
   }
+
+  syncBuildings = function() {
+    var iw = img.offsetWidth;
+    var ih = img.offsetHeight;
+    if (iw === 0 || ih === 0) return;
+
+    var layer = document.getElementById('scene-building-layer');
+    if (!layer) {
+      layer = document.createElement('div');
+      layer.id = 'scene-building-layer';
+      layer.style.cssText = 'position:absolute;top:0;left:0;pointer-events:none;';
+      wrap.appendChild(layer);
+      BUILDING_DEFS.forEach(function(d) {
+        var el = document.getElementById(d.id);
+        if (el) layer.appendChild(el);
+      });
+    }
+    layer.style.width  = iw + 'px';
+    layer.style.height = ih + 'px';
+
+    BUILDING_DEFS.forEach(function(d) {
+      var el = document.getElementById(d.id);
+      if (!el) return;
+      var x = d.cx - d.w / 2;
+      var y = d.cy - d.h / 2;
+      el.style.cssText = [
+        'position:absolute',
+        'left:'   + Math.round((x / ORIG_W) * iw) + 'px',
+        'top:'    + Math.round((y / ORIG_H) * ih) + 'px',
+        'width:'  + Math.round((d.w / ORIG_W) * iw * 1.25) + 'px',
+        'height:' + Math.round((d.h / ORIG_H) * ih * 1.25) + 'px',
+        'max-width:none!important',
+        'pointer-events:auto',
+        'cursor:pointer',
+        'transform:none',
+        'transition:filter 0.3s ease',
+        'filter:drop-shadow(0 0 8px rgba(255,255,255,0.9)) drop-shadow(0 0 20px rgba(255,255,255,0.5))'
+      ].join(';');
+    });
+  };
 
   function center() {
     var ww = wrap.offsetWidth,  wh = wrap.offsetHeight;
@@ -118,6 +160,7 @@ function initPan() {
     if (iw === 0 || ih === 0) return;
     ox = clamp(-Math.round((iw - ww) * 0.57), ww - iw, 0);
     oy = clamp(-Math.round((ih - wh) * 0.66), wh - ih, 0);
+    syncBuildings();
     applyTransform();
   }
 
@@ -143,9 +186,10 @@ function initPan() {
 
   wrap.addEventListener('pointermove', function(e) {
     if (!dragging) return;
-    ox = e.clientX - sx;
-    oy = e.clientY - sy;
-    limit();
+    var ww = wrap.offsetWidth, wh = wrap.offsetHeight;
+    var iw = img.offsetWidth,  ih = img.offsetHeight;
+    ox = clamp(e.clientX - sx, ww - iw, 0);
+    oy = clamp(e.clientY - sy, wh - ih, 0);
     applyTransform();
   });
 
@@ -200,14 +244,11 @@ function bind() {
         if (iw === 0 || ih === 0) return;
         var ox = Math.max(ww - iw, Math.min(0, -Math.round((iw - ww) * 0.57)));
         var oy = Math.max(wh - ih, Math.min(0, -Math.round((ih - wh) * 0.66)));
-        img.style.transform = 'translate(' + ox + 'px,' + oy + 'px)';
-        document.querySelectorAll('#pg-scene .scene-building').forEach(function(b) {
-          var fx = parseFloat(b.style.left) / 100;
-          var fy = parseFloat(b.style.top)  / 100;
-          var tx = ox + fx * (iw - ww);
-          var ty = oy + fy * (ih - wh);
-          b.style.transform = 'translateX(-50%) translate(' + tx + 'px,' + ty + 'px)';
-        });
+        var t = 'translate(' + ox + 'px,' + oy + 'px)';
+        img.style.transform = t;
+        syncBuildings();
+        var layer = document.getElementById('scene-building-layer');
+        if (layer) layer.style.transform = t;
       }, 50);
     } else {
       closePopup();
