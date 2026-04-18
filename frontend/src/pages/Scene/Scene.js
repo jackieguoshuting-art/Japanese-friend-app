@@ -100,8 +100,9 @@ function initPan() {
   function center() {
     var ww = wrap.offsetWidth,  wh = wrap.offsetHeight;
     var iw = img.offsetWidth,   ih = img.offsetHeight;
-    ox = clamp(-Math.round((iw - ww) * 0.805), ww - iw, 0);
-    oy = clamp(-Math.round((ih - wh) * 0.448), wh - ih, 0);
+    if (iw === 0 || ih === 0) return;
+    ox = clamp(-Math.round((iw - ww) * 0.57), ww - iw, 0);
+    oy = clamp(-Math.round((ih - wh) * 0.66), wh - ih, 0);
     applyTransform();
   }
 
@@ -113,7 +114,9 @@ function initPan() {
   }
 
   img.onload = center;
-  if (img.complete) requestAnimationFrame(center);
+  if (img.complete && img.naturalWidth > 0) {
+    requestAnimationFrame(center);
+  }
 
   var dragging = false, sx, sy;
 
