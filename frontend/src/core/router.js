@@ -12,6 +12,7 @@ function updateNavActive(page) {
     'video-call': 1,
     'summary': 1,
     'shadow': 2,
+    'scene': 3,
   };
   const idx = map[page] ?? -1;
   if (idx >= 0) {
