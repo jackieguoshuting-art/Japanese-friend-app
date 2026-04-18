@@ -1,7 +1,7 @@
 var BUILDING_DEFS = [
-  { id: 'building-station',  cx: 1390, cy: 2235, w: 850, h: 890, scene: 'station'  },
-  { id: 'building-izakaya',  cx: 2687, cy: 2245, w: 560, h: 855, scene: 'izakaya'  },
-  { id: 'building-minimart', cx: 3233, cy: 2973, w: 457, h: 700, scene: 'minimart' },
+  { id: 'building-station',  cx: 1390, cy: 2235, w: 850, h: 890, scene: 'station',  topRatio: 0.35 },
+  { id: 'building-izakaya',  cx: 2687, cy: 2245, w: 560, h: 855, scene: 'izakaya',  topRatio: 0.15 },
+  { id: 'building-minimart', cx: 3233, cy: 2973, w: 457, h: 700, scene: 'minimart', topRatio: 0.27 },
 ];
 var ORIG_W = 5116;
 var ORIG_H = 5120;
@@ -134,11 +134,7 @@ function initPan() {
     layer.style.width  = iw + 'px';
     layer.style.height = ih + 'px';
 
-    var defs = [
-      { id: 'building-station',  cx: 1390, cy: 2235, w: 850, h: 890, scene: 'station'  },
-      { id: 'building-izakaya',  cx: 2687, cy: 2245, w: 560, h: 855, scene: 'izakaya'  },
-      { id: 'building-minimart', cx: 3233, cy: 2973, w: 457, h: 700, scene: 'minimart' },
-    ];
+    var defs = BUILDING_DEFS;
 
     defs.forEach(function(d) {
       var el = document.getElementById(d.id);
@@ -204,7 +200,7 @@ function initPan() {
         if (hs.parentElement !== layer) layer.appendChild(hs);
         hs.style.position = 'absolute';
         hs.style.left = Math.round(left + displayW / 2) + 'px';
-        hs.style.top  = Math.round(top - 8) + 'px';
+        hs.style.top  = Math.round(top + renderedH * (d.topRatio || 0.25)) + 'px';
         hs.style.zIndex = '5';
       }
     });
