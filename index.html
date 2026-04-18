@@ -1177,16 +1177,13 @@
     <img class="scene-map-img" id="scene-map-img"
          src="/frontend/public/assets/backgrounds/tokyo-scene-bg.jpg" alt="" draggable="false">
 
-    <!-- Building cutout layers -->
-    <img class="scene-building" id="building-station" data-scene="station"
-         src="/frontend/public/assets/backgrounds/station.png" alt="" draggable="false"
-         style="left:32.1%;top:70.8%;">
-    <img class="scene-building" id="building-izakaya" data-scene="izakaya"
-         src="/frontend/public/assets/backgrounds/izakaya.png" alt="" draggable="false"
-         style="left:63.7%;top:60.8%;">
-    <img class="scene-building" id="building-minimart" data-scene="minimart"
-         src="/frontend/public/assets/backgrounds/minimart.png" alt="" draggable="false"
-         style="left:75.3%;top:72.1%;">
+    <!-- Building cutout layers (hidden until syncBuildings moves them into layer) -->
+    <img id="building-station" class="scene-building" data-scene="station"
+         src="/frontend/public/assets/backgrounds/station.png" draggable="false" style="display:none">
+    <img id="building-izakaya" class="scene-building" data-scene="izakaya"
+         src="/frontend/public/assets/backgrounds/izakaya.png" draggable="false" style="display:none">
+    <img id="building-minimart" class="scene-building" data-scene="minimart"
+         src="/frontend/public/assets/backgrounds/minimart.png" draggable="false" style="display:none">
 
     <div class="scene-map-overlay"></div>
 
