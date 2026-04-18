@@ -167,7 +167,21 @@ function bind() {
   initPan();
 
   new MutationObserver(function() {
-    if (!page.classList.contains('active')) closePopup();
+    if (page.classList.contains('active')) {
+      setTimeout(function() {
+        var img = document.getElementById('scene-map-img');
+        var wrap = document.getElementById('scene-map-wrap');
+        if (!img || !wrap) return;
+        var ww = wrap.offsetWidth, wh = wrap.offsetHeight;
+        var iw = img.offsetWidth,  ih = img.offsetHeight;
+        if (iw === 0 || ih === 0) return;
+        var ox = Math.max(ww - iw, Math.min(0, -Math.round((iw - ww) * 0.57)));
+        var oy = Math.max(wh - ih, Math.min(0, -Math.round((ih - wh) * 0.66)));
+        img.style.transform = 'translate(' + ox + 'px,' + oy + 'px)';
+      }, 50);
+    } else {
+      closePopup();
+    }
   }).observe(page, { attributes: true, attributeFilter: ['class'] });
 }
 
