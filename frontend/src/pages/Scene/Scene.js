@@ -75,6 +75,9 @@ function openPopup(id, anchor) {
   document.querySelectorAll('#pg-scene .scene-hotspot').forEach(function(h) {
     h.classList.toggle('is-active', h.dataset.scene === id);
   });
+  document.querySelectorAll('#pg-scene .scene-building').forEach(function(b) {
+    b.classList.toggle('is-active', b.dataset.scene === id);
+  });
 
   requestAnimationFrame(function() { card.classList.add('is-visible'); });
 }
@@ -82,6 +85,7 @@ function openPopup(id, anchor) {
 function closePopup() {
   document.querySelectorAll('#pg-scene .scene-popup').forEach(function(c) { c.remove(); });
   document.querySelectorAll('#pg-scene .scene-hotspot').forEach(function(h) { h.classList.remove('is-active'); });
+  document.querySelectorAll('#pg-scene .scene-building').forEach(function(b) { b.classList.remove('is-active'); });
 }
 
 function initPan() {
@@ -95,6 +99,17 @@ function initPan() {
 
   function applyTransform() {
     img.style.transform = 'translate(' + ox + 'px,' + oy + 'px)';
+    var iw = img.offsetWidth, ih = img.offsetHeight;
+    var ww = wrap.offsetWidth,  wh = wrap.offsetHeight;
+    document.querySelectorAll('#pg-scene .scene-building').forEach(function(b) {
+      var fx = parseFloat(b.style.left) / 100;
+      var fy = parseFloat(b.style.top)  / 100;
+      // building CSS left/top positions it at (fx*ww, fy*wh);
+      // we want it at (ox + fx*iw, oy + fy*ih)
+      var tx = ox + fx * (iw - ww);
+      var ty = oy + fy * (ih - wh);
+      b.style.transform = 'translateX(-50%) translate(' + tx + 'px,' + ty + 'px)';
+    });
   }
 
   function center() {
@@ -119,7 +134,7 @@ function initPan() {
   var dragging = false, sx, sy;
 
   wrap.addEventListener('pointerdown', function(e) {
-    if (e.target.closest('.scene-hotspot') || e.target.closest('.scene-popup')) return;
+    if (e.target.closest('.scene-hotspot') || e.target.closest('.scene-popup') || e.target.closest('.scene-building')) return;
     dragging = true;
     sx = e.clientX - ox;
     sy = e.clientY - oy;
@@ -144,6 +159,14 @@ function bind() {
   if (!page) return;
 
   page.addEventListener('click', function(e) {
+    var bld = e.target.closest('.scene-building');
+    if (bld) {
+      var id = bld.dataset.scene;
+      var existing = page.querySelector('.scene-popup[data-scene-id="' + id + '"]');
+      if (existing) { closePopup(); return; }
+      openPopup(id, bld);
+      return;
+    }
     var hs = e.target.closest('.scene-hotspot');
     if (hs) {
       var id = hs.dataset.scene;
@@ -178,6 +201,13 @@ function bind() {
         var ox = Math.max(ww - iw, Math.min(0, -Math.round((iw - ww) * 0.57)));
         var oy = Math.max(wh - ih, Math.min(0, -Math.round((ih - wh) * 0.66)));
         img.style.transform = 'translate(' + ox + 'px,' + oy + 'px)';
+        document.querySelectorAll('#pg-scene .scene-building').forEach(function(b) {
+          var fx = parseFloat(b.style.left) / 100;
+          var fy = parseFloat(b.style.top)  / 100;
+          var tx = ox + fx * (iw - ww);
+          var ty = oy + fy * (ih - wh);
+          b.style.transform = 'translateX(-50%) translate(' + tx + 'px,' + ty + 'px)';
+        });
       }, 50);
     } else {
       closePopup();

@@ -1176,14 +1176,22 @@
   <div class="scene-map-wrap" id="scene-map-wrap">
     <img class="scene-map-img" id="scene-map-img"
          src="/frontend/public/assets/backgrounds/tokyo-scene-bg.jpg" alt="" draggable="false">
+
+    <!-- Building cutout layers -->
+    <img class="scene-building" data-scene="station"
+         src="/frontend/public/assets/backgrounds/station.png" alt="" draggable="false"
+         style="left:22%;top:58%;">
+    <img class="scene-building" data-scene="izakaya"
+         src="/frontend/public/assets/backgrounds/izakaya.png" alt="" draggable="false"
+         style="left:52%;top:42%;">
+    <img class="scene-building" data-scene="minimart"
+         src="/frontend/public/assets/backgrounds/minimart.png" alt="" draggable="false"
+         style="left:72%;top:54%;">
+
     <div class="scene-map-overlay"></div>
 
     <!-- STATION hotspot -->
     <div class="scene-hotspot" data-scene="station" style="left:22%;top:66%;">
-      <svg class="scene-hotspot-outline" width="88" height="100" viewBox="0 0 88 100" fill="none">
-        <polygon points="14,95 8,50 18,22 44,14 70,22 80,50 74,95"
-          stroke="white" stroke-width="2.2" fill="rgba(255,255,255,0.03)" stroke-linejoin="round"/>
-      </svg>
       <div class="scene-hotspot-label">
         <span class="scene-hotspot-name">STATION</span>
         <span class="scene-hotspot-ja">地下鉄</span>
@@ -1191,11 +1199,7 @@
     </div>
 
     <!-- IZAKAYA hotspot -->
-    <div class="scene-hotspot" data-scene="izakaya" style="left:60%;top:50%;">
-      <svg class="scene-hotspot-outline" width="68" height="115" viewBox="0 0 68 115" fill="none">
-        <polygon points="10,110 6,55 14,20 34,8 54,20 62,55 58,110"
-          stroke="white" stroke-width="2.2" fill="rgba(255,255,255,0.03)" stroke-linejoin="round"/>
-      </svg>
+    <div class="scene-hotspot" data-scene="izakaya" style="left:52%;top:50%;">
       <div class="scene-hotspot-label">
         <span class="scene-hotspot-name">IZAKAYA</span>
         <span class="scene-hotspot-ja">居酒屋</span>
@@ -1203,11 +1207,7 @@
     </div>
 
     <!-- MINI MART hotspot -->
-    <div class="scene-hotspot" data-scene="minimart" style="left:82%;top:62%;">
-      <svg class="scene-hotspot-outline" width="78" height="88" viewBox="0 0 78 88" fill="none">
-        <polygon points="6,83 6,40 18,18 60,18 72,40 72,83"
-          stroke="white" stroke-width="2.2" fill="rgba(255,255,255,0.03)" stroke-linejoin="round"/>
-      </svg>
+    <div class="scene-hotspot" data-scene="minimart" style="left:72%;top:62%;">
       <div class="scene-hotspot-label">
         <span class="scene-hotspot-name">MINI MART</span>
         <span class="scene-hotspot-ja">コンビニ</span>
