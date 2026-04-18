@@ -134,9 +134,9 @@ function initPan() {
     layer.style.height = ih + 'px';
 
     var defs = [
-      { id: 'building-station',  cx: 1390, cy: 2235, w: 850, h: 890 },
-      { id: 'building-izakaya',  cx: 2687, cy: 2245, w: 560, h: 855 },
-      { id: 'building-minimart', cx: 3233, cy: 2973, w: 457, h: 700 },
+      { id: 'building-station',  cx: 1390, cy: 2235, w: 850, h: 890, scene: 'station'  },
+      { id: 'building-izakaya',  cx: 2687, cy: 2245, w: 560, h: 855, scene: 'izakaya'  },
+      { id: 'building-minimart', cx: 3233, cy: 2973, w: 457, h: 700, scene: 'minimart' },
     ];
 
     defs.forEach(function(d) {
@@ -152,6 +152,7 @@ function initPan() {
       var originTop  = (d.cy / ORIG_H) * ih;
       var left = originLeft - (displayW - baseW) / 2;
       var top  = originTop  - (displayH - baseH) / 2;
+      // visual: pointer-events off, glow via class
       el.style.cssText = [
         'position:absolute',
         'left:' + Math.round(left) + 'px',
@@ -159,11 +160,34 @@ function initPan() {
         'width:'  + Math.round(displayW) + 'px',
         'height:auto',
         'max-width:none!important',
-        'pointer-events:auto',
-        'cursor:pointer',
+        'pointer-events:none',
         'transform:none',
         'transition:filter 0.3s ease',
         'filter:drop-shadow(0 0 8px rgba(255,255,255,0.9)) drop-shadow(0 0 20px rgba(255,255,255,0.5))'
+      ].join(';');
+      // hit area: 60% size, centered on building
+      var hitW = Math.round(displayW * 0.6);
+      var hitH = Math.round(displayH * 0.6);
+      var hitLeft = Math.round(left + (displayW - hitW) / 2);
+      var hitTop  = Math.round(top  + (displayH - hitH) / 2);
+      var hitId = 'hit-' + d.id;
+      var hit = document.getElementById(hitId);
+      if (!hit) {
+        hit = document.createElement('div');
+        hit.id = hitId;
+        hit.className = 'scene-building';
+        hit.dataset.scene = d.scene || d.id.replace('building-', '');
+        layer.appendChild(hit);
+      }
+      hit.style.cssText = [
+        'position:absolute',
+        'left:' + hitLeft + 'px',
+        'top:'  + hitTop  + 'px',
+        'width:'  + hitW + 'px',
+        'height:' + hitH + 'px',
+        'pointer-events:auto',
+        'cursor:pointer',
+        'background:transparent'
       ].join(';');
     });
   };
