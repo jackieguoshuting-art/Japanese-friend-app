@@ -9,7 +9,7 @@ var ORIG_H = 5120;
 const SCENES = {
   station: {
     titleJa: '地下鉄',
-    titleEn: 'STATION',
+    titleEn: 'TRANSIT',
     desc: '"乗り換えは次の駅です…" Announcements, platform chatter, and the daily rhythm of Tokyo commutes.',
     stars: 2,
     route: 'transit',
@@ -23,7 +23,7 @@ const SCENES = {
   },
   minimart: {
     titleJa: 'コンビニ',
-    titleEn: 'MINI MART',
+    titleEn: 'KONBINI',
     desc: '"いらっしゃいませ！" Quick transactions, staff phrases, and the soundtrack of 24-hour life.',
     stars: 1,
     route: 'konbini',
