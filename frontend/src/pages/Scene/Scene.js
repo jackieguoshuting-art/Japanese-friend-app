@@ -196,6 +196,17 @@ function initPan() {
         'cursor:pointer',
         'background:transparent'
       ].join(';');
+
+      // position label at top-center of building
+      var scene = d.scene || d.id.replace('building-', '');
+      var hs = document.querySelector('.scene-hotspot[data-scene="' + scene + '"]');
+      if (hs) {
+        if (hs.parentElement !== layer) layer.appendChild(hs);
+        hs.style.position = 'absolute';
+        hs.style.left = Math.round(left + displayW / 2) + 'px';
+        hs.style.top  = Math.round(top - 8) + 'px';
+        hs.style.zIndex = '5';
+      }
     });
   };
 
