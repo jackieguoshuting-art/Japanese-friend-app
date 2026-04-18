@@ -2,6 +2,8 @@
 // app.js can reliably find functions regardless of module load order.
 // Must be listed as a <script type="module"> BEFORE app.js in index.html.
 
+import './app-namespace.js';
+
 import {
   appendChatMessage,
   triggerOpeningMessage,
