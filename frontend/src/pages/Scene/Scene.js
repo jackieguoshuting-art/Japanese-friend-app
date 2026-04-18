@@ -88,29 +88,49 @@ function initPan() {
   var wrap = document.getElementById('scene-map-wrap');
   var img  = document.getElementById('scene-map-img');
   if (!wrap || !img) return;
-  var ox = 0, oy = 0, dragging = false, sx, sy;
+
+  var ox = 0, oy = 0;
 
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
+  function applyTransform() {
+    img.style.transform = 'translate(' + ox + 'px,' + oy + 'px)';
+  }
+
+  function center() {
+    var ww = wrap.offsetWidth,  wh = wrap.offsetHeight;
+    var iw = img.offsetWidth,   ih = img.offsetHeight;
+    ox = clamp(-(iw - ww) / 2, ww - iw, 0);
+    oy = clamp(-(ih - wh) / 2, wh - ih, 0);
+    applyTransform();
+  }
+
   function limit() {
-    var ww = wrap.offsetWidth, wh = wrap.offsetHeight;
-    var iw = img.offsetWidth,  ih = img.offsetHeight;
+    var ww = wrap.offsetWidth,  wh = wrap.offsetHeight;
+    var iw = img.offsetWidth,   ih = img.offsetHeight;
     if (iw > ww) { ox = clamp(ox, ww - iw, 0); } else { ox = 0; }
     if (ih > wh) { oy = clamp(oy, wh - ih, 0); } else { oy = 0; }
   }
 
+  img.onload = center;
+  if (img.complete) requestAnimationFrame(center);
+
+  var dragging = false, sx, sy;
+
   wrap.addEventListener('pointerdown', function(e) {
     if (e.target.closest('.scene-hotspot') || e.target.closest('.scene-popup')) return;
     dragging = true;
-    sx = e.clientX - ox; sy = e.clientY - oy;
+    sx = e.clientX - ox;
+    sy = e.clientY - oy;
     wrap.setPointerCapture(e.pointerId);
   });
 
   wrap.addEventListener('pointermove', function(e) {
     if (!dragging) return;
-    ox = e.clientX - sx; oy = e.clientY - sy;
+    ox = e.clientX - sx;
+    oy = e.clientY - sy;
     limit();
-    img.style.transform = 'translateX(-50%) translate(' + ox + 'px,' + oy + 'px)';
+    applyTransform();
   });
 
   function end() { dragging = false; }

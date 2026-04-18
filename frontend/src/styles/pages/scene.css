@@ -22,10 +22,8 @@
   width: auto !important;
   max-width: none !important;
   height: 150% !important;
-  min-height: 150%;
-  top: -10%;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 0;
+  left: 0;
   user-select: none;
   pointer-events: none;
   will-change: transform;
