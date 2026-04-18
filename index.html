@@ -1159,67 +1159,6 @@
 
 </div>
 
-  <!-- Mode select modal — outside all pages so it works from any page -->
-  <div class="mode-modal" id="mode-modal">
-    <div class="mode-sheet">
-      <div class="mode-sheet-label">SELECT MODE · モードを選ぶ</div>
-      <div class="mode-choice" onclick="closeModeModal(); go('call'); setTimeout(() => triggerOpeningMessage(), 300)">
-        <div class="mode-choice-icon" style="background:rgba(48,112,255,.15);">📹</div>
-        <div>
-          <div class="mode-choice-title">Video Chat</div>
-          <div class="mode-choice-sub">ビデオ通話 · Live 2D キャラクター</div>
-        </div>
-      </div>
-      <div class="mode-choice" onclick="closeModeModal(); go('text'); setTimeout(() => initTextPageForChar(), 300)">
-        <div class="mode-choice-icon" style="background:rgba(40,100,255,.15);">💬</div>
-        <div>
-          <div class="mode-choice-title">Text Message</div>
-          <div class="mode-choice-sub">テキスト · テキストで会話</div>
-        </div>
-      </div>
-      <button class="mode-cancel" onclick="closeModeModal()">キャンセル · Cancel</button>
-    </div>
-  </div>
-
-  </div>
-  <script>
-  window.frToggleCard = function(el, charId) {
-    var wasOpen = el.classList.contains('fr-expanded');
-    document.querySelectorAll('#pg-friends .fr-card.fr-expanded').forEach(function(c) {
-      c.classList.remove('fr-expanded');
-    });
-    if (!wasOpen) el.classList.add('fr-expanded');
-  };
-
-  window.scsSelectEpisode = function(el) {
-    var wasSelected = el.classList.contains('scs-selected');
-    document.querySelectorAll('#pg-shadow-scenes .scs-episode.scs-selected').forEach(function(e) {
-      e.classList.remove('scs-selected');
-    });
-    if (!wasSelected) el.classList.add('scs-selected');
-  };
-
-  // Record button three-state: idle → recording → playback → idle
-  var _slvRecState = 'idle'; // 'idle' | 'recording' | 'playback'
-  var _slvRecStates = {
-    idle:      { icon: '🎙',  label: 'TAP TO RECORD', cls: '' },
-    recording: { icon: '⏹',  label: 'RECORDING…',    cls: 'slv-rec-recording' },
-    playback:  { icon: '▶',   label: 'PLAY BACK',     cls: 'slv-rec-playback' },
-  };
-  window.slvCycleRecord = function(btn) {
-    var next = { idle: 'recording', recording: 'playback', playback: 'idle' }[_slvRecState];
-    _slvRecState = next;
-    var s = _slvRecStates[next];
-    btn.querySelector('.slv-rec-icon').textContent = s.icon;
-    document.getElementById('slv-rec-label').textContent = s.label;
-    btn.className = 'slv-record-btn ' + s.cls;
-    // forward to real handler if wired
-    if (next === 'recording' && typeof shadowRecord === 'function') shadowRecord();
-    if (next === 'playback'  && typeof shadowPlay    === 'function') shadowPlay();
-    if (next === 'idle'      && typeof shadowRetry   === 'function') {} // just reset UI
-  };
-</script>
-
 <div id="pg-scene" class="page">
 
   <!-- Header -->
@@ -1298,6 +1237,67 @@
   </div>
 
 </div>
+
+  <!-- Mode select modal — outside all pages so it works from any page -->
+  <div class="mode-modal" id="mode-modal">
+    <div class="mode-sheet">
+      <div class="mode-sheet-label">SELECT MODE · モードを選ぶ</div>
+      <div class="mode-choice" onclick="closeModeModal(); go('call'); setTimeout(() => triggerOpeningMessage(), 300)">
+        <div class="mode-choice-icon" style="background:rgba(48,112,255,.15);">📹</div>
+        <div>
+          <div class="mode-choice-title">Video Chat</div>
+          <div class="mode-choice-sub">ビデオ通話 · Live 2D キャラクター</div>
+        </div>
+      </div>
+      <div class="mode-choice" onclick="closeModeModal(); go('text'); setTimeout(() => initTextPageForChar(), 300)">
+        <div class="mode-choice-icon" style="background:rgba(40,100,255,.15);">💬</div>
+        <div>
+          <div class="mode-choice-title">Text Message</div>
+          <div class="mode-choice-sub">テキスト · テキストで会話</div>
+        </div>
+      </div>
+      <button class="mode-cancel" onclick="closeModeModal()">キャンセル · Cancel</button>
+    </div>
+  </div>
+
+  </div>
+  <script>
+  window.frToggleCard = function(el, charId) {
+    var wasOpen = el.classList.contains('fr-expanded');
+    document.querySelectorAll('#pg-friends .fr-card.fr-expanded').forEach(function(c) {
+      c.classList.remove('fr-expanded');
+    });
+    if (!wasOpen) el.classList.add('fr-expanded');
+  };
+
+  window.scsSelectEpisode = function(el) {
+    var wasSelected = el.classList.contains('scs-selected');
+    document.querySelectorAll('#pg-shadow-scenes .scs-episode.scs-selected').forEach(function(e) {
+      e.classList.remove('scs-selected');
+    });
+    if (!wasSelected) el.classList.add('scs-selected');
+  };
+
+  // Record button three-state: idle → recording → playback → idle
+  var _slvRecState = 'idle'; // 'idle' | 'recording' | 'playback'
+  var _slvRecStates = {
+    idle:      { icon: '🎙',  label: 'TAP TO RECORD', cls: '' },
+    recording: { icon: '⏹',  label: 'RECORDING…',    cls: 'slv-rec-recording' },
+    playback:  { icon: '▶',   label: 'PLAY BACK',     cls: 'slv-rec-playback' },
+  };
+  window.slvCycleRecord = function(btn) {
+    var next = { idle: 'recording', recording: 'playback', playback: 'idle' }[_slvRecState];
+    _slvRecState = next;
+    var s = _slvRecStates[next];
+    btn.querySelector('.slv-rec-icon').textContent = s.icon;
+    document.getElementById('slv-rec-label').textContent = s.label;
+    btn.className = 'slv-record-btn ' + s.cls;
+    // forward to real handler if wired
+    if (next === 'recording' && typeof shadowRecord === 'function') shadowRecord();
+    if (next === 'playback'  && typeof shadowPlay    === 'function') shadowPlay();
+    if (next === 'idle'      && typeof shadowRetry   === 'function') {} // just reset UI
+  };
+</script>
 
   <script type="module" src="./frontend/src/features/character.js"></script>
   <script type="module" src="./frontend/src/features/ui.js"></script>
