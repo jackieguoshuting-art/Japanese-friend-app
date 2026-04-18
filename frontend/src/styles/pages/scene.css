@@ -53,6 +53,10 @@
   transform: translateX(-50%) scale(1.08);
 }
 
+#building-station  { left:32.1%; top:70.8%; width:19%; }
+#building-izakaya  { left:63.7%; top:60.8%; width:11.7%; }
+#building-minimart { left:75.3%; top:72.1%; width:9.3%; }
+
 .scene-map-overlay {
   position: absolute;
   inset: 0;
