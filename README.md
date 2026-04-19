@@ -45,7 +45,7 @@ frontend/src/
 │   ├── Call/Call.js          # Video call 逻辑
 │   ├── Text/Text.js          # Text message 逻辑
 │   ├── Shadow/ShadowLive.js  # Shadow 跟读逻辑
-│   └── Listen/Listen.js      # Listen 模块
+│   └── Scene/Scene.js        # Scene 地图 + 情境页面入口
 ├── bridge.js                 # 统一 window.* 全局接口（HTML onclick 专用）
 └── styles/
     └── idol-theme.css        # 全局主题样式
@@ -80,7 +80,7 @@ frontend/public/assets/characters/yuki/
 | Shadow 关卡 | #pg-shadow-scenes | ✅ 关卡选择 |
 | Shadow 跟读 | #pg-shadow-live | ✅ Cinematic UI，视频+录音+KTV字幕 |
 | Summary | #pg-summary | ✅ 会话回顾+记忆卡片 |
-| Listen | #pg-listen | ⬜ 待做 |
+| Scene 地图 | #pg-scene | ✅ 东京场景地图，三个热点（便利店/居酒屋/地铁）|
 
 ---
 
@@ -175,13 +175,13 @@ YUKI_VOICE_ID=
 - 底部导航 CSS 五份重复，需合并
 - window.* 全局挂载未完全统一到 bridge.js
 - index.html 内联 onclick 未换成 addEventListener
-- 老模块 README.md 未补齐（Call/Text/Shadow/Listen），Commit 3 统一处理
+- 老模块 README.md 未补齐（Call/Text/Shadow/Scene），Commit 3 统一处理
 - localStorage key `jfa-memory` 不符合 NAMING.md 的 `<module>-<key>` 规范，应改为 `memory-<characterId>`（涉及老数据迁移，不急）
 
 【上线前必须删除】
 - yukiAnimation.js 末尾：window.setYukiEmotion = setEmotion（调试用）
 
-【app.js 大重构专项】（计划在便利店/居酒屋/地铁/Listen 完成后执行）
+【app.js 大重构专项】（计划在便利店/居酒屋/地铁 完成后执行）
 - Friends/Home/Summary 页面逻辑散在 app.js 里（约 100+ 行），需拆到 pages/Friends/Friends.js、pages/Home/Home.js、pages/Summary/Summary.js
 - window.go 被 app.js 底部 monkey patch 用于 proactive message 触发，应移到 router.js 用 lifecycle hook 替代
 - window.endCall / window.toggleConvRecap / window.YUKI_SYSTEM_PROMPT 三处违规挂载，应通过 bridge.js 注册到 App namespace
@@ -235,7 +235,6 @@ YUKI_VOICE_ID=
 ## 待做功能
 
 ### 功能层面
-- [ ] Listen 页面 UI
 - [ ] Onboarding / Profile / Settings 页面(未实现,占位目录已清理)
 - [ ] server.js 加词汇标记
 - [ ] Ren/Hana/Mio 完整 prompt（当前调试用 1/2/3）
@@ -292,7 +291,7 @@ YUKI_VOICE_ID=
 
 ---
 
-## 重构计划（Listen 页做完后执行）
+## 重构计划（便利店/居酒屋/地铁 完成后执行）
 
 1. conversationStore 统一历史
 2. 清理 `window.*` 挂载
