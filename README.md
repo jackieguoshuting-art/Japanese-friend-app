@@ -162,30 +162,60 @@ YUKI_VOICE_ID=
 - 不清楚接口字段 → 先问，不要写一堆猜测性的字段名
 - 不确定影响范围 → 先问，不要擅自改动
 
-## 已知技术债（大重构时处理）
+## 已知技术债 & 修复进度
 
-【代码层面】
-- Call.js 第214行：isJapaneseContent 内联函数可读性差，需提取成独立函数
-- Call.js 底部：window.stopSpeaking / resetYukiToIdle / getSessionMemory 未统一到 bridge.js
-- window.escapeHtml?.() 防御性调用过多，说明模块依赖关系不清晰，重构时理清
+按修复时机分组。按对照物理现状校准(Commit 3.1,2026-04-18)。
 
-【架构层面】
-- conversationStore 三套对话历史未统一（Call/Text/Scene 各自维护）
-- Summary 页读不到 Call 历史
-- 底部导航 CSS 五份重复，需合并
-- window.* 全局挂载未完全统一到 bridge.js
-- index.html 内联 onclick 未换成 addEventListener
-- 老模块 README.md 未补齐（Call/Text/Shadow/Scene），Commit 3 统一处理
-- localStorage key `jfa-memory` 不符合 NAMING.md 的 `<module>-<key>` 规范，应改为 `memory-<characterId>`（涉及老数据迁移，不急）
+### ✅ 已修复
 
-【上线前必须删除】
-- yukiAnimation.js 末尾：window.setYukiEmotion = setEmotion（调试用）
+按 Commit 时间倒序:
+- [x] 老模块 README 未补齐(Commit 3)— Call/Text/Shadow/Scene 各有 README
+- [x] Listen 废弃遗留清理(Commit 2.91)— CSS class 名和 6 处 README 残留
+- [x] 30% 记忆随机 bug(Commit 2.9)— 每次都传记忆给 Claude 自己判断
+- [x] 14 个空桩文件(Commit 2.9)— components/ store/ utils/ 全目录清除
+- [x] 11 个旧版 CSS/HTML 死码 + 3 个占位目录(Commit 2.8)
+- [x] 4 个占位 service 文件(Commit 1.5)
+- [x] 底部导航 CSS 主合并(navbar.css 已统一,idol-theme.css 里只剩 .active 状态覆写)
+- [x] Call.js 的 isJapaneseContent 已自然解决(代码里已不存在)
+- [x] Summary 读取 Call 历史实际在工作(走 lastConversation localStorage 中转,非最优雅但能用)
 
-【app.js 大重构专项】（计划在便利店/居酒屋/地铁 完成后执行）
-- Friends/Home/Summary 页面逻辑散在 app.js 里（约 100+ 行），需拆到 pages/Friends/Friends.js、pages/Home/Home.js、pages/Summary/Summary.js
-- window.go 被 app.js 底部 monkey patch 用于 proactive message 触发，应移到 router.js 用 lifecycle hook 替代
-- window.endCall / window.toggleConvRecap / window.YUKI_SYSTEM_PROMPT 三处违规挂载，应通过 bridge.js 注册到 App namespace
-- 10+ 处 window.xxx?.() 防御性调用（spawnStars/animateVoiceBars/setActiveCharacter 等），说明依赖关系不清晰，应改为 ES import
+### 🔧 地基阶段内修(Commit 4 / 5a / 5b)
+
+- [ ] `window.go` 被 app.js 底部 monkey patch → router lifecycle hook 替代(Commit 5a)
+- [ ] TTS 全局管理器(stopAll on page change)(Commit 5b)
+
+### 📦 便利店 / 居酒屋 / 地铁 完成后修
+
+**app.js 大重构专项**:
+- [ ] Friends/Home/Summary 页面逻辑散在 app.js(约 100+ 行),拆到对应 pages/
+- [ ] `window.endCall` / `window.toggleConvRecap` / `window.YUKI_SYSTEM_PROMPT` 违规挂载,改走 App namespace
+- [ ] 10+ 处 `window.xxx?.()` 防御性调用,改为 ES import
+- [ ] conversationStore 统一三套对话历史(Call/Text/Scene 各自维护)
+
+**localStorage key 命名迁移**(不符合 NAMING.md `<module>-<key>` 规范):
+- [ ] `jfa-memory` → `memory-<characterId>`(涉及老数据迁移,要小心)
+- [ ] `callCaptionMode` → `call-caption-mode`
+- [ ] `yukiOpeningHistory` → `call-yuki-opening-history`
+
+**Call.js 底部违规挂载**:
+- [ ] `window.stopSpeaking` / `window.resetYukiToIdle` / `window.getSessionMemory` 改走 App namespace
+
+### 🎬 Shadow 专项(时机灵活,可独立于其它重构)
+
+- [ ] 12 个 `window.shadow*` 函数迁移到 `window.App.shadow.*`(需同时改 HTML onclick)
+- [ ] `shadowProgress` → `shadow-progress`(key 格式)
+- (功能优化见"Shadow 跟读页 - 待做优化"章节)
+
+### 🧹 独立清理任务(找机会顺手做)
+
+- [ ] index.html 内联 onclick 换成 addEventListener
+- [ ] Scene.js 的 `var` → `const` / `let`
+- [ ] Scene 三栋建筑贴纸(station/izakaya/minimart)从 JPEG 伪装改真 RGBA PNG
+- [ ] `idol-theme.css` 里 `.nav-item` 覆写用 modifier class 或 CSS 变量,不直接覆盖 component
+
+### 🚨 上线前必须删除
+
+- [ ] `window.setYukiEmotion`(yukiAnimation.js 末尾,Yuki 情绪调试用)
 
 ---
 
