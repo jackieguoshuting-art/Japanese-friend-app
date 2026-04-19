@@ -229,6 +229,7 @@ YUKI_VOICE_ID=
 
 ### 功能层面
 - [ ] Listen 页面 UI
+- [ ] Onboarding / Profile / Settings 页面(未实现,占位目录已清理)
 - [ ] server.js 加词汇标记
 - [ ] Ren/Hana/Mio 完整 prompt（当前调试用 1/2/3）
 - [ ] Mio 角色 config（当前复用 yukiConfig）
