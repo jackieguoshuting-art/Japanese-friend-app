@@ -176,9 +176,16 @@ YUKI_VOICE_ID=
 - window.* 全局挂载未完全统一到 bridge.js
 - index.html 内联 onclick 未换成 addEventListener
 - 老模块 README.md 未补齐（Call/Text/Shadow/Listen），Commit 3 统一处理
+- localStorage key `jfa-memory` 不符合 NAMING.md 的 `<module>-<key>` 规范，应改为 `memory-<characterId>`（涉及老数据迁移，不急）
 
 【上线前必须删除】
 - yukiAnimation.js 末尾：window.setYukiEmotion = setEmotion（调试用）
+
+【app.js 大重构专项】（计划在便利店/居酒屋/地铁/Listen 完成后执行）
+- Friends/Home/Summary 页面逻辑散在 app.js 里（约 100+ 行），需拆到 pages/Friends/Friends.js、pages/Home/Home.js、pages/Summary/Summary.js
+- window.go 被 app.js 底部 monkey patch 用于 proactive message 触发，应移到 router.js 用 lifecycle hook 替代
+- window.endCall / window.toggleConvRecap / window.YUKI_SYSTEM_PROMPT 三处违规挂载，应通过 bridge.js 注册到 App namespace
+- 10+ 处 window.xxx?.() 防御性调用（spawnStars/animateVoiceBars/setActiveCharacter 等），说明依赖关系不清晰，应改为 ES import
 
 ---
 
@@ -255,6 +262,33 @@ YUKI_VOICE_ID=
 ### 画师素材待完成
 - [ ] Yuki 情绪动画补全（happy-in、smile-in 过渡视频）
 - [ ] Ren/Hana/Mio 立绘和动画
+
+---
+
+## 规划中的模块（未建，有需要再创建）
+
+### 数据层 - store/
+- 用户状态（user.store.js）— 登录、档案、streak
+- 聊天状态（chat.store.js）— 统一对话历史（见已知技术债）
+- 设置（settings.store.js）— 主题、语速、字幕开关
+
+### 工具层 - utils/
+- 日期格式化（date.js）
+- 日语文本处理（japanese.js）— 假名/汉字/罗马字转换
+- 日志（logger.js）— 统一打点
+- 校验（validators.js）
+- 动画工具（animations.js）
+- 通用 helpers（helpers.js）
+
+### 可复用组件 - components/
+- CharacterCard — 角色卡片（Friends 页）
+- SubtitleBar — 字幕条（Call 页）
+- WaveVisualizer — 语音波形
+- MemoryChip — 记忆胶囊（Summary 页）
+- LoadingScreen — 加载页
+
+### 主题系统 - styles/themes/
+- default.css / dark.css 当前仅占位，未来接入主题切换时填充
 
 ---
 

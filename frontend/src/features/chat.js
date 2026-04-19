@@ -1,5 +1,4 @@
 import { estimateDifficulty } from './difficulty.js';
-import { shouldUseMemory } from '../store/memory.store.js';
 
 // ── Session tracking ──
 export const session = {
@@ -37,9 +36,8 @@ export function buildPrompt({ character, topic, memory, history, userText }) {
 
   const difficulty = estimateDifficulty(userText);
   const trimmedHistory = trimHistory(history || []);
-  const useMemory = shouldUseMemory();
 
-  const memoryBlock = useMemory && memory?.length
+  const memoryBlock = memory?.length
     ? memory.map((item) => `- ${item.factJa || item.fact || item}`).join('\n')
     : 'None';
 
