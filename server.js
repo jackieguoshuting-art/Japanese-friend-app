@@ -226,10 +226,54 @@ async function handleTTS(req, res) {
   }
 }
 
+// ── Scene dialogue (便利店/居酒屋/地铁等场景对话) ──
+// 独立于 handleChat:无 emotion、无 memoryCandidate、无 character/topic,
+// 仅保留 VOCAB_MARKUP 标注。前端通过 dialogue.service.js 调用。
+async function handleSceneChat(req, res) {
+  try {
+    const { messages, systemPrompt } = JSON.parse(await readBody(req));
+    const result = await callAnthropic({
+      model:      'claude-sonnet-4-20250514',
+      max_tokens: 256,
+      system:     (systemPrompt || '') +
+        "\n\nYou MUST reply in this exact JSON format with no extra text outside the JSON:\n" +
+        "{\"replyJa\": \"日本語の返事\", \"replyEn\": \"English translation\"}\n" +
+        "Do not add markdown, code blocks, or any text before or after the JSON.\n" +
+        "VOCAB_MARKUP in replyJa (required, dense): wrap almost EVERY noun and EVERY lexical verb in [[surface as written|ひらがな reading|concise English gloss]]. " +
+        "Skip ONLY: particles (は を に が の と も や か ね よ さ へ で から まで より って), interjections, and bare です／ます／だ when they add no new lemma. " +
+        "No spaces inside [[ ]]. Inside JSON strings escape any double-quote as \\\".",
+      messages,
+    });
+
+    if (result.status !== 200) {
+      res.writeHead(result.status, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Anthropic error', detail: result.raw }));
+      return;
+    }
+
+    const text = JSON.parse(result.raw).content?.[0]?.text || '';
+    const cleanText = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+    let parsed;
+    try {
+      parsed = JSON.parse(cleanText);
+    } catch {
+      const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
+      parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : { replyJa: cleanText, replyEn: '' };
+    }
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(parsed));
+  } catch (e) {
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: e.message }));
+  }
+}
+
 // ── Route dispatcher ──
 const routes = {
   'POST /api/voice-format': handleVoiceFormat, // STT 文本润色 → { formatted }
   'POST /api/chat':         handleChat,         // 主聊天接口 → { replyJa, replyEn, memoryCandidate }
+  'POST /api/scene-chat':   handleSceneChat,    // 场景对话 → { replyJa, replyEn }
   'POST /api/tts':          handleTTS,          // ElevenLabs TTS → audio/mpeg
 };
 
