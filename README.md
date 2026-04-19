@@ -44,7 +44,8 @@ frontend/src/
 ├── pages/
 │   ├── Call/Call.js          # Video call 逻辑
 │   ├── Text/Text.js          # Text message 逻辑
-│   ├── Shadow/ShadowLive.js  # Shadow 跟读逻辑
+│   ├── Shadow/Shadow.js      # Shadow 主列表 + 关卡选择
+│   ├── Shadow/ShadowLive.js  # Shadow 跟读实况页
 │   └── Scene/Scene.js        # Scene 地图 + 情境页面入口
 ├── bridge.js                 # 统一 window.* 全局接口（HTML onclick 专用）
 └── styles/
@@ -236,9 +237,9 @@ YUKI_VOICE_ID=
 - [x] 底部导航 CSS 去重
 - [x] initTextPage 合并（自然解决）
 
-#### 第三批 ⬜ 待做（功能稳定后）
-- [ ] conversationStore 统一三套对话历史
-- [ ] Summary 页正确读取 Call 历史
+#### 第三批 ✅ 已合并到「已知技术债 & 修复进度」章节
+原"conversationStore 统一历史"归入 app.js 大重构专项。
+原"Summary 读取 Call 历史"已验证实际通过 lastConversation localStorage 中转在工作,标记 ✅ 已修复。
 
 ### 功能开发记录
 
