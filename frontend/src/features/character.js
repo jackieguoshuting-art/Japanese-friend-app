@@ -58,54 +58,10 @@ function setActiveCharacter(characterId) {
   window.initWordTooltips?.();
 }
 
-function drawPixelChar(cfg) {
-  const canvas = document.getElementById('home-char-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  ctx.clearRect(0, 0, 72, 110);
-  ctx.imageSmoothingEnabled = false;
-  const S = 5;
-  const rows = [
-    [0,0,1,1,1,1,0,0],
-    [0,1,2,2,2,2,1,0],
-    [0,1,2,3,2,2,1,0],
-    [0,1,2,2,2,2,1,0],
-    [0,0,1,4,4,1,0,0],
-    [1,5,5,5,5,5,5,1],
-    [5,5,5,5,5,5,5,5],
-    [5,5,5,5,5,5,5,5],
-    [0,5,6,5,5,6,5,0],
-    [0,0,6,6,6,6,0,0],
-    [0,0,6,6,6,6,0,0],
-    [0,0,6,0,0,6,0,0],
-    [0,0,7,0,0,7,0,0],
-    [0,0,7,0,0,7,0,0],
-  ];
-  const colorMap = {
-    0: 'transparent',
-    1: cfg.hairColor,
-    2: cfg.skinColor,
-    3: '#50a0e0',
-    4: '#d06878',
-    5: cfg.bodyColor,
-    6: '#0a1428',
-    7: cfg.accentColor,
-  };
-  const ox = (72 - 8 * S) / 2;
-  rows.forEach((row, y) => {
-    row.forEach((v, x) => {
-      if (v === 0) return;
-      ctx.fillStyle = colorMap[v];
-      ctx.fillRect(ox + x * S, 8 + y * S, S, S);
-    });
-  });
-}
-
 function updateCharDisplay() {
   const cfg = CHARS[charIndex];
   const nameTag = document.getElementById('char-name-tag');
   if (nameTag) nameTag.innerHTML = `<span class="home-name-en">${cfg.nameEn || cfg.name}</span><span class="home-name-jp">${cfg.nameJp || ''}</span>`;
-  drawPixelChar(cfg);
 }
 
 function prevChar() {
@@ -134,7 +90,6 @@ function closeModeModal() {
 }
 
 window.setActiveCharacter = setActiveCharacter;
-window.drawPixelChar = drawPixelChar;
 window.updateCharDisplay = updateCharDisplay;
 window.prevChar = prevChar;
 window.nextChar = nextChar;
