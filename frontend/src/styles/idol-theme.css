@@ -902,29 +902,6 @@ body { background:#040810; }
 }
 
 
-/* ── In-app notification bar ── */
-#in-app-notif {
-  position: fixed;
-  top: -80px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 88%;
-  max-width: 360px;
-  background: rgba(30,30,30,0.92);
-  color: #fff;
-  border-radius: 16px;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  z-index: 9999;
-  transition: top 0.35s cubic-bezier(0.34,1.56,0.64,1);
-  cursor: pointer;
-}
-#in-app-notif.notif-show { top: 16px; }
-.notif-name { font-weight: 600; font-size: 0.9rem; }
-.notif-text { font-size: 0.85rem; opacity: 0.85; flex: 1; }
-
 /* ── Topic buttons bar ── */
 #txt-topic-bar {
   display: flex;
