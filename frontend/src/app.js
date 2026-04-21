@@ -188,11 +188,10 @@ window.addEventListener('page:enter', (e) => {
       appendTextHistory(characterId, 'assistant', replyJa);
       addUnread(characterId);
       updateFriendBadge(characterId, getUnreadCount(characterId));
-      const total = getTotalUnread(['yuki', 'ren', 'hana', 'mio']);
       showInAppNotification({
         characterName: character.name || characterId,
-        messageJa: `未読メッセージ ${total} 件`,
-        messageEn: `${total} unread message${total > 1 ? 's' : ''}`,
+        messageJa: replyJa,
+        messageEn: data.replyEn || '',
         avatarSrc: character.photoSrc || `/frontend/public/assets/characters/${characterId}/${characterId}-photo.jpg`,
         onClick: () => {
           appState.activeCharacter = characterId;
