@@ -185,7 +185,9 @@ window.addEventListener('page:enter', (e) => {
       showTalkBadge();
       showInAppNotification({
         characterName: character.name || characterId,
-        message: replyJa,
+        messageJa: replyJa,
+        messageEn: data.replyEn || '',
+        avatarSrc: character.photoSrc || `/frontend/public/assets/characters/${characterId}/${characterId}-photo.jpg`,
         onClick: () => {
           go('friends');
           setTimeout(() => {
