@@ -3,7 +3,8 @@ export function showInAppNotification({ characterName, message, onClick }) {
   if (!bar) {
     bar = document.createElement('div');
     bar.id = 'in-app-notif';
-    document.body.appendChild(bar);
+    const parent = document.querySelector('.phone') || document.body;
+    parent.appendChild(bar);
   }
   bar.innerHTML = `
     <span class="notif-avatar">🔵</span>
