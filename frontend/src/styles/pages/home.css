@@ -365,10 +365,11 @@
   border: none;
   border-radius: 12px;
   padding: 10px 8px;
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  line-height: 1.2;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  line-height: 1.25;
   text-transform: uppercase;
   cursor: pointer;
   box-shadow: 0 5px 0 #ff8fab;
