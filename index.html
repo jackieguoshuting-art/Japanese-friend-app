@@ -257,9 +257,10 @@
             <span>Best Friend</span><span>明るい</span><span>東京女子</span>
           </div>
           <p class="fr-dbio">東京の静かな路地を探索するのが好き。レコードと隠れ家カフェについて話しましょう。</p>
-          <button class="fr-dtalk" onclick="event.stopPropagation(); setActiveCharacter('yuki'); openModeModal(true);">
-            ● 話す · Start Talking
-          </button>
+          <div class="fr-dtalk-row">
+            <button class="fr-dtalk fr-dtalk-call" onclick="event.stopPropagation(); setActiveCharacter('yuki'); go('call'); setTimeout(() => triggerOpeningMessage(), 300);">📞 Call</button>
+            <button class="fr-dtalk fr-dtalk-text" onclick="event.stopPropagation(); setActiveCharacter('yuki'); go('text'); setTimeout(() => initTextPageForChar(), 300);">💬 Text</button>
+          </div>
         </div>
       </div>
 
@@ -281,9 +282,10 @@
             <span>クール</span><span>音楽好き</span><span>渋谷</span>
           </div>
           <p class="fr-dbio">渋谷のスタジオで音楽を制作している。無口だが仲良くなれば温かい。</p>
-          <button class="fr-dtalk" onclick="event.stopPropagation(); setActiveCharacter('ren'); openModeModal(true);">
-            ● 話す · Start Talking
-          </button>
+          <div class="fr-dtalk-row">
+            <button class="fr-dtalk fr-dtalk-call" onclick="event.stopPropagation(); setActiveCharacter('ren'); go('call'); setTimeout(() => triggerOpeningMessage(), 300);">📞 Call</button>
+            <button class="fr-dtalk fr-dtalk-text" onclick="event.stopPropagation(); setActiveCharacter('ren'); go('text'); setTimeout(() => initTextPageForChar(), 300);">💬 Text</button>
+          </div>
         </div>
       </div>
 
@@ -305,9 +307,10 @@
             <span>元気</span><span>アニメ好き</span><span>おしゃべり</span>
           </div>
           <p class="fr-dbio">アニメと漫画が大好き！常に明るくて話が止まらない。</p>
-          <button class="fr-dtalk" onclick="event.stopPropagation(); setActiveCharacter('hana'); openModeModal(true);">
-            ● 話す · Start Talking
-          </button>
+          <div class="fr-dtalk-row">
+            <button class="fr-dtalk fr-dtalk-call" onclick="event.stopPropagation(); setActiveCharacter('hana'); go('call'); setTimeout(() => triggerOpeningMessage(), 300);">📞 Call</button>
+            <button class="fr-dtalk fr-dtalk-text" onclick="event.stopPropagation(); setActiveCharacter('hana'); go('text'); setTimeout(() => initTextPageForChar(), 300);">💬 Text</button>
+          </div>
         </div>
       </div>
 
@@ -329,9 +332,10 @@
             <span>知的</span><span>穏やか</span><span>文学好き</span>
           </div>
           <p class="fr-dbio">読書と映画が趣味。落ち着いた雰囲気で深い話が得意。</p>
-          <button class="fr-dtalk" onclick="event.stopPropagation(); setActiveCharacter('mio'); openModeModal(true);">
-            ● 話す · Start Talking
-          </button>
+          <div class="fr-dtalk-row">
+            <button class="fr-dtalk fr-dtalk-call" onclick="event.stopPropagation(); setActiveCharacter('mio'); go('call'); setTimeout(() => triggerOpeningMessage(), 300);">📞 Call</button>
+            <button class="fr-dtalk fr-dtalk-text" onclick="event.stopPropagation(); setActiveCharacter('mio'); go('text'); setTimeout(() => initTextPageForChar(), 300);">💬 Text</button>
+          </div>
         </div>
       </div>
 

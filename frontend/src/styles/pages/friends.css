@@ -229,8 +229,13 @@
   margin-bottom: 12px;
   letter-spacing: 0.2px;
 }
+.fr-dtalk-row {
+  display: flex;
+  gap: 8px;
+}
+
 .fr-dtalk {
-  width: 100%;
+  flex: 1;
   background: linear-gradient(90deg, #0035c5, #002fa7);
   color: #fff;
   border: none;
@@ -241,6 +246,13 @@
   cursor: pointer;
   letter-spacing: 1px;
   box-shadow: 0 5px 10px -3px rgba(0,47,167,0.3);
+}
+
+.fr-dtalk-text {
+  background: #fff;
+  color: #002fa7;
+  border: 1.5px solid #002fa7;
+  box-shadow: none;
 }
 
 /* ── Sticky note ── */
