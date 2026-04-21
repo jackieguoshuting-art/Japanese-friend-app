@@ -33,6 +33,7 @@ export function go(pageName) {
   if (pageName === 'call') {
     window.applyCallCaptionMode?.();
   }
+  window.dispatchEvent(new CustomEvent('page:enter', { detail: { pageName } }));
 }
 
 export function syncNav(pageName) {

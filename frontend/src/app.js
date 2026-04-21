@@ -166,36 +166,34 @@ window.YUKI_SYSTEM_PROMPT = yukiConfig.systemPrompt;
 
 // moved to frontend/src/features/vocab.js
 
-// ── Proactive message check on page switch ──
+// ── Proactive message check on page:enter event ──
 let _proactiveTimer = null;
-const _origGo = window.go;
-window.go = function(pageName) {
-  _origGo(pageName);
-  if (pageName !== 'text') {
-    clearTimeout(_proactiveTimer);
-    _proactiveTimer = setTimeout(async () => {
-      const characterId = appState.activeCharacter || 'yuki';
-      if (!shouldSendProactive(characterId)) return;
-      const character = characterMap[characterId] || yukiConfig;
-      const memory = getCharacterMemory(characterId);
-      try {
-        markProactiveSent(characterId);
-        const data = await generateProactiveMessage(character, memory);
-        const replyJa = data.replyJa || data.text || '';
-        if (!replyJa) return;
-        showTalkBadge();
-        showInAppNotification({
-          characterName: character.name || characterId,
-          message: replyJa,
-          onClick: () => {
-            _origGo('friends');
-            setTimeout(() => {
-              _origGo('text');
-              window.initTextPageForChar?.();
-            }, 300);
-          },
-        });
-      } catch { /* ignore */ }
-    }, 3000);
-  }
-};
+window.addEventListener('page:enter', (e) => {
+  const pageName = e.detail?.pageName;
+  if (pageName === 'text') return;
+  clearTimeout(_proactiveTimer);
+  _proactiveTimer = setTimeout(async () => {
+    const characterId = appState.activeCharacter || 'yuki';
+    if (!shouldSendProactive(characterId)) return;
+    const character = characterMap[characterId] || yukiConfig;
+    const memory = getCharacterMemory(characterId);
+    try {
+      markProactiveSent(characterId);
+      const data = await generateProactiveMessage(character, memory);
+      const replyJa = data.replyJa || data.text || '';
+      if (!replyJa) return;
+      showTalkBadge();
+      showInAppNotification({
+        characterName: character.name || characterId,
+        message: replyJa,
+        onClick: () => {
+          go('friends');
+          setTimeout(() => {
+            go('text');
+            window.initTextPageForChar?.();
+          }, 300);
+        },
+      });
+    } catch { /* ignore */ }
+  }, 3000);
+});
