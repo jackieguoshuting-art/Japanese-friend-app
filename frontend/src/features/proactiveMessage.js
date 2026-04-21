@@ -12,17 +12,22 @@ export function markProactiveSent(characterId) {
 }
 
 export async function generateProactiveMessage(character, memory) {
+  const base = character.systemPrompt || '';
+  const memBlock = (memory && memory.length)
+    ? '\n\nユーザーについて覚えていること(会話で自然に活かすこと):\n' +
+      memory.map(m => `- ${m.factJa || m.fact || m}`).join('\n')
+    : '';
+  const systemPrompt = base + memBlock;
+
   const res = await fetch('/api/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      character,
-      memory,
-      history: [],
-      userText: '[PROACTIVE]',
+      messages: [{ role: 'user', content: '[PROACTIVE]' }],
+      systemPrompt,
       isProactive: true,
     })
   });
-  const data = await res.json();
-  return data;
+  if (!res.ok) throw new Error('proactive chat failed: ' + res.status);
+  return await res.json();
 }
