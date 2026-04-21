@@ -177,7 +177,7 @@ window.YUKI_SYSTEM_PROMPT = yukiConfig.systemPrompt;
 let _proactiveTimer = null;
 window.addEventListener('page:enter', (e) => {
   const pageName = e.detail?.pageName;
-  if (pageName === 'text') return;
+  if (pageName === 'text' || pageName === 'call') return;
   clearTimeout(_proactiveTimer);
   _proactiveTimer = setTimeout(async () => {
     const characterId = appState.activeCharacter || 'yuki';
