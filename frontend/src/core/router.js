@@ -1,4 +1,5 @@
 import { appState } from './state.js';
+import { stopSpeaking } from '../features/tts.js';
 
 function updateNavActive(page) {
   document.querySelectorAll('.nav-item').forEach(item => {
@@ -23,6 +24,7 @@ function updateNavActive(page) {
 }
 
 export function go(pageName) {
+  stopSpeaking();
   document.querySelectorAll('.page').forEach((page) => page.classList.remove('active'));
   document.getElementById(`pg-${pageName}`)?.classList.add('active');
   appState.activePage = pageName;
