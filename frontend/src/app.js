@@ -16,6 +16,11 @@ import { addUnread, getUnreadCount, getTotalUnread, markAllRead } from './featur
 import { updateFriendBadge, refreshAllFriendBadges } from './features/badge.js';
 import { appendTextHistory } from './features/textHistory.js';
 
+// 去除 VOCAB_MARKUP 标记,用于纯文本显示场景(通知条、Summary 等)
+function stripVocabMarkup(text) {
+  return (text || '').replace(/\[\[([^|[\]]+)\|[^\]]+\]\]/g, '$1');
+}
+
 const characterMap = {
   yuki: yukiConfig,
   ren:  renConfig,
@@ -59,7 +64,6 @@ function renderConversationSummary() {
   recap.hidden = false;
   const content = document.getElementById('conv-recap-content');
   if (content) {
-    const stripVocabMarkup = (t) => t.replace(/\[\[([^|[\]]+)\|[^\]]+\]\]/g, '$1');
     content.innerHTML = `
       <div class="conv-recap-inner">
         ${history.map((m) => `
@@ -190,8 +194,8 @@ window.addEventListener('page:enter', (e) => {
       updateFriendBadge(characterId, getUnreadCount(characterId));
       showInAppNotification({
         characterName: character.name || characterId,
-        messageJa: replyJa,
-        messageEn: data.replyEn || '',
+        messageJa: stripVocabMarkup(replyJa),
+        messageEn: stripVocabMarkup(data.replyEn || ''),
         avatarSrc: character.photoSrc || `/frontend/public/assets/characters/${characterId}/${characterId}-photo.jpg`,
         onClick: () => {
           appState.activeCharacter = characterId;
