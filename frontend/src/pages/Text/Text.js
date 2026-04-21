@@ -212,7 +212,7 @@ function initTextPage() {
         removeTyping();
         const replyJa = data.replyJa || data.text || '...';
         addMsg('yuki', replyJa, data.replyEn || '');
-        appendTextHistory(characterId, 'assistant', replyJa);
+        appendTextHistory(characterId, 'assistant', replyJa, data.replyEn || '');
         saveMemoryCandidate(data);
       } catch {
         removeTyping();
@@ -239,7 +239,7 @@ function initTextPage() {
       removeTyping();
       const replyJa = data.replyJa || data.text || '...';
       addMsg('yuki', replyJa, data.replyEn || '');
-      appendTextHistory(characterId, 'assistant', replyJa);
+      appendTextHistory(characterId, 'assistant', replyJa, data.replyEn || '');
       saveMemoryCandidate(data);
     } catch {
       removeTyping();
