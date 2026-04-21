@@ -9,12 +9,8 @@ import {
   getTextHistory,
   appendTextHistory,
 } from '../../features/textHistory.js';
-import {
-  shouldSendProactive,
-  markProactiveSent,
-  generateProactiveMessage,
-} from '../../features/proactiveMessage.js';
-import { hideTalkBadge } from '../../features/badge.js';
+import { hideTalkBadge, updateFriendBadge } from '../../features/badge.js';
+import { markAllRead } from '../../features/unreadQueue.js';
 
 const TOPICS = [
   'そういえば、最近どんな音楽聴いてる？',
@@ -284,8 +280,9 @@ async function initTextPageForChar() {
   if (headerName) headerName.textContent = fullName;
   if (headerSub) headerSub.innerHTML = `<span class="text-online-label">オンライン</span> · ${location}`;
 
-  // Clear badge
-  hideTalkBadge();
+  // Clear unread for this character
+  markAllRead(characterId);
+  updateFriendBadge(characterId, 0);
 
   // Init input binding first to get addMsg
   const { addMsg } = initTextPage() || {};
@@ -298,25 +295,6 @@ async function initTextPageForChar() {
     const role = entry.role === 'assistant' ? 'yuki' : entry.role;
     addMsg(role, entry.content, entry.replyEn || '', entry.timestamp);
   });
-
-  // Check if proactive message should be generated
-  if (shouldSendProactive(characterId)) {
-    markProactiveSent(characterId);
-    try {
-      const memory = getCharacterMemory(characterId);
-      const data = await generateProactiveMessage(character, memory);
-      const replyJa = data.replyJa || data.text || '';
-      if (replyJa) {
-        // Timestamp: 1–8 hours ago
-        const hoursAgo = Math.floor(Math.random() * 7 + 1);
-        const pastTs = Date.now() - hoursAgo * 60 * 60 * 1000;
-        addMsg('yuki', replyJa, data.replyEn || '', pastTs);
-        appendTextHistory(characterId, 'assistant', replyJa);
-      }
-    } catch {
-      // Silently ignore proactive generation failure
-    }
-  }
 
   list.scrollTop = list.scrollHeight;
 }

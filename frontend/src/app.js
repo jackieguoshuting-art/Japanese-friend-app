@@ -12,6 +12,9 @@ import { save, load } from './core/storage.js';
 import { shouldSendProactive, markProactiveSent, generateProactiveMessage } from './features/proactiveMessage.js';
 import { showInAppNotification } from './features/inAppNotification.js';
 import { showTalkBadge } from './features/badge.js';
+import { addUnread, getUnreadCount, getTotalUnread, markAllRead } from './features/unreadQueue.js';
+import { updateFriendBadge, refreshAllFriendBadges } from './features/badge.js';
+import { appendTextHistory } from './features/textHistory.js';
 
 const characterMap = {
   yuki: yukiConfig,
@@ -182,13 +185,17 @@ window.addEventListener('page:enter', (e) => {
       const data = await generateProactiveMessage(character, memory);
       const replyJa = data.replyJa || data.text || '';
       if (!replyJa) return;
-      showTalkBadge();
+      appendTextHistory(characterId, 'assistant', replyJa);
+      addUnread(characterId);
+      updateFriendBadge(characterId, getUnreadCount(characterId));
+      const total = getTotalUnread(['yuki', 'ren', 'hana', 'mio']);
       showInAppNotification({
         characterName: character.name || characterId,
-        messageJa: replyJa,
-        messageEn: data.replyEn || '',
+        messageJa: `未読メッセージ ${total} 件`,
+        messageEn: `${total} unread message${total > 1 ? 's' : ''}`,
         avatarSrc: character.photoSrc || `/frontend/public/assets/characters/${characterId}/${characterId}-photo.jpg`,
         onClick: () => {
+          appState.activeCharacter = characterId;
           go('friends');
           setTimeout(() => {
             go('text');
@@ -199,3 +206,28 @@ window.addEventListener('page:enter', (e) => {
     } catch { /* ignore */ }
   }, 3000);
 });
+
+// ── App 启动时:读取已有未读,更新红点,如有则弹汇总通知 ──
+(function onAppStart() {
+  const characterIds = ['yuki', 'ren', 'hana', 'mio'];
+  refreshAllFriendBadges(characterIds, getUnreadCount);
+  const total = getTotalUnread(characterIds);
+  if (total > 0) {
+    const firstWithUnread = characterIds.find(id => getUnreadCount(id) > 0);
+    const character = characterMap[firstWithUnread] || yukiConfig;
+    showInAppNotification({
+      characterName: character.name || firstWithUnread,
+      messageJa: `未読メッセージ ${total} 件`,
+      messageEn: `${total} unread message${total > 1 ? 's' : ''}`,
+      avatarSrc: character.photoSrc || `/frontend/public/assets/characters/${firstWithUnread}/${firstWithUnread}-photo.jpg`,
+      onClick: () => {
+        appState.activeCharacter = firstWithUnread;
+        go('friends');
+        setTimeout(() => {
+          go('text');
+          window.initTextPageForChar?.();
+        }, 300);
+      },
+    });
+  }
+})();
