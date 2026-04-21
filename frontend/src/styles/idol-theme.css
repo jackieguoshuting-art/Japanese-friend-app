@@ -863,6 +863,11 @@ body { background:#040810; }
   transition: background 0.15s;
 }
 .mode-option:hover .mode-option-icon { background: rgba(0, 71, 255, 0.05); }
+.mode-option:active .mode-option-icon {
+  background: rgba(255, 142, 155, 0.12);
+  box-shadow: 0 0 18px rgba(255, 142, 155, 0.75), 0 0 36px rgba(255, 142, 155, 0.35);
+  border-color: #ff8e9b;
+}
 .mode-option-label {
   font-family: 'Liberation Serif', serif;
   font-size: 12px;
@@ -872,22 +877,6 @@ body { background:#040810; }
   letter-spacing: 1.2px;
   text-transform: uppercase;
 }
-.mode-footer-dots {
-  display: flex;
-  gap: 6px;
-  justify-content: center;
-  padding-top: 16px;
-  border-top: 1px solid rgba(0, 71, 255, 0.2);
-  width: 100%;
-}
-.mode-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-.mode-dot:nth-child(1) { background: rgba(0, 71, 255, 0.4); }
-.mode-dot:nth-child(2) { background: rgba(0, 71, 255, 0.2); }
-.mode-dot:nth-child(3) { background: rgba(0, 71, 255, 0.1); }
 
 #pg-call .call-input-area,
 #pg-call .chat-msg,
