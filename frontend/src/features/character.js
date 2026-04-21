@@ -82,11 +82,13 @@ function openModeModal(skipCharSelect) {
   }
   const m = document.getElementById('mode-modal');
   if (m) m.style.display = 'flex';
+  document.getElementById('pg-home')?.classList.add('modal-active');
 }
 
 function closeModeModal() {
   const m = document.getElementById('mode-modal');
   if (m) m.style.display = 'none';
+  document.getElementById('pg-home')?.classList.remove('modal-active');
 }
 
 window.setActiveCharacter = setActiveCharacter;

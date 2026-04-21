@@ -1249,25 +1249,38 @@
 
 </div>
 
-  <!-- Mode select modal — outside all pages so it works from any page -->
+  <!-- Mode select modal — Figma "CHAT WITH ME" centered card design -->
   <div class="mode-modal" id="mode-modal">
-    <div class="mode-sheet">
-      <div class="mode-sheet-label">SELECT MODE · モードを選ぶ</div>
-      <div class="mode-choice" onclick="closeModeModal(); go('call'); setTimeout(() => triggerOpeningMessage(), 300)">
-        <div class="mode-choice-icon" style="background:rgba(48,112,255,.15);">📹</div>
-        <div>
-          <div class="mode-choice-title">Video Chat</div>
-          <div class="mode-choice-sub">ビデオ通話 · Live 2D キャラクター</div>
+    <div class="mode-card-wrapper">
+      <div class="mode-card">
+        <div class="mode-tape"></div>
+        <button class="mode-close" onclick="closeModeModal()" aria-label="Close">✕</button>
+        <div class="mode-title">CHAT WITH ME!</div>
+        <div class="mode-options">
+          <button class="mode-option" onclick="closeModeModal(); go('call'); setTimeout(() => triggerOpeningMessage(), 300)" aria-label="Call">
+            <div class="mode-option-icon">
+              <svg width="30" height="24" viewBox="0 0 30 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="1" y="3" width="18" height="18" rx="3" stroke="#0047ff" stroke-width="1.5"/>
+                <path d="M19 9L28.5 4.5V19.5L19 15V9Z" stroke="#0047ff" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="mode-option-label">CALL ME</span>
+          </button>
+          <button class="mode-option" onclick="closeModeModal(); go('text'); setTimeout(() => initTextPageForChar(), 300)" aria-label="Text">
+            <div class="mode-option-icon">
+              <svg width="30" height="28" viewBox="0 0 30 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 2C3 1.45 3.45 1 4 1H26C26.55 1 27 1.45 27 2V19C27 19.55 26.55 20 26 20H10.5L3 27V20H4C3.45 20 3 19.55 3 19V2Z" stroke="#0047ff" stroke-width="1.5" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <span class="mode-option-label">TEXT ME</span>
+          </button>
+        </div>
+        <div class="mode-footer-dots">
+          <div class="mode-dot"></div>
+          <div class="mode-dot"></div>
+          <div class="mode-dot"></div>
         </div>
       </div>
-      <div class="mode-choice" onclick="closeModeModal(); go('text'); setTimeout(() => initTextPageForChar(), 300)">
-        <div class="mode-choice-icon" style="background:rgba(40,100,255,.15);">💬</div>
-        <div>
-          <div class="mode-choice-title">Text Message</div>
-          <div class="mode-choice-sub">テキスト · テキストで会話</div>
-        </div>
-      </div>
-      <button class="mode-cancel" onclick="closeModeModal()">キャンセル · Cancel</button>
     </div>
   </div>
 
