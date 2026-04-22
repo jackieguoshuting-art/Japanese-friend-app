@@ -18,6 +18,8 @@ import {
   initTextPageForChar,
 } from './pages/Text/Text.js';
 
+import { initKonbini } from './pages/Konbini/Konbini.js';
+
 window.appendChatMessage      = appendChatMessage;
 window.triggerOpeningMessage  = triggerOpeningMessage;
 window.initCallInput          = initCallInput;
@@ -27,3 +29,5 @@ window.toggleCallCaptionMode  = toggleCallCaptionMode;
 
 window.initTextPage           = initTextPage;
 window.initTextPageForChar    = initTextPageForChar;
+
+window.initKonbini            = initKonbini;

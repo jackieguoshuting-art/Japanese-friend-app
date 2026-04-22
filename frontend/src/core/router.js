@@ -14,6 +14,7 @@ function updateNavActive(page) {
     'summary': 1,
     'shadow': 2,
     'scene': 3,
+    'konbini': 3,
   };
   const idx = map[page] ?? -1;
   if (idx >= 0) {
