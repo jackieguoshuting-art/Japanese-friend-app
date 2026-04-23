@@ -1094,7 +1094,7 @@
 .kb-checkout-scene {
   position: relative;
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   background: var(--kb-surface);
   border-bottom: 1.5px solid var(--kb-border);
@@ -1105,16 +1105,16 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: left center;
+  object-position: center 20%;
 }
 
-/* 右上角气泡 */
+/* 气泡靠右下，避开脸部 */
 .kb-checkout-bubble {
   position: absolute;
-  top: 20px;
-  right: 16px;
-  width: 45%;
-  max-width: 220px;
+  bottom: 56px;
+  right: 12px;
+  width: 42%;
+  max-width: 190px;
   background: #fff;
   border: 1.5px solid var(--kb-border);
   border-radius: 20px;
@@ -1139,13 +1139,13 @@
 }
 .kb-bubble-tail {
   position: absolute;
-  bottom: -8px;
+  top: -8px;
   left: 24px;
   width: 14px;
   height: 14px;
   background: #fff;
-  border-right: 1.5px solid var(--kb-border);
-  border-bottom: 1.5px solid var(--kb-border);
+  border-left: 1.5px solid var(--kb-border);
+  border-top: 1.5px solid var(--kb-border);
   transform: rotate(45deg);
 }
 
