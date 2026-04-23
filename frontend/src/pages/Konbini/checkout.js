@@ -1,8 +1,10 @@
 import { buildTurns } from './checkout-data.js';
 
-// Module-level handle so Konbini.js can stop TTS when leaving the page
-export const _checkoutTTSHandle = { currentAudio: null };
+// Module-level handle so Konbini.js can stop TTS when leaving the page.
+// gen increments on stop, so in-flight playClerkTTS calls abort after their awaits.
+export const _checkoutTTSHandle = { currentAudio: null, gen: 0 };
 export function stopCheckoutTTS() {
+  _checkoutTTSHandle.gen++;          // invalidate any in-flight fetch
   if (_checkoutTTSHandle.currentAudio) {
     try { _checkoutTTSHandle.currentAudio.pause(); _checkoutTTSHandle.currentAudio.src = ''; } catch (e) {}
     _checkoutTTSHandle.currentAudio = null;
@@ -250,6 +252,8 @@ export function renderCheckout(container, { cart, total }) {
       try { tts.currentAudio.pause(); tts.currentAudio.src = ''; } catch (e) {}
       tts.currentAudio = null;
     }
+    // snapshot gen before any await; if it changes mid-flight we were cancelled
+    const myGen = _checkoutTTSHandle.gen;
     try {
       console.log('[konbini-2c] TTS request:', text.slice(0, 30));
       const res = await fetch('/api/tts', {
@@ -257,8 +261,10 @@ export function renderCheckout(container, { cart, total }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text, voiceId: CLERK_VOICE_ID }),
       });
+      if (_checkoutTTSHandle.gen !== myGen) return; // cancelled while fetching
       if (!res.ok) throw new Error(`TTS ${res.status}`);
       const blob = await res.blob();
+      if (_checkoutTTSHandle.gen !== myGen) return; // cancelled while decoding blob
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
       tts.currentAudio = audio;
