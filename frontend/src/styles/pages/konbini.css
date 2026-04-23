@@ -1075,7 +1075,10 @@
   display: block;
 }
 #pg-konbini[data-stage="checkout"] .kb-stage-checkout {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
 }
 #pg-konbini[data-stage="summary"] .kb-stage-summary {
   display: block;
@@ -1087,34 +1090,36 @@
   flex-direction: column;
   font-family: var(--kb-font-body);
   background: var(--kb-bg);
-  padding-bottom: 32px;
+  min-height: 100%;
 }
 
 /* ===== 葵插画场景 ===== */
 .kb-checkout-scene {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 4;
   overflow: hidden;
   background: var(--kb-surface);
   border-bottom: 1.5px solid var(--kb-border);
+  flex-shrink: 0;
 }
 .kb-checkout-clerk-img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  object-position: center 20%;
+  object-fit: contain;
+  object-position: center bottom;
+  background: #f5f0e8;
 }
 
-/* 气泡靠右下，避开脸部 */
+/* 气泡右下角，脸部以下 */
 .kb-checkout-bubble {
   position: absolute;
-  bottom: 56px;
-  right: 12px;
-  width: 42%;
-  max-width: 190px;
+  bottom: 64px;
+  right: 8px;
+  width: 40%;
+  max-width: 180px;
   background: #fff;
   border: 1.5px solid var(--kb-border);
   border-radius: 20px;
@@ -1167,10 +1172,11 @@
 
 /* ===== 对话流(手账拼贴风) ===== */
 .kb-checkout-stream {
-  padding: 24px 20px 20px;
+  padding: 16px 20px 12px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  flex: 1;
   background:
     radial-gradient(circle at 1px 1px, rgba(0, 47, 167, 0.08) 1px, transparent 0) 0 0 / 22px 22px,
     var(--kb-bg);
