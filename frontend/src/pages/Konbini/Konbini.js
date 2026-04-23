@@ -155,10 +155,19 @@ function showTaskBubble(taskEl, item) {
   const existing = pg.querySelector('.kb-task-bubble');
   if (existing) existing.remove();
 
+  // 计算 taskEl 相对 pg 的位置
+  const taskRect = taskEl.getBoundingClientRect();
+  const pgRect = pg.getBoundingClientRect();
+  const relLeft = taskRect.left - pgRect.left + taskRect.width / 2;
+  const relTop = taskRect.bottom - pgRect.top + 8;
+
   const bubble = document.createElement('div');
   bubble.className = 'kb-task-bubble';
   bubble.innerHTML = `<span class="kb-task-bubble-kana">${item.kana}</span><span class="kb-task-bubble-en">${item.en}</span>`;
-  taskEl.appendChild(bubble);
+  bubble.style.left = relLeft + 'px';
+  bubble.style.top = relTop + 'px';
+  // 挂到 pg 顶级,不是 taskEl
+  pg.appendChild(bubble);
 
   requestAnimationFrame(() => {
     bubble.classList.add('kb-task-bubble-show');

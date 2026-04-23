@@ -738,16 +738,15 @@
 
 .kb-task-bubble {
   position: absolute;
-  top: calc(100% + 8px);
-  left: 50%;
   transform: translateX(-50%) translateY(-4px) scale(0.8);
+  transform-origin: top center;
   background: var(--kb-primary);
   color: #fff;
   padding: 5px 10px;
   border-radius: 6px;
   font-family: var(--kb-font-body);
   white-space: nowrap;
-  z-index: 200;
+  z-index: 500;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.15s, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -773,8 +772,8 @@
 }
 
 .kb-task-bubble-show {
-  opacity: 1;
   transform: translateX(-50%) translateY(0) scale(1);
+  opacity: 1;
 }
 
 .kb-task-bubble-kana {
