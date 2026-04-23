@@ -287,9 +287,12 @@
 .kb-card:nth-child(3n) { transform: rotate(-2deg); }
 
 .kb-card-soldout {
+  cursor: not-allowed;
+}
+
+.kb-card-soldout > :not(.kb-soldout-overlay) {
   opacity: 0.45;
   filter: grayscale(1);
-  cursor: not-allowed;
 }
 
 /* === 细分类 subtag === */
@@ -464,4 +467,85 @@
   letter-spacing: 0.08em;
   font-size: 10px;
   text-transform: uppercase;
+}
+
+/* === 卡片过冲回弹动画 === */
+.kb-card {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.25s ease;
+}
+
+/* === 选中状态:反向扭 + 放大 + 粉红阴影 === */
+.kb-card-selected {
+  border-width: 2.5px;
+  box-shadow: 4px 4px 0 #FF8FAB;
+  z-index: 10;
+}
+
+.kb-card-selected {
+  transform: rotate(3deg) scale(1.05) !important;
+}
+
+.kb-card-selected:nth-child(2n) {
+  transform: rotate(-3deg) scale(1.05) !important;
+}
+
+.kb-card-selected:nth-child(3n) {
+  transform: rotate(4deg) scale(1.05) !important;
+}
+
+/* ✓ 勾徽章(白底粉边粉字) */
+.kb-card-check {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  color: #FF8FAB;
+  border: 2px solid #FF8FAB;
+  border-radius: 50%;
+  font-family: var(--kb-font-label);
+  font-weight: 900;
+  font-size: 11px;
+  line-height: 14px;
+  text-align: center;
+  z-index: 4;
+}
+
+/* 选中时 HOT/FAV 徽章让位给 ✓ */
+.kb-card-selected .kb-badge {
+  display: none;
+}
+
+/* === Toast === */
+.kb-toast {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translate(-50%, -80px);
+  background: rgba(26, 28, 28, 0.92);
+  color: #fff;
+  font-family: var(--kb-font-body);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 10px 18px;
+  border-radius: var(--kb-radius-pill);
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  letter-spacing: 0.05em;
+}
+
+.kb-toast-show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* === レジへ 激活状态 === */
+.kb-checkout-btn:not(.kb-checkout-btn-disabled) {
+  background: var(--kb-accent);
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
 }

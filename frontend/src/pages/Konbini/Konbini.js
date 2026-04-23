@@ -1,9 +1,10 @@
-import { TABS, FOOD_ITEMS, DRINK_ITEMS, SNACK_ITEMS, TASK_ITEM_IDS } from './data.js';
+import { TABS, FOOD_ITEMS, DRINK_ITEMS, SNACK_ITEMS, TASK_ITEM_IDS, ALL_ITEMS } from './data.js';
+import { go } from '../../core/router.js';
 
 const STAGES = ['shopping', 'checkout', 'summary'];
 let _state = null;
+let _toastTimer = null;
 
-// === 工具:洗牌(Fisher-Yates)===
 function shuffle(arr) {
   const copy = [...arr];
   for (let i = copy.length - 1; i > 0; i--) {
@@ -13,13 +14,11 @@ function shuffle(arr) {
   return copy;
 }
 
-// === 工具:从数组里随机选 N 个 id ===
 function pickRandomIds(items, n) {
   const shuffled = shuffle(items);
   return shuffled.slice(0, Math.min(n, shuffled.length)).map(it => it.id);
 }
 
-// === 确保 Tab 已初始化(第一次访问时洗牌 + 随机品切れ)===
 function ensureTabInitialized(tabKey) {
   if (!_state.shuffledByTab[tabKey] || _state.shuffledByTab[tabKey].length === 0) {
     const sourceMap = { food: FOOD_ITEMS, drink: DRINK_ITEMS, snack: SNACK_ITEMS };
@@ -40,12 +39,34 @@ function resetState() {
     sessionStart: Date.now(),
     dialogHistory: [],
   };
-  // 进店立即初始化默认 Tab
   ensureTabInitialized(_state.activeTab);
 }
 
-// === 渲染卡片(静态,不能点击) ===
+function findItemById(id) {
+  return ALL_ITEMS.find(it => it.id === id);
+}
+
+function calcCartTotal() {
+  return _state.cart.reduce((sum, id) => {
+    const item = findItemById(id);
+    return sum + (item ? item.price : 0);
+  }, 0);
+}
+
+function isCheckoutReady() {
+  return TASK_ITEM_IDS.every(id => _state.cart.includes(id));
+}
+
+function subtagClass(subtag) {
+  const map = {
+    '温食': 'warm', 'パン': 'bread', '冷': 'cold', '酒': 'alcohol',
+    '菓子': 'snack', '甘味': 'sweet', '生鮮': 'fresh', '雑貨': 'goods',
+  };
+  return map[subtag] || 'default';
+}
+
 function renderCard(item, soldOut) {
+  const inCart = _state.cart.includes(item.id);
   const badgeHtml = item.badge
     ? `<span class="kb-badge kb-badge-${item.badge.toLowerCase()}">${item.badge}</span>`
     : '';
@@ -53,10 +74,19 @@ function renderCard(item, soldOut) {
   const soldOutOverlay = soldOut
     ? `<div class="kb-soldout-overlay"><div class="kb-soldout-stamp">品切れ</div></div>`
     : '';
+  const checkMark = inCart ? `<span class="kb-card-check">✓</span>` : '';
+
+  const classes = [
+    'kb-card',
+    soldOut ? 'kb-card-soldout' : '',
+    inCart ? 'kb-card-selected' : '',
+  ].filter(Boolean).join(' ');
+
   return `
-    <div class="kb-card ${soldOut ? 'kb-card-soldout' : ''}" data-id="${item.id}">
+    <div class="${classes}" data-id="${item.id}">
       ${subtagHtml}
       ${badgeHtml}
+      ${checkMark}
       ${soldOutOverlay}
       <div class="kb-card-emoji">${item.emoji}</div>
       <div class="kb-card-body">
@@ -68,34 +98,17 @@ function renderCard(item, soldOut) {
   `;
 }
 
-function subtagClass(subtag) {
-  const map = {
-    '温食': 'warm',
-    'パン': 'bread',
-    '冷': 'cold',
-    '酒': 'alcohol',
-    '菓子': 'snack',
-    '甘味': 'sweet',
-    '生鮮': 'fresh',
-    '雑貨': 'goods',
-  };
-  return map[subtag] || 'default';
-}
-
-// === 只重新渲染货架区(Tab 切换时调用) ===
 function renderGrid() {
   const pg = document.getElementById('pg-konbini');
   if (!pg) return;
   const grid = pg.querySelector('.kb-grid');
   if (!grid) return;
-
   ensureTabInitialized(_state.activeTab);
   const items = _state.shuffledByTab[_state.activeTab];
   const soldOutIds = _state.soldOutIdsByTab[_state.activeTab];
   grid.innerHTML = items.map(it => renderCard(it, soldOutIds.includes(it.id))).join('');
 }
 
-// === 更新 Tab 选中状态 ===
 function updateTabsUI() {
   const pg = document.getElementById('pg-konbini');
   if (!pg) return;
@@ -104,7 +117,46 @@ function updateTabsUI() {
   });
 }
 
-// === Tab 点击 handler ===
+function updateCartUI() {
+  const pg = document.getElementById('pg-konbini');
+  if (!pg) return;
+
+  const count = _state.cart.length;
+  const total = calcCartTotal();
+  const ready = isCheckoutReady();
+
+  const countEl = pg.querySelector('.kb-checkout-count');
+  const totalEl = pg.querySelector('.kb-total-num');
+  if (countEl) countEl.innerHTML = `📋 ${count} ITEMS`;
+  if (totalEl) totalEl.textContent = `¥${total}`;
+
+  const btn = pg.querySelector('.kb-checkout-btn');
+  if (btn) {
+    btn.classList.toggle('kb-checkout-btn-disabled', !ready);
+    btn.disabled = !ready;
+  }
+
+  const badge = pg.querySelector('.kb-cart-badge');
+  if (badge) badge.textContent = count;
+}
+
+function showToast(msg) {
+  const pg = document.getElementById('pg-konbini');
+  if (!pg) return;
+  let toast = pg.querySelector('.kb-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.className = 'kb-toast';
+    pg.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.classList.add('kb-toast-show');
+  if (_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => {
+    toast.classList.remove('kb-toast-show');
+  }, 2000);
+}
+
 function onTabClick(e) {
   const btn = e.target.closest('.kb-tab');
   if (!btn) return;
@@ -115,7 +167,38 @@ function onTabClick(e) {
   renderGrid();
 }
 
-// === 主渲染 ===
+function onCardClick(e) {
+  const card = e.target.closest('.kb-card');
+  if (!card) return;
+  const id = card.dataset.id;
+  if (!id) return;
+
+  const soldOutIds = _state.soldOutIdsByTab[_state.activeTab] || [];
+  if (soldOutIds.includes(id)) {
+    showToast('売り切れました');
+    return;
+  }
+
+  const idx = _state.cart.indexOf(id);
+  if (idx >= 0) {
+    _state.cart.splice(idx, 1);
+    card.classList.remove('kb-card-selected');
+    const check = card.querySelector('.kb-card-check');
+    if (check) check.remove();
+  } else {
+    _state.cart.push(id);
+    card.classList.add('kb-card-selected');
+    if (!card.querySelector('.kb-card-check')) {
+      const check = document.createElement('span');
+      check.className = 'kb-card-check';
+      check.textContent = '✓';
+      card.appendChild(check);
+    }
+  }
+
+  updateCartUI();
+}
+
 function renderShopping() {
   const tabs = TABS.map(t => `
     <button class="kb-tab ${_state.activeTab === t.key ? 'kb-tab-active' : ''}" data-tab="${t.key}">
@@ -185,10 +268,16 @@ function initKonbini() {
   pg.dataset.stage = _state.stage;
   pg.innerHTML = renderShopping();
 
-  // 绑定 Tab 点击事件(事件委托)
+  const backBtn = pg.querySelector('.kb-back');
+  if (backBtn) backBtn.addEventListener('click', () => go('scene'));
+
   const tabsContainer = pg.querySelector('.kb-tabs');
   if (tabsContainer) {
     tabsContainer.addEventListener('click', onTabClick);
+  }
+  const gridContainer = pg.querySelector('.kb-grid');
+  if (gridContainer) {
+    gridContainer.addEventListener('click', onCardClick);
   }
 }
 
