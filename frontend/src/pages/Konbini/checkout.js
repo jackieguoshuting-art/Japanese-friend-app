@@ -290,12 +290,20 @@ export function renderCheckout(container, { cart, total }) {
     state.loading = false;
     refreshHintsAndInput();
 
+    // 记录刚完成的轮 id(必须在推进前读)
+    const justFinishedId = turns[state.turnIndex]?.id;
+
     // 再推进到下一轮(为下次 advanceTurn 准备新轮的 prompt)
     state.turnIndex += 1;
 
     // 如果下一轮是 auto，自动推进
     const next = turns[state.turnIndex];
     if (next?.auto) {
+      // greeting 结束后停顿 1.5 秒，让用户看清欢迎语
+      if (justFinishedId === 'greeting') {
+        console.log('[konbini-2b-review-fix2] pause 1500ms after greeting');
+        await new Promise(r => setTimeout(r, 1500));
+      }
       await advanceTurn(null);
     }
   }
