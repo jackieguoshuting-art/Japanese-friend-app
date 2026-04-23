@@ -46,6 +46,20 @@ function resetState() {
   ensureTabInitialized(_state.activeTab);
 }
 
+// fix2: clear checkout/summary DOM and reset stage before re-init
+function cleanupKonbiniStages() {
+  const pg = document.getElementById('pg-konbini');
+  if (!pg) return;
+  const checkoutEl = pg.querySelector('.kb-stage-checkout');
+  if (checkoutEl) checkoutEl.innerHTML = '';
+  const summaryEl = pg.querySelector('.kb-stage-summary');
+  if (summaryEl) summaryEl.innerHTML = '';
+  pg.dataset.stage = 'shopping';
+  delete pg.dataset.transition;
+  if (_state) _state.stage = 'shopping';
+  console.log('[konbini-2d-fix2] cleanupKonbiniStages done');
+}
+
 function findItemById(id) {
   return ALL_ITEMS.find(it => it.id === id);
 }
@@ -662,17 +676,9 @@ function initKonbini() {
 
   const backBtn = pg.querySelector('.kb-back');
   if (backBtn) backBtn.addEventListener('click', () => {
+    console.log('[konbini-2d-fix2] Back button → exit to scene');
     stopCheckoutTTS();
-    if (_state.stage === 'checkout') {
-      _state.stage = 'shopping';
-      pg.dataset.stage = 'shopping';
-      const stepText = pg.querySelector('.kb-step-text');
-      const stepFill = pg.querySelector('.kb-step-bar-fill');
-      if (stepText) stepText.textContent = 'STEP 1/3';
-      if (stepFill) stepFill.style.width = '33%';
-    } else {
-      go('scene');
-    }
+    go('scene');
   });
 
   const checkoutBtn = pg.querySelector('.kb-checkout-btn');
@@ -779,6 +785,9 @@ function getState() {
 
 window.addEventListener('page:enter', (e) => {
   if (e.detail?.pageName === 'konbini') {
+    console.log('[konbini-2d-fix2] page:enter konbini → cleanup');
+    stopCheckoutTTS();
+    cleanupKonbiniStages();
     initKonbini();
   } else {
     stopCheckoutTTS();
