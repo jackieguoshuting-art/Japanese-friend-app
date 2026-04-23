@@ -126,16 +126,18 @@ function setupTasklistDrag() {
     isDragging = false;
     list.classList.remove('kb-tasklist-dragging');
 
+    // 强制吸附到距离更近的一边
     const pgRect = pg.getBoundingClientRect();
     const listRect = list.getBoundingClientRect();
     const leftDist = listRect.left - pgRect.left;
     const rightDist = pgRect.right - listRect.right;
-    const SNAP = 30;
 
-    if (leftDist < SNAP) {
+    if (leftDist <= rightDist) {
       list.style.left = '0px';
-    } else if (rightDist < SNAP) {
+      list.dataset.side = 'left';
+    } else {
       list.style.left = (pgRect.width - listRect.width) + 'px';
+      list.dataset.side = 'right';
     }
   }
 
@@ -385,7 +387,7 @@ function renderShopping() {
     </main>
 
     <!-- 右侧任务条 -->
-    <div class="kb-tasklist" data-collapsed="false">
+    <div class="kb-tasklist" data-collapsed="false" data-side="right">
       <div class="kb-tasklist-header">
         <span class="kb-tasklist-icon">📋</span>
         <button class="kb-tasklist-toggle" type="button" aria-label="toggle">⊖</button>

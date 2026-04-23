@@ -478,7 +478,7 @@
 /* === 选中状态:反向扭 + 放大 + 粉红阴影 === */
 .kb-card-selected {
   border-width: 2.5px;
-  box-shadow: 4px 4px 0 #FF8FAB;
+  box-shadow: 4px 4px 0 #22c55e;
   z-index: 10;
 }
 
@@ -502,8 +502,8 @@
   width: 18px;
   height: 18px;
   background: #fff;
-  color: #FF8FAB;
-  border: 2px solid #FF8FAB;
+  color: #22c55e;
+  border: 2px solid #22c55e;
   border-radius: 50%;
   font-family: var(--kb-font-label);
   font-weight: 900;
@@ -667,11 +667,11 @@
 @keyframes kb-tasklist-glow {
   0%, 100% {
     box-shadow: -2px 2px 0 rgba(0, 47, 167, 0.15),
-                0 0 0 0 rgba(255, 143, 171, 0.6);
+                0 0 0 0 rgba(34, 197, 94, 0.6);
   }
   50% {
     box-shadow: -2px 2px 0 rgba(0, 47, 167, 0.15),
-                0 0 20px 8px rgba(255, 143, 171, 0.5);
+                0 0 20px 8px rgba(34, 197, 94, 0.5);
   }
 }
 
@@ -684,7 +684,7 @@
   position: absolute;
   top: -18px;
   right: 8px;
-  background: #FF8FAB;
+  background: #22c55e;
   color: #fff;
   font-family: var(--kb-font-label);
   font-weight: 900;
@@ -784,4 +784,48 @@
   font-family: var(--kb-font-label);
   font-size: 10px;
   letter-spacing: 0.03em;
+}
+
+/* === 任务条左右贴边翻转 === */
+
+/* 贴右边(默认):左开右闭 */
+.kb-tasklist[data-side="right"] {
+  border-right: none;
+  border-radius: 12px 0 0 12px;
+  box-shadow: -2px 2px 0 rgba(0, 47, 167, 0.15);
+}
+
+/* 贴左边:右开左闭(翻转) */
+.kb-tasklist[data-side="left"] {
+  border-left: none;
+  border-right: 1.5px solid var(--kb-primary);
+  border-radius: 0 12px 12px 0;
+  box-shadow: 2px 2px 0 rgba(0, 47, 167, 0.15);
+}
+
+/* 脉冲发光时覆盖左侧 box-shadow */
+@keyframes kb-tasklist-glow-left {
+  0%, 100% {
+    box-shadow: 2px 2px 0 rgba(0, 47, 167, 0.15),
+                0 0 0 0 rgba(34, 197, 94, 0.6);
+  }
+  50% {
+    box-shadow: 2px 2px 0 rgba(0, 47, 167, 0.15),
+                0 0 20px 8px rgba(34, 197, 94, 0.5);
+  }
+}
+
+.kb-tasklist[data-side="left"].kb-tasklist-pulse {
+  animation: kb-tasklist-glow-left 1s ease-in-out 2;
+}
+
+/* 準備OK! 贴纸:贴左边时位置翻转 */
+.kb-tasklist[data-side="left"] .kb-tasklist-ready-badge {
+  right: auto;
+  left: 8px;
+  transform: rotate(8deg) translateY(20px);
+}
+
+.kb-tasklist[data-side="left"].kb-tasklist-ready .kb-tasklist-ready-badge {
+  transform: rotate(8deg) translateY(0);
 }
