@@ -1384,3 +1384,26 @@
 .kb-msg-user .kb-msg-en {
   color: rgba(255, 255, 255, 0.75);
 }
+
+/* ===== fix1: mic 独立一行 ===== */
+.kb-mic-row {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0 0;
+}
+
+/* ===== fix1: hint 3个横排 ===== */
+.kb-hint-row {
+  flex-wrap: nowrap;
+}
+.kb-hint-row .kb-hint-pill {
+  font-size: 11px;
+  padding: 12px 8px;
+  line-height: 1.15;
+}
+
+/* ===== fix1: 对话区最新1对 ===== */
+.kb-checkout-stream {
+  min-height: 120px;
+  justify-content: flex-start;
+}

@@ -20,23 +20,27 @@ const CLERK_SYSTEM_PROMPT_TEMPLATE = `
 - 新しい話題を始めない。
 - 個人的な話(名前、趣味、天気など)に触れない。
 - ユーザーの日本語を褒めたり評価したりしない。
+- 単語マークアップ記号 [[...]] は絶対に使わないでください。純粋な日本語テキストのみで返答してください。
 `.trim();
 
 function buildClerkSystemPrompt(turn, current, cart, total) {
   const cartSummary = cart.map(i => `${i.ja} ¥${i.price}`).join('、');
+  const instructionText = typeof current.instruction === 'function'
+    ? current.instruction(cart, total)
+    : String(current.instruction).replace('${total}', total);
   return CLERK_SYSTEM_PROMPT_TEMPLATE
     .replace('__CART__', cartSummary)
     .replace('__TOTAL__', total)
     .replace('__TURN__', String(turn.index + 1))
     .replace('__TURN_COUNT__', String(turn.total))
     .replace('__TURN_ID__', current.id)
-    .replace('__INSTRUCTION__', current.instruction.replace('${total}', total));
+    .replace('__INSTRUCTION__', instructionText);
 }
 
-// 剥离服务器自动添加的 [[word|reading|gloss]] 标记
+// 剥离 [[word|reading|gloss]] 或 [[word]] 格式的 vocab 标记
 function stripVocabMarkup(text) {
   if (!text) return '';
-  return text.replace(/\[\[([^\]|]+)\|[^\]]*\]\]/g, '$1');
+  return text.replace(/\[\[([^\]|]+)[^\]]*\]\]/g, '$1');
 }
 
 // ============================================
@@ -77,8 +81,11 @@ export function renderCheckout(container, { cart, total }) {
       <section class="kb-checkout-input-hub">
         <div class="kb-hint-row" data-role="hint-row">
           <button class="kb-hint-pill" type="button" data-hint-index="0" disabled></button>
-          <button class="kb-mic-btn" type="button" disabled aria-label="語音入力(後続で有効化)">🎤</button>
           <button class="kb-hint-pill" type="button" data-hint-index="1" disabled></button>
+          <button class="kb-hint-pill" type="button" data-hint-index="2" disabled></button>
+        </div>
+        <div class="kb-mic-row">
+          <button class="kb-mic-btn" type="button" disabled aria-label="語音入力(後続で有効化)">🎤</button>
         </div>
 
         <div class="kb-input-wrap">
@@ -131,23 +138,28 @@ export function renderCheckout(container, { cart, total }) {
   }
 
   function showBubble(ja, en) {
-    $bubbleJa.textContent = ja || '';
+    $bubbleJa.textContent = stripVocabMarkup(ja || '');
     $bubbleEn.textContent = en || '';
   }
 
   function appendStream(role, ja, en) {
+    const cleanJa = stripVocabMarkup(ja || '');
+    const cleanEn = en || '';
     const div = document.createElement('div');
     div.className = role === 'clerk' ? 'kb-msg kb-msg-clerk' : 'kb-msg kb-msg-user';
     div.innerHTML = `
       ${role === 'clerk' ? '<span class="kb-msg-tape" aria-hidden="true"></span>' : ''}
       <p class="kb-msg-meta">${role === 'clerk' ? 'CLERK' : 'YOU'}</p>
       <p class="kb-msg-text"></p>
-      ${en ? '<p class="kb-msg-en"></p>' : ''}
+      ${cleanEn ? '<p class="kb-msg-en"></p>' : ''}
     `;
-    div.querySelector('.kb-msg-text').textContent = ja;
-    if (en) div.querySelector('.kb-msg-en').textContent = en;
+    div.querySelector('.kb-msg-text').textContent = cleanJa;
+    if (cleanEn) div.querySelector('.kb-msg-en').textContent = cleanEn;
+
+    // 只保留最新 1 个同角色气泡
+    $stream.querySelectorAll(role === 'clerk' ? '.kb-msg-clerk' : '.kb-msg-user')
+      .forEach(el => el.remove());
     $stream.appendChild(div);
-    $stream.scrollTop = $stream.scrollHeight;
   }
 
   // ── API call ─────────────────────────────────
