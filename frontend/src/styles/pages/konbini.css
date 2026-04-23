@@ -738,8 +738,6 @@
 
 .kb-task-bubble {
   position: absolute;
-  transform: translateX(-50%) translateY(-4px) scale(0.8);
-  transform-origin: top center;
   background: var(--kb-primary);
   color: #fff;
   padding: 5px 10px;
@@ -758,22 +756,52 @@
   min-width: max-content;
 }
 
-.kb-task-bubble::after {
-  content: '';
-  position: absolute;
-  top: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 5px solid var(--kb-primary);
+/* 气泡向左弹(任务条贴右时),y 轴居中对齐 emoji */
+.kb-task-bubble-left {
+  transform: translateY(-50%) translateX(4px) scale(0.8);
+  transform-origin: right center;
 }
 
-.kb-task-bubble-show {
-  transform: translateX(-50%) translateY(0) scale(1);
+.kb-task-bubble-left.kb-task-bubble-show {
+  transform: translateY(-50%) translateX(0) scale(1);
   opacity: 1;
+}
+
+.kb-task-bubble-left::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -5px;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 5px solid var(--kb-primary);
+}
+
+/* 气泡向右弹(任务条贴左时) */
+.kb-task-bubble-right {
+  transform: translateY(-50%) translateX(-4px) scale(0.8);
+  transform-origin: left center;
+}
+
+.kb-task-bubble-right.kb-task-bubble-show {
+  transform: translateY(-50%) translateX(0) scale(1);
+  opacity: 1;
+}
+
+.kb-task-bubble-right::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -5px;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 5px solid var(--kb-primary);
 }
 
 .kb-task-bubble-kana {

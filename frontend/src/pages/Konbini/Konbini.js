@@ -155,18 +155,34 @@ function showTaskBubble(taskEl, item) {
   const existing = pg.querySelector('.kb-task-bubble');
   if (existing) existing.remove();
 
+  // 判断任务条在左还是在右
+  const tasklist = pg.querySelector('.kb-tasklist');
+  const side = tasklist?.dataset.side || 'right';
+
   // 计算 taskEl 相对 pg 的位置
   const taskRect = taskEl.getBoundingClientRect();
   const pgRect = pg.getBoundingClientRect();
-  const relLeft = taskRect.left - pgRect.left + taskRect.width / 2;
-  const relTop = taskRect.bottom - pgRect.top + 8;
+  const emojiCenterY = taskRect.top + taskRect.height / 2 - pgRect.top;
 
   const bubble = document.createElement('div');
-  bubble.className = 'kb-task-bubble';
+  bubble.className = `kb-task-bubble kb-task-bubble-${side === 'right' ? 'left' : 'right'}`;
   bubble.innerHTML = `<span class="kb-task-bubble-kana">${item.kana}</span><span class="kb-task-bubble-en">${item.en}</span>`;
-  bubble.style.left = relLeft + 'px';
-  bubble.style.top = relTop + 'px';
-  // 挂到 pg 顶级,不是 taskEl
+
+  // 位置:气泡 y 中心对齐 emoji 中心
+  bubble.style.top = emojiCenterY + 'px';
+
+  if (side === 'right') {
+    // 任务条贴右 → 气泡向左弹,贴在 taskEl 左边
+    const taskLeft = taskRect.left - pgRect.left;
+    bubble.style.right = (pgRect.width - taskLeft + 8) + 'px';
+    bubble.style.left = 'auto';
+  } else {
+    // 任务条贴左 → 气泡向右弹,贴在 taskEl 右边
+    const taskRight = taskRect.right - pgRect.left;
+    bubble.style.left = (taskRight + 8) + 'px';
+    bubble.style.right = 'auto';
+  }
+
   pg.appendChild(bubble);
 
   requestAnimationFrame(() => {
