@@ -121,6 +121,7 @@ export function renderCheckout(container, { cart, total }) {
     history: [],
     loading: false,
     done: false,
+    reviewReconfirmed: false,  // fix6: キャンセル再確認済みフラグ
   };
 
   // TTS 配置(2c 新增)
@@ -320,6 +321,37 @@ export function renderCheckout(container, { cart, total }) {
     // ─── Review 否定分支检查 ───
     const currentTurn = turns[state.turnIndex];
     const lastTurn = state.turnIndex > 0 ? turns[state.turnIndex - 1] : null;
+
+    // fix6: reviewReconfirmed=true 时用户正在回答"ではこちらでよろしいでしょうか?"
+    if (currentTurn?.id === 'review' && state.reviewReconfirmed && userText) {
+      const negativeKeywordsForReconfirm = [
+        '他に', 'ほかに', '他にも', 'ほかにも',
+        'いいえ', 'no', 'NO',
+        '違う', '違います', 'ちがう', 'ちがいます',
+        'もう一つ', 'もう一個', 'もう一品',
+        '追加', 'ついか',
+        '間違', 'まちがい', 'まちがえ',
+        '足り', 'たり',
+      ];
+      const isStillNegative = negativeKeywordsForReconfirm.some(kw => userText.includes(kw));
+
+      if (isStillNegative) {
+        console.log('[konbini-2b-review-fix6] Reconfirm still negative, showing modal again');
+        appendStream('user', userText, '');
+        state.history.push({ role: 'user', ja: userText, en: '' });
+        showReviewCancelModal();
+        return;
+      } else {
+        console.log('[konbini-2b-review-fix6] Reconfirm positive, skipping to next turn. userText:', userText);
+        appendStream('user', userText, '');
+        state.history.push({ role: 'user', ja: userText, en: '' });
+        state.reviewReconfirmed = false;
+        state.turnIndex += 1;
+        await advanceTurn(null);
+        return;
+      }
+    }
+
     // a) 正常流程: turnIndex 推进到 review 下一轮, lastTurn 是 review
     // b) fix5 回退流程: turnIndex 指向 review 本身, currentTurn 是 review
     const justAnsweredReview = userText && (
@@ -426,17 +458,17 @@ export function renderCheckout(container, { cart, total }) {
 
     modal.querySelector('.kb-review-modal-cancel').addEventListener('click', () => {
       modal.remove();
-      console.log('[konbini-2b-review-fix5] modal dismissed, asking review again');
+      console.log('[konbini-2b-review-fix6] modal dismissed, asking review again');
       state.loading = false;
-      // 关键修复: 回退 turnIndex 到 review, 让 refreshHintsAndInput 取到 review 的 hints
       const reviewIndex = turns.findIndex(t => t.id === 'review');
       if (reviewIndex >= 0) state.turnIndex = reviewIndex;
+      state.reviewReconfirmed = true;  // fix6: 标记已再确认过
       showBubble('ではこちらでよろしいでしょうか?', 'Then, is this all?');
       playClerkTTS('ではこちらでよろしいでしょうか?');
       appendStream('clerk', 'ではこちらでよろしいでしょうか?', 'Then, is this all?');
       state.history.push({ role: 'clerk', ja: 'ではこちらでよろしいでしょうか?', en: 'Then, is this all?' });
       refreshHintsAndInput();
-      console.log('[konbini-2b-review-fix5] turnIndex reset to review, hints:', turns[state.turnIndex]?.hints);
+      console.log('[konbini-2b-review-fix6] turnIndex reset to review, reviewReconfirmed=true');
     });
 
     container.querySelector('.kb-checkout').appendChild(modal);
