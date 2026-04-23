@@ -389,11 +389,18 @@ function onCardClick(e) {
 
   const idx = _state.cart.indexOf(id);
   if (idx >= 0) {
+    // 移除已选商品(不受上限限制)
     _state.cart.splice(idx, 1);
     card.classList.remove('kb-card-selected');
     const check = card.querySelector('.kb-card-check');
     if (check) check.remove();
   } else {
+    // 加入新商品:检查上限
+    const CART_LIMIT = 10;
+    if (_state.cart.length >= CART_LIMIT) {
+      showToast('たくさん選びましたね!');
+      return;
+    }
     _state.cart.push(id);
     card.classList.add('kb-card-selected');
     if (!card.querySelector('.kb-card-check')) {
