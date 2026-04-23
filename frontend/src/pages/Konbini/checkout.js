@@ -123,6 +123,13 @@ export function renderCheckout(container, { cart, total }) {
     done: false,
   };
 
+  // TTS 配置(2c 新增)
+  const CLERK_VOICE_ID = 'rerT9Cnl89WMx94e9WDH';
+  const tts = {
+    enabled: true,
+    currentAudio: null,
+  };
+
   container.innerHTML = `
     <div class="kb-checkout">
 
@@ -138,6 +145,7 @@ export function renderCheckout(container, { cart, total }) {
           <span class="kb-bubble-tail" aria-hidden="true"></span>
         </div>
         <div class="kb-checkout-clerk-tag">店員「葵」</div>
+        <button class="kb-tts-toggle" type="button" data-role="tts-toggle" aria-label="TTS toggle">🔊</button>
       </section>
 
       <section class="kb-checkout-stream" data-role="stream"></section>
@@ -208,6 +216,46 @@ export function renderCheckout(container, { cart, total }) {
     } else {
       $bubbleJa.textContent = cleanJa;
       $bubbleEn.textContent = en || '';
+    }
+  }
+
+  // TTS 播放函数(2c 新增)
+  async function playClerkTTS(text) {
+    if (!tts.enabled) {
+      console.log('[konbini-2c] TTS disabled, skip');
+      return;
+    }
+    if (!text || text === '……' || text === '...' || text === '…') return;
+    if (tts.currentAudio) {
+      try { tts.currentAudio.pause(); tts.currentAudio.src = ''; } catch (e) {}
+      tts.currentAudio = null;
+    }
+    try {
+      console.log('[konbini-2c] TTS request:', text.slice(0, 30));
+      const res = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text, voiceId: CLERK_VOICE_ID }),
+      });
+      if (!res.ok) throw new Error(`TTS ${res.status}`);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      tts.currentAudio = audio;
+      audio.addEventListener('ended', () => {
+        URL.revokeObjectURL(url);
+        if (tts.currentAudio === audio) tts.currentAudio = null;
+      });
+      await audio.play();
+    } catch (e) {
+      console.warn('[konbini-2c] TTS failed:', e);
+    }
+  }
+
+  function stopClerkTTS() {
+    if (tts.currentAudio) {
+      try { tts.currentAudio.pause(); tts.currentAudio.src = ''; } catch (e) {}
+      tts.currentAudio = null;
     }
   }
 
@@ -320,6 +368,7 @@ export function renderCheckout(container, { cart, total }) {
     console.log('[konbini-2b] turn', state.turnIndex + 1, '/', state.turnCount, 'reply:', parsed);
 
     showBubble(parsed.replyJa, parsed.replyEn);
+    playClerkTTS(parsed.replyJa);
     appendStream('clerk', parsed.replyJa, parsed.replyEn);
     state.history.push({ role: 'clerk', ja: parsed.replyJa, en: parsed.replyEn });
 
@@ -383,6 +432,7 @@ export function renderCheckout(container, { cart, total }) {
       const reviewIndex = turns.findIndex(t => t.id === 'review');
       if (reviewIndex >= 0) state.turnIndex = reviewIndex;
       showBubble('ではこちらでよろしいでしょうか?', 'Then, is this all?');
+      playClerkTTS('ではこちらでよろしいでしょうか?');
       appendStream('clerk', 'ではこちらでよろしいでしょうか?', 'Then, is this all?');
       state.history.push({ role: 'clerk', ja: 'ではこちらでよろしいでしょうか?', en: 'Then, is this all?' });
       refreshHintsAndInput();
@@ -425,6 +475,17 @@ export function renderCheckout(container, { cart, total }) {
     $input.value = '';
     advanceTurn(txt);
   });
+
+  // TTS toggle button
+  const $ttsToggle = container.querySelector('[data-role="tts-toggle"]');
+  if ($ttsToggle) {
+    $ttsToggle.addEventListener('click', () => {
+      tts.enabled = !tts.enabled;
+      $ttsToggle.textContent = tts.enabled ? '🔊' : '🔇';
+      if (!tts.enabled) stopClerkTTS();
+      console.log('[konbini-2c] TTS toggled:', tts.enabled);
+    });
+  }
 
   // ── Boot ─────────────────────────────────────
   refreshHintsAndInput();

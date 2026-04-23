@@ -179,9 +179,14 @@ async function handleChat(req, res) {
 
 async function handleTTS(req, res) {
   try {
-    const { text } = JSON.parse(await readBody(req));
-    const voiceId  = env.YUKI_VOICE_ID;
+    const { text, voiceId: requestVoiceId } = JSON.parse(await readBody(req));
+    const voiceId = requestVoiceId || env.YUKI_VOICE_ID;
     const elevenKey = env.ELEVENLABS_API_KEY;
+    if (!/^[A-Za-z0-9]+$/.test(voiceId || '')) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Invalid voiceId' }));
+      return;
+    }
     if (!voiceId || !elevenKey) {
       res.writeHead(503, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: 'TTS not configured' }));
