@@ -1,9 +1,11 @@
 import { buildTurns } from './checkout-data.js';
 
 // Module-level handle so Konbini.js can stop TTS when leaving the page.
-// gen increments on stop, so in-flight playClerkTTS calls abort after their awaits.
-export const _checkoutTTSHandle = { currentAudio: null, gen: 0 };
+// stopped=true blocks all future playClerkTTS calls until next renderCheckout resets it.
+// gen is used only to cancel in-flight fetches that started before stopCheckoutTTS().
+export const _checkoutTTSHandle = { currentAudio: null, gen: 0, stopped: false };
 export function stopCheckoutTTS() {
+  _checkoutTTSHandle.stopped = true;
   _checkoutTTSHandle.gen++;          // invalidate any in-flight fetch
   if (_checkoutTTSHandle.currentAudio) {
     try { _checkoutTTSHandle.currentAudio.pause(); _checkoutTTSHandle.currentAudio.src = ''; } catch (e) {}
@@ -137,9 +139,8 @@ export function renderCheckout(container, { cart, total }) {
 
   // TTS 配置(2c 新增)
   const CLERK_VOICE_ID = 'rerT9Cnl89WMx94e9WDH';
-  // renderGen: snapshot at render time. stopCheckoutTTS() increments gen,
-  // making renderGen stale and blocking ALL future playClerkTTS calls in this render cycle.
-  const renderGen = _checkoutTTSHandle.gen;
+  // Reset stopped flag so this render cycle can play TTS freely.
+  _checkoutTTSHandle.stopped = false;
   // tts.currentAudio is mirrored into _checkoutTTSHandle so stopCheckoutTTS() can reach it
   const tts = {
     enabled: true,
@@ -246,7 +247,7 @@ export function renderCheckout(container, { cart, total }) {
 
   // TTS 播放函数(2c 新增)
   async function playClerkTTS(text) {
-    if (_checkoutTTSHandle.gen !== renderGen) return; // page left since renderCheckout
+    if (_checkoutTTSHandle.stopped) return; // page left since renderCheckout
     if (!tts.enabled) {
       console.log('[konbini-2c] TTS disabled, skip');
       return;
