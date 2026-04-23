@@ -555,7 +555,7 @@
   position: absolute;
   top: 140px;
   right: 0;
-  z-index: 45;
+  z-index: 100;
   background: var(--kb-surface);
   border: 1.5px solid var(--kb-primary);
   border-right: none;
