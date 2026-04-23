@@ -24,15 +24,16 @@ export const BASE_TURNS = [
   {
     id: 'greeting',
     auto: true,
-    instruction: (cart, total) => `お客様が入店した。「いらっしゃいませ」と一言だけ挨拶する。他には何も言わない。`,
+    instruction: (cart, total) => `お客様が入店した。「いらっしゃいませ」と短く挨拶するだけ。他の内容は一切含めない。`,
     hints: [],
   },
   {
     id: 'review',
     auto: true,
     instruction: (cart, total) => {
-      const summary = listItemsWithLimit(cart, 3);
-      return `注文内容を復唱して確認する。「${summary}、以上でよろしいでしょうか?」と自然に言う。`;
+      const shown = cart.slice(0, 3).map(i => i.ja).join('、');
+      const suffix = cart.length > 3 ? 'など' : '';
+      return `かごの商品を確認する。「${shown}${suffix}、以上でよろしいでしょうか?」と一言で確認する。商品名はこのリスト通りに読み上げ、追加も変更もしない。`;
     },
     hints: ['はい、お願いします', '他にもあります'],
   },
