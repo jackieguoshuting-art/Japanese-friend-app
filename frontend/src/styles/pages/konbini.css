@@ -1075,9 +1075,11 @@
   display: block;
 }
 #pg-konbini[data-stage="checkout"] .kb-stage-checkout {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   overflow-y: auto;
-  height: 100%;
+  min-height: 0;
 }
 #pg-konbini[data-stage="summary"] .kb-stage-summary {
   display: block;
