@@ -73,6 +73,52 @@ function renderTaskItems() {
   }).join('');
 }
 
+function setupGridSwipe() {
+  const pg = document.getElementById('pg-konbini');
+  if (!pg) return;
+  const grid = pg.querySelector('.kb-grid');
+  if (!grid) return;
+
+  const SWIPE_THRESHOLD = 50;
+  let startX = 0, startY = 0;
+  let tracking = false;
+
+  function onStart(e) {
+    const pt = e.touches ? e.touches[0] : e;
+    startX = pt.clientX;
+    startY = pt.clientY;
+    tracking = true;
+  }
+
+  function onEnd(e) {
+    if (!tracking) return;
+    tracking = false;
+    const pt = e.changedTouches ? e.changedTouches[0] : e;
+    const dx = pt.clientX - startX;
+    const dy = pt.clientY - startY;
+
+    if (Math.abs(dx) < SWIPE_THRESHOLD) return;
+    if (Math.abs(dx) < Math.abs(dy)) return;
+
+    const tabs = ['food', 'drink', 'snack'];
+    const currentIdx = tabs.indexOf(_state.activeTab);
+    let newIdx;
+    if (dx < 0) {
+      newIdx = (currentIdx + 1) % tabs.length;
+    } else {
+      newIdx = (currentIdx - 1 + tabs.length) % tabs.length;
+    }
+    _state.activeTab = tabs[newIdx];
+    updateTabsUI();
+    renderGrid();
+  }
+
+  grid.addEventListener('touchstart', onStart, { passive: true });
+  grid.addEventListener('touchend', onEnd, { passive: true });
+  grid.addEventListener('mousedown', onStart);
+  grid.addEventListener('mouseup', onEnd);
+}
+
 function setupTasklistDrag() {
   const pg = document.getElementById('pg-konbini');
   if (!pg) return;
@@ -467,6 +513,7 @@ function initKonbini() {
 
   // 拖动
   setupTasklistDrag();
+  setupGridSwipe();
 
   // 点击 emoji 弹气泡
   const taskItemEls = pg.querySelectorAll('.kb-task-item');
