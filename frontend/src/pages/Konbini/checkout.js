@@ -137,6 +137,9 @@ export function renderCheckout(container, { cart, total }) {
 
   // TTS 配置(2c 新增)
   const CLERK_VOICE_ID = 'rerT9Cnl89WMx94e9WDH';
+  // renderGen: snapshot at render time. stopCheckoutTTS() increments gen,
+  // making renderGen stale and blocking ALL future playClerkTTS calls in this render cycle.
+  const renderGen = _checkoutTTSHandle.gen;
   // tts.currentAudio is mirrored into _checkoutTTSHandle so stopCheckoutTTS() can reach it
   const tts = {
     enabled: true,
@@ -243,6 +246,7 @@ export function renderCheckout(container, { cart, total }) {
 
   // TTS 播放函数(2c 新增)
   async function playClerkTTS(text) {
+    if (_checkoutTTSHandle.gen !== renderGen) return; // page left since renderCheckout
     if (!tts.enabled) {
       console.log('[konbini-2c] TTS disabled, skip');
       return;
