@@ -13,13 +13,26 @@ function joinItemNames(items) {
   return items.map(i => i.ja).join('と');
 }
 
+function listItemsWithLimit(cart, maxCount = 3) {
+  if (!cart || cart.length === 0) return '';
+  if (cart.length <= maxCount) return cart.map(i => i.ja).join('、');
+  const first = cart.slice(0, maxCount).map(i => i.ja).join('、');
+  return `${first}など`;
+}
+
 export const BASE_TURNS = [
   {
     id: 'greeting',
     auto: true,
+    instruction: (cart, total) => `お客様が入店した。「いらっしゃいませ」と一言だけ挨拶する。他には何も言わない。`,
+    hints: [],
+  },
+  {
+    id: 'review',
+    auto: true,
     instruction: (cart, total) => {
-      const items = listItems(cart);
-      return `お客様が入店した。まず「いらっしゃいませ」と挨拶し、続けて注文確認する。「${items}、以上でよろしいでしょうか?」と一息に言う。二文を一言にまとめ、自然に繋げる。`;
+      const summary = listItemsWithLimit(cart, 3);
+      return `注文内容を復唱して確認する。「${summary}、以上でよろしいでしょうか?」と自然に言う。`;
     },
     hints: ['はい、お願いします', '他にもあります'],
   },
@@ -96,8 +109,9 @@ export function buildTurns(cart) {
   });
 
   return [
-    BASE_TURNS[0],          // greeting
+    BASE_TURNS[0],          // greeting (auto)
+    BASE_TURNS[1],          // review   (auto)
     ...additional,          // warm/sauce/chopsticks (0~3 轮)
-    ...BASE_TURNS.slice(1), // bag, point, total, farewell
+    ...BASE_TURNS.slice(2), // bag, point, total, farewell
   ];
 }
