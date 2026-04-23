@@ -1,5 +1,6 @@
 import { TABS, FOOD_ITEMS, DRINK_ITEMS, SNACK_ITEMS, TASK_ITEM_IDS, ALL_ITEMS } from './data.js';
 import { go } from '../../core/router.js';
+import { renderCheckout } from './checkout.js';
 
 const STAGES = ['shopping', 'checkout', 'summary'];
 let _state = null;
@@ -523,60 +524,76 @@ function renderShopping() {
       <div class="kb-step-bar"><div class="kb-step-bar-fill" style="width:33%"></div></div>
     </div>
 
-    <main class="kb-main">
-      <div class="kb-title-section">
-        <div class="kb-title-sticker">NEW TRAINING</div>
-        <h2 class="kb-title-main">コンビニ練習</h2>
-        <p class="kb-title-sub">A compact archive of daily Japanese essentials.</p>
-      </div>
-
-      <div class="kb-tabs">
-        ${tabs}
-      </div>
-
-      <div class="kb-grid">
-        ${cards}
-      </div>
-    </main>
-
-    <!-- 右侧任务条 -->
-    <div class="kb-tasklist" data-collapsed="false" data-side="right">
-      <div class="kb-tasklist-header">
-        <span class="kb-tasklist-icon">📋</span>
-        <button class="kb-tasklist-toggle" type="button" aria-label="toggle">⊖</button>
-      </div>
-      <div class="kb-tasklist-items">
-        ${renderTaskItems()}
-      </div>
-      <div class="kb-tasklist-ready-badge">準備OK!</div>
-    </div>
-
-    <!-- 购物车浮层 -->
-    <div class="kb-cart-sheet" data-open="false">
-      <div class="kb-cart-sheet-backdrop"></div>
-      <div class="kb-cart-sheet-panel">
-        <div class="kb-cart-sheet-header">
-          <h3 class="kb-cart-sheet-title">🛒 買い物かご</h3>
-          <button class="kb-cart-sheet-close" type="button">✕</button>
+    <div class="kb-stage kb-stage-shopping">
+      <main class="kb-main">
+        <div class="kb-title-section">
+          <div class="kb-title-sticker">NEW TRAINING</div>
+          <h2 class="kb-title-main">コンビニ練習</h2>
+          <p class="kb-title-sub">A compact archive of daily Japanese essentials.</p>
         </div>
-        <div class="kb-cart-sheet-list"></div>
-        <div class="kb-cart-sheet-footer">
-          <div class="kb-cart-sheet-count"></div>
-          <div class="kb-cart-sheet-total"></div>
+
+        <div class="kb-tabs">
+          ${tabs}
         </div>
+
+        <div class="kb-grid">
+          ${cards}
+        </div>
+      </main>
+
+      <!-- 右侧任务条 -->
+      <div class="kb-tasklist" data-collapsed="false" data-side="right">
+        <div class="kb-tasklist-header">
+          <span class="kb-tasklist-icon">📋</span>
+          <button class="kb-tasklist-toggle" type="button" aria-label="toggle">⊖</button>
+        </div>
+        <div class="kb-tasklist-items">
+          ${renderTaskItems()}
+        </div>
+        <div class="kb-tasklist-ready-badge">準備OK!</div>
+      </div>
+
+      <!-- 购物车浮层 -->
+      <div class="kb-cart-sheet" data-open="false">
+        <div class="kb-cart-sheet-backdrop"></div>
+        <div class="kb-cart-sheet-panel">
+          <div class="kb-cart-sheet-header">
+            <h3 class="kb-cart-sheet-title">🛒 買い物かご</h3>
+            <button class="kb-cart-sheet-close" type="button">✕</button>
+          </div>
+          <div class="kb-cart-sheet-list"></div>
+          <div class="kb-cart-sheet-footer">
+            <div class="kb-cart-sheet-count"></div>
+            <div class="kb-cart-sheet-total"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kb-checkout-bar">
+        <div class="kb-checkout-info">
+          <span class="kb-checkout-count">📋 0 ITEMS</span>
+          <span class="kb-checkout-total">TOTAL <span class="kb-total-num">¥0</span></span>
+        </div>
+        <button class="kb-checkout-btn kb-checkout-btn-disabled" disabled>
+          レジへ行く 🛒
+        </button>
       </div>
     </div>
 
-    <div class="kb-checkout-bar">
-      <div class="kb-checkout-info">
-        <span class="kb-checkout-count">📋 0 ITEMS</span>
-        <span class="kb-checkout-total">TOTAL <span class="kb-total-num">¥0</span></span>
-      </div>
-      <button class="kb-checkout-btn kb-checkout-btn-disabled" disabled>
-        レジへ行く 🛒
-      </button>
-    </div>
+    <div class="kb-stage kb-stage-checkout"></div>
   `;
+}
+
+function goToCheckout() {
+  const pg = document.getElementById('pg-konbini');
+  if (!pg) return;
+  pg.dataset.stage = 'checkout';
+  _state.stage = 'checkout';
+  const checkoutEl = pg.querySelector('.kb-stage-checkout');
+  if (!checkoutEl) return;
+  const cartItems = _state.cart.map(id => findItemById(id)).filter(Boolean);
+  const total = calcCartTotal();
+  renderCheckout(checkoutEl, { cart: cartItems, total });
 }
 
 function initKonbini() {
@@ -587,7 +604,22 @@ function initKonbini() {
   pg.innerHTML = renderShopping();
 
   const backBtn = pg.querySelector('.kb-back');
-  if (backBtn) backBtn.addEventListener('click', () => go('scene'));
+  if (backBtn) backBtn.addEventListener('click', () => {
+    if (_state.stage === 'checkout') {
+      _state.stage = 'shopping';
+      pg.dataset.stage = 'shopping';
+    } else {
+      go('scene');
+    }
+  });
+
+  const checkoutBtn = pg.querySelector('.kb-checkout-btn');
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener('click', () => {
+      if (!isCheckoutReady()) return;
+      goToCheckout();
+    });
+  }
 
   const tabsContainer = pg.querySelector('.kb-tabs');
   if (tabsContainer) {

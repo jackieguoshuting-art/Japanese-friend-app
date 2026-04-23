@@ -1066,3 +1066,126 @@
   font-size: 18px;
   margin-left: 4px;
 }
+
+/* ── Stage switching ─────────────────────────────────────── */
+#pg-konbini .kb-stage {
+  display: none;
+}
+
+#pg-konbini[data-stage="shopping"] .kb-stage-shopping {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+#pg-konbini[data-stage="checkout"] .kb-stage-checkout {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ── Checkout UI ─────────────────────────────────────────── */
+.kb-checkout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 32px;
+  gap: 20px;
+}
+
+.kb-checkout-clerk {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.kb-clerk-avatar {
+  font-size: 56px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.15));
+}
+
+.kb-clerk-label {
+  font-family: var(--kb-font-label);
+  font-size: 12px;
+  color: var(--kb-text);
+  opacity: .7;
+  letter-spacing: .05em;
+}
+
+.kb-checkout-subtitle {
+  text-align: center;
+}
+
+.kb-sub-ja {
+  font-family: var(--kb-font-label);
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--kb-text);
+  letter-spacing: .05em;
+}
+
+.kb-sub-en {
+  font-size: 12px;
+  color: var(--kb-text);
+  opacity: .55;
+  margin-top: 2px;
+}
+
+.kb-checkout-hints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
+}
+
+.kb-hint-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 2px solid var(--kb-primary);
+  border-radius: 999px;
+  background: #fff;
+  font-family: var(--kb-font-label);
+  font-size: 13px;
+  color: var(--kb-primary);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+
+.kb-hint-pill:active {
+  background: var(--kb-primary);
+  color: #fff;
+}
+
+.kb-hint-icon {
+  font-size: 14px;
+}
+
+.kb-checkout-input {
+  width: 100%;
+}
+
+.kb-input-field {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border: 2px solid var(--kb-border, #e0d6f5);
+  border-radius: 12px;
+  font-family: var(--kb-font-label);
+  font-size: 14px;
+  color: var(--kb-text);
+  background: #fafafa;
+  outline: none;
+}
+
+.kb-input-field:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
