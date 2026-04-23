@@ -15,7 +15,7 @@ export function renderCheckout(container, { cart, total }) {
       <section class="kb-checkout-scene">
         <img
           class="kb-checkout-clerk-img"
-          src="/assets/scenes/konbini/aoi.jpg"
+          src="/frontend/public/assets/scenes/konbini/aoi.jpg"
           alt="店員 葵"
         />
         <div class="kb-checkout-bubble">
