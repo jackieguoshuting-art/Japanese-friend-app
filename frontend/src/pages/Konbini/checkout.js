@@ -270,9 +270,13 @@ export function renderCheckout(container, { cart, total }) {
     const currentTurnId = turns[state.turnIndex]?.id;
 
     // ─── Review 否定分支检查 ───
-    // turnIndex 已推进到 review 的下一轮，turnIndex-1 仍指向 review
+    const currentTurn = turns[state.turnIndex];
     const lastTurn = state.turnIndex > 0 ? turns[state.turnIndex - 1] : null;
-    const justAnsweredReview = lastTurn?.id === 'review' && userText;
+    // a) 正常流程: turnIndex 推进到 review 下一轮, lastTurn 是 review
+    // b) fix5 回退流程: turnIndex 指向 review 本身, currentTurn 是 review
+    const justAnsweredReview = userText && (
+      lastTurn?.id === 'review' || currentTurn?.id === 'review'
+    );
 
     if (justAnsweredReview) {
       const negativeKeywords = [
@@ -373,12 +377,16 @@ export function renderCheckout(container, { cart, total }) {
 
     modal.querySelector('.kb-review-modal-cancel').addEventListener('click', () => {
       modal.remove();
-      console.log('[konbini-2b-review-fix4] modal dismissed, asking review again');
+      console.log('[konbini-2b-review-fix5] modal dismissed, asking review again');
       state.loading = false;
+      // 关键修复: 回退 turnIndex 到 review, 让 refreshHintsAndInput 取到 review 的 hints
+      const reviewIndex = turns.findIndex(t => t.id === 'review');
+      if (reviewIndex >= 0) state.turnIndex = reviewIndex;
       showBubble('ではこちらでよろしいでしょうか?', 'Then, is this all?');
       appendStream('clerk', 'ではこちらでよろしいでしょうか?', 'Then, is this all?');
       state.history.push({ role: 'clerk', ja: 'ではこちらでよろしいでしょうか?', en: 'Then, is this all?' });
       refreshHintsAndInput();
+      console.log('[konbini-2b-review-fix5] turnIndex reset to review, hints:', turns[state.turnIndex]?.hints);
     });
 
     container.querySelector('.kb-checkout').appendChild(modal);
