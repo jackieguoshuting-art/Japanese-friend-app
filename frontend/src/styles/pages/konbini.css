@@ -1,31 +1,468 @@
-/* Konbini(便利店)Design Tokens 和基础样式 */
-/* 里程碑 1a:只 tokens + 页面容器样式,UI 样式留给 1b */
+/* Konbini(便利店)完整样式 — Stitch 手账拼贴风格 */
+/* 里程碑 1b:静态 UI,不能交互 */
 
 #pg-konbini {
-  --kb-bg:         #ffffff;
-  --kb-surface:    #fafbfc;
+  --kb-bg:         #FDFCFB;
+  --kb-surface:    #ffffff;
   --kb-primary:    #002FA7;
   --kb-primary-2:  #0041d4;
-  --kb-text:       #111111;
-  --kb-muted:      rgba(17, 17, 17, 0.45);
+  --kb-accent:     #ff7062;
+  --kb-text:       #1a1c1c;
+  --kb-muted:      rgba(26, 28, 28, 0.55);
   --kb-border:     rgba(0, 47, 167, 0.22);
-  --kb-dim:        rgba(17, 17, 17, 0.25);
-  --kb-accent-red: #e94e4e;
+  --kb-dim:        rgba(26, 28, 28, 0.25);
 
-  --kb-radius-sm:   12px;
-  --kb-radius-md:   16px;
+  --kb-subtag-warm:    #fb923c;
+  --kb-subtag-bread:   #fbbf24;
+  --kb-subtag-cold:    #60a5fa;
+  --kb-subtag-alcohol: #eab308;
+  --kb-subtag-snack:   #a78bfa;
+  --kb-subtag-sweet:   #f472b6;
+  --kb-subtag-fresh:   #4ade80;
+  --kb-subtag-goods:   #9ca3af;
+
+  --kb-radius-sm:   8px;
+  --kb-radius-md:   14px;
+  --kb-radius-lg:   20px;
   --kb-radius-pill: 999px;
 
-  --kb-border-std: 1.5px solid var(--kb-primary);
-  --kb-font:       'Noto Sans JP', sans-serif;
+  --kb-font-head:  'Epilogue', system-ui, sans-serif;
+  --kb-font-body:  'Be Vietnam Pro', system-ui, sans-serif;
+  --kb-font-label: 'Space Grotesk', monospace;
 
-  background: var(--kb-bg);
+  background-color: var(--kb-bg);
+  background-image:
+    linear-gradient(to right, rgba(0, 47, 167, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 47, 167, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+
   color: var(--kb-text);
-  font-family: var(--kb-font);
+  font-family: var(--kb-font-body);
   width: 100%;
   height: 100%;
-  overflow: hidden;
   position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 120px;
+}
+
+/* === 背景装饰水印 === */
+.kb-deco-fresh,
+.kb-deco-new,
+.kb-deco-sticker {
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  font-weight: 900;
+}
+
+.kb-deco-fresh {
+  top: 20%;
+  right: -10px;
+  font-family: var(--kb-font-label);
+  font-size: 3rem;
+  color: rgba(255, 112, 98, 0.1);
+  transform: rotate(90deg);
+}
+
+.kb-deco-new {
+  bottom: 25%;
+  left: -5px;
+  font-family: var(--kb-font-head);
+  font-size: 2.5rem;
+  color: rgba(0, 47, 167, 0.08);
+  transform: rotate(-15deg);
+}
+
+.kb-deco-sticker {
+  font-size: 1.2rem;
+  opacity: 0.2;
+}
+.kb-sticker-1 { top: 30%; left: 8px; transform: rotate(12deg); }
+.kb-sticker-2 { bottom: 40%; right: 12px; transform: rotate(-12deg); font-size: 1rem; }
+.kb-sticker-3 { top: 50%; left: 4px; transform: rotate(45deg); font-size: 1.3rem; }
+
+/* === 顶部 Header === */
+.kb-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(253, 252, 251, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 2.5px solid var(--kb-primary);
+}
+
+.kb-back {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--kb-primary);
+  font-size: 20px;
+  padding: 4px 8px;
+}
+
+.kb-back-arrow {
+  display: inline-block;
+  font-weight: 700;
+}
+
+.kb-header-title {
+  font-family: var(--kb-font-head);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--kb-text);
+  margin: 0;
+}
+
+.kb-cart-icon {
+  position: relative;
+  font-size: 20px;
+  color: var(--kb-primary);
+  cursor: pointer;
+}
+
+.kb-cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: var(--kb-accent);
+  color: #fff;
+  font-family: var(--kb-font-label);
+  font-weight: 900;
+  font-size: 9px;
+  padding: 2px 5px;
+  border-radius: var(--kb-radius-pill);
+  min-width: 16px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+/* === STEP 胶囊 === */
+.kb-step-capsule {
+  position: sticky;
+  top: 53px;
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin: 8px auto 0;
+  background: var(--kb-bg);
+  border: 1.5px solid var(--kb-primary);
+  padding: 4px 12px;
+  border-radius: var(--kb-radius-pill);
+  box-shadow: 2px 2px 0 var(--kb-primary);
+}
+
+.kb-step-text {
+  font-family: var(--kb-font-label);
+  font-weight: 900;
+  font-size: 10px;
+  color: var(--kb-primary);
+  letter-spacing: 0.05em;
+}
+
+.kb-step-bar {
+  width: 40px;
+  height: 3px;
+  background: rgba(0, 47, 167, 0.15);
+  border-radius: var(--kb-radius-pill);
+  overflow: hidden;
+}
+
+.kb-step-bar-fill {
+  height: 100%;
+  background: var(--kb-primary);
+}
+
+/* === 主内容 === */
+.kb-main {
+  position: relative;
+  z-index: 1;
+  padding: 16px 16px 20px;
+  max-width: 100%;
+}
+
+/* === 标题区 === */
+.kb-title-section {
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.kb-title-sticker {
+  display: inline-block;
+  background: var(--kb-accent);
+  color: #fff;
+  font-family: var(--kb-font-label);
+  font-weight: 900;
+  font-size: 9px;
+  padding: 3px 10px;
+  border-radius: 3px;
+  transform: rotate(3deg);
+  margin-bottom: 8px;
+  letter-spacing: 0.1em;
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+}
+
+.kb-title-main {
+  font-family: var(--kb-font-head);
+  font-weight: 900;
+  font-size: 28px;
+  color: var(--kb-primary);
+  letter-spacing: -0.02em;
+  margin: 4px 0;
+  line-height: 1.1;
+}
+
+.kb-title-sub {
+  font-family: var(--kb-font-body);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--kb-muted);
+  margin: 0;
+}
+
+/* === Tab === */
+.kb-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.kb-tab {
+  padding: 7px 14px;
+  border-radius: var(--kb-radius-pill);
+  background: #fff;
+  color: var(--kb-primary);
+  border: 1.5px solid var(--kb-primary);
+  font-family: var(--kb-font-label);
+  font-weight: 900;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0, 47, 167, 0.2);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.kb-tab-active {
+  background: var(--kb-primary);
+  color: #fff;
+}
+
+/* === 3×3 货架 === */
+.kb-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+/* === 商品卡 === */
+.kb-card {
+  position: relative;
+  background: var(--kb-surface);
+  border: 1.5px solid var(--kb-primary);
+  border-radius: var(--kb-radius-md);
+  padding: 10px 6px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transform: rotate(-1deg);
+  box-shadow: 3px 3px 0 rgba(0, 47, 167, 0.15);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  min-height: 120px;
+}
+
+.kb-card:nth-child(2n) { transform: rotate(1deg); }
+.kb-card:nth-child(3n) { transform: rotate(-2deg); }
+
+.kb-card-soldout {
+  opacity: 0.45;
+  filter: grayscale(1);
+  cursor: not-allowed;
+}
+
+/* === 细分类 subtag === */
+.kb-subtag {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  font-family: var(--kb-font-label);
+  font-weight: 900;
+  font-size: 8px;
+  padding: 2px 5px;
+  border-radius: var(--kb-radius-pill);
+  color: #fff;
+  z-index: 2;
+}
+
+.kb-subtag-warm    { background: var(--kb-subtag-warm); }
+.kb-subtag-bread   { background: var(--kb-subtag-bread); color: #5a4a00; }
+.kb-subtag-cold    { background: var(--kb-subtag-cold); }
+.kb-subtag-alcohol { background: var(--kb-subtag-alcohol); color: #4a3a00; }
+.kb-subtag-snack   { background: var(--kb-subtag-snack); }
+.kb-subtag-sweet   { background: var(--kb-subtag-sweet); }
+.kb-subtag-fresh   { background: var(--kb-subtag-fresh); color: #1a3d1a; }
+.kb-subtag-goods   { background: var(--kb-subtag-goods); }
+
+/* === HOT / FAV 徽章 === */
+.kb-badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-family: var(--kb-font-label);
+  font-weight: 900;
+  font-size: 8px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  color: #fff;
+  z-index: 2;
+}
+
+.kb-badge-hot { background: var(--kb-accent); }
+.kb-badge-fav { background: var(--kb-primary); }
+
+/* === 品切れ 遮罩 === */
+.kb-soldout-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.kb-soldout-stamp {
+  background: #ba1a1a;
+  color: #fff;
+  font-family: var(--kb-font-head);
+  font-weight: 900;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 2px solid #fff;
+  transform: rotate(-6deg);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+
+/* === 卡片内容 === */
+.kb-card-emoji {
+  font-size: 32px;
+  margin: 12px 0 6px;
+}
+
+.kb-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-bottom: 6px;
+}
+
+.kb-card-kana {
+  font-family: var(--kb-font-label);
+  font-size: 8px;
+  text-transform: uppercase;
+  color: var(--kb-primary);
+  opacity: 0.7;
+}
+
+.kb-card-en {
+  font-family: var(--kb-font-head);
+  font-weight: 900;
+  font-size: 10px;
+  color: var(--kb-primary);
+  line-height: 1.15;
+  margin: 0;
+}
+
+.kb-card-price {
+  font-family: var(--kb-font-label);
+  font-weight: 900;
+  font-size: 11px;
+  color: var(--kb-primary);
+  background: rgba(0, 47, 167, 0.05);
+  padding: 2px 8px;
+  border-radius: var(--kb-radius-sm);
+  margin-top: auto;
+}
+
+/* === 底部 Checkout Bar === */
+.kb-checkout-bar {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 24px);
+  max-width: 420px;
+  background: rgba(253, 252, 251, 0.96);
+  backdrop-filter: blur(8px);
+  border: 2.5px solid var(--kb-primary);
+  border-radius: 24px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 4px 4px 0 rgba(0, 47, 167, 0.2);
+  z-index: 40;
+}
+
+.kb-checkout-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--kb-font-label);
+  font-weight: 900;
+  font-size: 10px;
+  color: var(--kb-primary);
+  opacity: 0.7;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.kb-checkout-total {
+  color: var(--kb-text);
+  opacity: 1;
+}
+
+.kb-total-num {
+  color: var(--kb-primary);
+}
+
+.kb-checkout-btn {
+  width: 100%;
+  background: var(--kb-accent);
+  color: #fff;
+  font-family: var(--kb-font-head);
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: none;
+  padding: 12px;
+  border-radius: var(--kb-radius-pill);
+  cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
+  transition: transform 0.1s;
+}
+
+.kb-checkout-btn-disabled {
+  background: var(--kb-dim);
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .kb-caps {
