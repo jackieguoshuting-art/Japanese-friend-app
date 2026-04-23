@@ -30,6 +30,27 @@ function buildClerkSystemPrompt(turn, current, cart, total) {
   const instructionText = typeof current.instruction === 'function'
     ? current.instruction(cart, total)
     : String(current.instruction).replace('${total}', total);
+
+  let extraStrict = '';
+  if (current.id === 'review') {
+    const itemList = cart.map((i, idx) => `${idx + 1}. ${i.ja} ¥${i.price}`).join('\n');
+    extraStrict = `
+
+【超重要·商品リスト厳守】
+お客様のかごに入っているのは以下の商品のみです(合計 ${cart.length} 点):
+${itemList}
+
+絶対ルール:
+- このリストにない商品名を発してはいけない(例: コロッケ、バナナ等)
+- 商品の追加・削除・置き換えをしてはいけない
+- 復唱は必ずこのリストの商品名だけを使う
+
+良い例: 「${cart.slice(0, 3).map(i => i.ja).join('、')}${cart.length > 3 ? 'など' : ''}、以上でよろしいでしょうか?」
+悪い例: 「${cart[0]?.ja || ''}、コロッケ、${cart[1]?.ja || ''}、以上でよろしいでしょうか?」← コロッケは存在しない
+
+復唱してよい商品は上のリストのみ。リストに無い名前を追加したら厳重な違反です。`;
+  }
+
   const proceedField = current.id === 'review' ? ',"proceed":true' : '';
   const proceedInstruction = current.id === 'review'
     ? 'proceedフィールド: ユーザーが「はい」など確認したら true、「他にもあります」など否定・追加なら false。'
@@ -40,7 +61,7 @@ function buildClerkSystemPrompt(turn, current, cart, total) {
     .replace('__TURN__', String(turn.index + 1))
     .replace('__TURN_COUNT__', String(turn.total))
     .replace('__TURN_ID__', current.id)
-    .replace('__INSTRUCTION__', instructionText)
+    .replace('__INSTRUCTION__', instructionText + extraStrict)
     .replace('__PROCEED_FIELD__', proceedField)
     .replace('__PROCEED_INSTRUCTION__', proceedInstruction);
 }
@@ -204,9 +225,36 @@ export function renderCheckout(container, { cart, total }) {
   // ── Turn state machine ────────────────────────
   async function advanceTurn(userText) {
     if (state.loading || state.done) return;
-    state.loading = true;
 
     const currentTurnId = turns[state.turnIndex]?.id;
+
+    // ─── Review 否定分支检查 ───
+    // turnIndex 已推进到 review 的下一轮，turnIndex-1 仍指向 review
+    const lastTurn = state.turnIndex > 0 ? turns[state.turnIndex - 1] : null;
+    const justAnsweredReview = lastTurn?.id === 'review' && userText;
+
+    if (justAnsweredReview) {
+      const negativeKeywords = [
+        '他に', 'ほかに', '他にも', 'ほかにも',
+        'いいえ', 'no', 'NO',
+        '違う', '違います', 'ちがう', 'ちがいます',
+        'もう一つ', 'もう一個', 'もう一品',
+        '追加', 'ついか',
+        '間違', 'まちがい', 'まちがえ',
+        '足り', 'たり',
+      ];
+      const isNegative = negativeKeywords.some(kw => userText.includes(kw));
+
+      if (isNegative) {
+        console.log('[konbini-2b-review-fix1] User negated review, showing modal. userText:', userText);
+        appendStream('user', userText, '');
+        state.history.push({ role: 'user', ja: userText, en: '' });
+        showReviewCancelModal();
+        return;
+      }
+    }
+
+    state.loading = true;
 
     if (userText) {
       appendStream('user', userText, '');
@@ -229,14 +277,6 @@ export function renderCheckout(container, { cart, total }) {
     showBubble(parsed.replyJa, parsed.replyEn);
     appendStream('clerk', parsed.replyJa, parsed.replyEn);
     state.history.push({ role: 'clerk', ja: parsed.replyJa, en: parsed.replyEn });
-
-    // Review branch: user wants to add more items
-    if (currentTurnId === 'review' && !parsed.proceed) {
-      state.loading = false;
-      refreshHintsAndInput();
-      showReviewCancelModal();
-      return;
-    }
 
     if (state.turnIndex >= state.turnCount - 1) {
       state.done = true;
@@ -284,14 +324,9 @@ export function renderCheckout(container, { cart, total }) {
 
     modal.querySelector('.kb-review-modal-cancel').addEventListener('click', () => {
       modal.remove();
-      // Treat as confirmation — advance past review into next turns
-      state.turnIndex += 1;
-      const next = turns[state.turnIndex];
-      if (next?.auto) {
-        advanceTurn(null);
-      } else {
-        refreshHintsAndInput();
-      }
+      console.log('[konbini-2b-review-fix1] modal dismissed, continuing to next turn');
+      state.loading = false;
+      advanceTurn(null);
     });
 
     container.querySelector('.kb-checkout').appendChild(modal);
