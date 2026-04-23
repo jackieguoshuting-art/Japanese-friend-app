@@ -37,6 +37,7 @@
   background-size: 20px 20px;
 
   position: relative;
+  isolation: isolate;
   color: var(--kb-text);
   font-family: var(--kb-font-body);
 }
@@ -570,6 +571,7 @@
               box-shadow 0.3s ease;
   min-width: 52px;
   overflow: visible;
+  will-change: transform;
 }
 
 /* 非 Shopping stage 隐藏任务条 */
