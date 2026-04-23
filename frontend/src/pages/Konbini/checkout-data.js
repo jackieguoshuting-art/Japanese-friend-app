@@ -39,7 +39,7 @@ export const BASE_TURNS = [
     id: 'total',
     auto: false,
     instruction: (cart, total) => `合計金額と支払い方法を尋ねる。例:「お会計は¥${total}になります。お支払い方法は?」`,
-    hints: ['現金で', 'カードで', 'キャッシュレスで'],
+    hints: ['現金で', 'カードで'],
   },
   {
     id: 'farewell',

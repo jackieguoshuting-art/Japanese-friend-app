@@ -81,11 +81,8 @@ export function renderCheckout(container, { cart, total }) {
       <section class="kb-checkout-input-hub">
         <div class="kb-hint-row" data-role="hint-row">
           <button class="kb-hint-pill" type="button" data-hint-index="0" disabled></button>
-          <button class="kb-hint-pill" type="button" data-hint-index="1" disabled></button>
-          <button class="kb-hint-pill" type="button" data-hint-index="2" disabled></button>
-        </div>
-        <div class="kb-mic-row">
           <button class="kb-mic-btn" type="button" disabled aria-label="語音入力(後続で有効化)">🎤</button>
+          <button class="kb-hint-pill" type="button" data-hint-index="1" disabled></button>
         </div>
 
         <div class="kb-input-wrap">
@@ -117,13 +114,15 @@ export function renderCheckout(container, { cart, total }) {
   function refreshHintsAndInput() {
     const current = turns[state.turnIndex];
     const hints = current?.hints || [];
-    const disabled = state.loading || state.done;
+    const inputDisabled = state.loading || state.done;
+
+    console.log('[konbini-2b-fix2] refresh: turn=', state.turnIndex, 'id=', current?.id, 'hints=', hints);
 
     $hints.forEach((btn, idx) => {
       const txt = hints[idx];
       if (txt) {
         btn.textContent = txt;
-        btn.disabled = disabled;
+        btn.disabled = inputDisabled;
         btn.style.visibility = 'visible';
       } else {
         btn.textContent = '';
@@ -132,9 +131,9 @@ export function renderCheckout(container, { cart, total }) {
       }
     });
 
-    $input.disabled = disabled;
-    $send.disabled  = disabled;
-    $input.placeholder = state.done ? '対話終了' : disabled ? '...' : 'Type your response here...';
+    $input.disabled = inputDisabled;
+    $send.disabled = inputDisabled;
+    $input.placeholder = state.done ? '対話終了' : inputDisabled ? '...' : 'Type your response here...';
   }
 
   function showBubble(ja, en) {
@@ -228,14 +227,17 @@ export function renderCheckout(container, { cart, total }) {
       return;
     }
 
-    state.turnIndex += 1;
+    // 先刷新 hints(此时 turnIndex 还指向葵刚说完的那轮，hints 对应正确)
     state.loading = false;
+    refreshHintsAndInput();
 
+    // 再推进到下一轮(为下次 advanceTurn 准备新轮的 prompt)
+    state.turnIndex += 1;
+
+    // 如果下一轮是 auto，自动推进
     const next = turns[state.turnIndex];
     if (next?.auto) {
       await advanceTurn(null);
-    } else {
-      refreshHintsAndInput();
     }
   }
 
