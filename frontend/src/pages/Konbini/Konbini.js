@@ -57,6 +57,21 @@ function isCheckoutReady() {
   return TASK_ITEM_IDS.every(id => _state.cart.includes(id));
 }
 
+function renderTaskItems() {
+  return TASK_ITEM_IDS.map(id => {
+    const item = findItemById(id);
+    if (!item) return '';
+    const inCart = _state.cart.includes(id);
+    const tooltip = `${item.kana} / ${item.en}`;
+    return `
+      <div class="kb-task-item ${inCart ? 'kb-task-item-done' : ''}" title="${tooltip}" data-id="${id}">
+        <span class="kb-task-emoji">${item.emoji}</span>
+        <span class="kb-task-dot">${inCart ? '✓' : '○'}</span>
+      </div>
+    `;
+  }).join('');
+}
+
 function subtagClass(subtag) {
   const map = {
     '温食': 'warm', 'パン': 'bread', '冷': 'cold', '酒': 'alcohol',
@@ -138,6 +153,30 @@ function updateCartUI() {
 
   const badge = pg.querySelector('.kb-cart-badge');
   if (badge) badge.textContent = count;
+
+  // 更新任务条
+  const taskItems = pg.querySelectorAll('.kb-task-item');
+  taskItems.forEach(el => {
+    const id = el.dataset.id;
+    const inCart = _state.cart.includes(id);
+    el.classList.toggle('kb-task-item-done', inCart);
+    const dot = el.querySelector('.kb-task-dot');
+    if (dot) dot.textContent = inCart ? '✓' : '○';
+  });
+
+  // 3 件齐 → 触发灯光特效(只触发一次)
+  const tasklist = pg.querySelector('.kb-tasklist');
+  if (tasklist) {
+    if (ready && !tasklist.classList.contains('kb-tasklist-ready')) {
+      tasklist.classList.add('kb-tasklist-ready');
+      setTimeout(() => {
+        tasklist.classList.remove('kb-tasklist-pulse');
+      }, 2000);
+      tasklist.classList.add('kb-tasklist-pulse');
+    } else if (!ready) {
+      tasklist.classList.remove('kb-tasklist-ready', 'kb-tasklist-pulse');
+    }
+  }
 }
 
 function showToast(msg) {
@@ -249,6 +288,18 @@ function renderShopping() {
       </div>
     </main>
 
+    <!-- 右侧任务条 -->
+    <div class="kb-tasklist" data-collapsed="false">
+      <div class="kb-tasklist-header">
+        <span class="kb-tasklist-icon">📋</span>
+        <button class="kb-tasklist-toggle" type="button" aria-label="toggle">⊖</button>
+      </div>
+      <div class="kb-tasklist-items">
+        ${renderTaskItems()}
+      </div>
+      <div class="kb-tasklist-ready-badge">準備OK!</div>
+    </div>
+
     <div class="kb-checkout-bar">
       <div class="kb-checkout-info">
         <span class="kb-checkout-count">📋 0 ITEMS</span>
@@ -278,6 +329,17 @@ function initKonbini() {
   const gridContainer = pg.querySelector('.kb-grid');
   if (gridContainer) {
     gridContainer.addEventListener('click', onCardClick);
+  }
+
+  const toggle = pg.querySelector('.kb-tasklist-toggle');
+  if (toggle) {
+    toggle.addEventListener('click', () => {
+      const list = pg.querySelector('.kb-tasklist');
+      if (!list) return;
+      const collapsed = list.dataset.collapsed === 'true';
+      list.dataset.collapsed = collapsed ? 'false' : 'true';
+      toggle.textContent = collapsed ? '⊖' : '⊕';
+    });
   }
 }
 

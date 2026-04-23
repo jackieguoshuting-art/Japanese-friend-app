@@ -549,3 +549,157 @@
   cursor: pointer;
   box-shadow: 2px 2px 0 rgba(0,0,0,0.12);
 }
+
+/* === 右侧任务条 === */
+.kb-tasklist {
+  position: absolute;
+  top: 140px;
+  right: 0;
+  z-index: 45;
+  background: var(--kb-surface);
+  border: 1.5px solid var(--kb-primary);
+  border-right: none;
+  border-radius: 12px 0 0 12px;
+  padding: 8px;
+  box-shadow: -2px 2px 0 rgba(0, 47, 167, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.3s ease;
+  min-width: 52px;
+}
+
+/* 非 Shopping stage 隐藏任务条 */
+#pg-konbini:not([data-stage="shopping"]) .kb-tasklist {
+  display: none;
+}
+
+/* === 任务条头部 === */
+.kb-tasklist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 4px;
+  border-bottom: 1.5px dashed rgba(0, 47, 167, 0.25);
+}
+
+.kb-tasklist-icon {
+  font-size: 14px;
+}
+
+.kb-tasklist-toggle {
+  background: none;
+  border: none;
+  color: var(--kb-primary);
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+/* === 任务条商品列表 === */
+.kb-tasklist-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.2s;
+  max-height: 180px;
+  opacity: 1;
+}
+
+.kb-tasklist[data-collapsed="true"] .kb-tasklist-items {
+  max-height: 0;
+  opacity: 0;
+}
+
+.kb-tasklist[data-collapsed="true"] {
+  padding: 6px 8px;
+}
+
+.kb-tasklist[data-collapsed="true"] .kb-tasklist-header {
+  border-bottom: none;
+  padding: 0;
+}
+
+/* === 单个任务商品 === */
+.kb-task-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 2px;
+  cursor: help;
+}
+
+.kb-task-emoji {
+  font-size: 20px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 47, 167, 0.05);
+  border-radius: 50%;
+  border: 1.5px solid rgba(0, 47, 167, 0.15);
+  transition: all 0.3s ease;
+}
+
+.kb-task-item-done .kb-task-emoji {
+  background: rgba(255, 143, 171, 0.2);
+  border-color: #FF8FAB;
+}
+
+.kb-task-dot {
+  font-size: 10px;
+  font-weight: 900;
+  color: rgba(0, 47, 167, 0.4);
+  font-family: var(--kb-font-label);
+}
+
+.kb-task-item-done .kb-task-dot {
+  color: #FF8FAB;
+}
+
+/* === 全齐脉冲发光 === */
+@keyframes kb-tasklist-glow {
+  0%, 100% {
+    box-shadow: -2px 2px 0 rgba(0, 47, 167, 0.15),
+                0 0 0 0 rgba(255, 143, 171, 0.6);
+  }
+  50% {
+    box-shadow: -2px 2px 0 rgba(0, 47, 167, 0.15),
+                0 0 20px 8px rgba(255, 143, 171, 0.5);
+  }
+}
+
+.kb-tasklist-pulse {
+  animation: kb-tasklist-glow 1s ease-in-out 2;
+}
+
+/* === 準備OK 贴纸 === */
+.kb-tasklist-ready-badge {
+  position: absolute;
+  top: -18px;
+  right: 8px;
+  background: #FF8FAB;
+  color: #fff;
+  font-family: var(--kb-font-label);
+  font-weight: 900;
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  letter-spacing: 0.08em;
+  transform: rotate(-8deg) translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+}
+
+.kb-tasklist-ready .kb-tasklist-ready-badge {
+  opacity: 1;
+  transform: rotate(-8deg) translateY(0);
+}
