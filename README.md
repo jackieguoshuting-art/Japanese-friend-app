@@ -82,6 +82,7 @@ frontend/public/assets/characters/yuki/
 | Shadow 跟读 | #pg-shadow-live | ✅ Cinematic UI，视频+录音+KTV字幕 |
 | Summary | #pg-summary | ✅ 会话回顾+记忆卡片 |
 | Scene 地图 | #pg-scene | ✅ 东京场景地图，三个热点（便利店/居酒屋/地铁）|
+| 便利店 | #pg-konbini | ✅ 里程碑1完成：购物/Tab切换/洗牌/品切れ/任务条/购物车浮层 |
 
 ---
 
@@ -182,8 +183,8 @@ YUKI_VOICE_ID=
 
 ### 🔧 地基阶段内修(Commit 4 / 5a / 5b)
 
-- [ ] `window.go` 被 app.js 底部 monkey patch → router lifecycle hook 替代(Commit 5a)
-- [ ] TTS 全局管理器(stopAll on page change)(Commit 5b)
+- [x] `window.go` 被 app.js 底部 monkey patch → router lifecycle hook 替代(Commit 5a)
+- [x] TTS 全局管理器(stopAll on page change)(Commit 5b)
 
 ### 📦 便利店 / 居酒屋 / 地铁 完成后修
 
@@ -260,6 +261,10 @@ YUKI_VOICE_ID=
 | 2026-04-14 | Yuki 动画竞态修复（操作队列）| ✅ |
 | 2026-04-14 | Shadow Live CSS 冲突修复（旧规则覆盖新设计）| ✅ |
 | 2026-04-15 | Shadow Live KTV 字幕重叠修复 + 空蓝框删除 | ✅ |
+| 2026-04-22 | Home CALL ME 大字 + 弹窗按钮 :active 发光 | ✅ |
+| 2026-04-22 | TTS AbortController 修复（立刻挂断不停声）| ✅ |
+| 2026-04-22 | Yuki Friends 卡片换真实照片 | ✅ |
+| 2026-04-22 | 便利店里程碑1：购物页全交互（Tab/购物车/任务条/浮层）| ✅ |
 
 ---
 
