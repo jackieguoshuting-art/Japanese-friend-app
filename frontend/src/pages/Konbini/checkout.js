@@ -22,6 +22,13 @@ const CLERK_SYSTEM_PROMPT_TEMPLATE = `
 - ユーザーの日本語を褒めたり評価したりしない。
 - 個人情報(名前、趣味、天気、場所等)を尋ねない。
 - 単語マークアップ記号 [[...]] は絶対に使わないでください。純粋な日本語テキストのみ。
+- 語気助詞を自然に交えて接客らしさを出す(例: 句頭に「はい、」「えっと、」「そうですね〜」「あ、」など、文末に「〜ね」「〜よ」を時々)。ただし入れすぎず、1文に1〜2個まで。
+- コンビニ店員らしい丁寧で親しみやすいトーン(固すぎず、砕けすぎず)。
+
+例文比較(【悪い】冷たい / 【良い】自然):
+- 【悪い】「鮭おにぎりは温めますか?」 【良い】「はい、鮭おにぎりは温めますね?」
+- 【悪い】「袋はご利用になりますか?」 【良い】「えっと、袋はご利用になりますか?」
+- 【悪い】「ありがとうございました」 【良い】「はい、ありがとうございました〜」
 
 人情応答の例(このパターンに従うこと):
 - ユーザー「はい」 → 「かしこまりました。【本題の質問】」
@@ -194,8 +201,14 @@ export function renderCheckout(container, { cart, total }) {
   }
 
   function showBubble(ja, en) {
-    $bubbleJa.textContent = stripVocabMarkup(ja || '');
-    $bubbleEn.textContent = en || '';
+    const cleanJa = stripVocabMarkup(ja || '');
+    if (cleanJa === '……' || cleanJa === '...' || cleanJa === '…') {
+      $bubbleJa.innerHTML = '<span class="kb-bubble-dots"><span></span><span></span><span></span></span>';
+      $bubbleEn.textContent = '';
+    } else {
+      $bubbleJa.textContent = cleanJa;
+      $bubbleEn.textContent = en || '';
+    }
   }
 
   function appendStream(role, ja, en) {
@@ -360,9 +373,12 @@ export function renderCheckout(container, { cart, total }) {
 
     modal.querySelector('.kb-review-modal-cancel').addEventListener('click', () => {
       modal.remove();
-      console.log('[konbini-2b-review-fix1] modal dismissed, continuing to next turn');
+      console.log('[konbini-2b-review-fix4] modal dismissed, asking review again');
       state.loading = false;
-      advanceTurn(null);
+      showBubble('ではこちらでよろしいでしょうか?', 'Then, is this all?');
+      appendStream('clerk', 'ではこちらでよろしいでしょうか?', 'Then, is this all?');
+      state.history.push({ role: 'clerk', ja: 'ではこちらでよろしいでしょうか?', en: 'Then, is this all?' });
+      refreshHintsAndInput();
     });
 
     container.querySelector('.kb-checkout').appendChild(modal);

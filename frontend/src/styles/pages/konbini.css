@@ -1467,3 +1467,29 @@
   animation: kb-slide-out-left 0.35s ease-in forwards;
   pointer-events: none;
 }
+
+/* ===== fix4: loading 点动画(3 个点依次缩放 + 透明度) ===== */
+.kb-bubble-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.kb-bubble-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--kb-primary);
+  opacity: 0.3;
+  animation: kb-dot-pulse 1.2s infinite ease-in-out both;
+}
+
+.kb-bubble-dots span:nth-child(1) { animation-delay: 0s; }
+.kb-bubble-dots span:nth-child(2) { animation-delay: 0.2s; }
+.kb-bubble-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes kb-dot-pulse {
+  0%, 60%, 100% { transform: scale(0.7); opacity: 0.3; }
+  30%           { transform: scale(1.2); opacity: 1; }
+}
