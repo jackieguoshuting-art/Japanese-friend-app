@@ -173,15 +173,23 @@ export function renderCheckout(container, { cart, total }) {
         </div>
       </section>
 
+      <div class="kb-checkout-complete-wrap" data-role="complete-wrap" hidden>
+        <button class="kb-checkout-complete-btn" type="button" data-role="complete-btn">
+          お会計完了 →
+        </button>
+      </div>
+
     </div>
   `;
 
-  const $bubbleJa = container.querySelector('[data-role="bubble-ja"]');
-  const $bubbleEn = container.querySelector('[data-role="bubble-en"]');
-  const $stream   = container.querySelector('[data-role="stream"]');
-  const $hints    = container.querySelectorAll('[data-hint-index]');
-  const $input    = container.querySelector('[data-role="input"]');
-  const $send     = container.querySelector('[data-role="send"]');
+  const $bubbleJa      = container.querySelector('[data-role="bubble-ja"]');
+  const $bubbleEn      = container.querySelector('[data-role="bubble-en"]');
+  const $stream        = container.querySelector('[data-role="stream"]');
+  const $hints         = container.querySelectorAll('[data-hint-index]');
+  const $input         = container.querySelector('[data-role="input"]');
+  const $send          = container.querySelector('[data-role="send"]');
+  const $completeWrap  = container.querySelector('[data-role="complete-wrap"]');
+  const $completeBtn   = container.querySelector('[data-role="complete-btn"]');
 
   // ── UI helpers ──────────────────────────────
   function refreshHintsAndInput() {
@@ -409,6 +417,13 @@ export function renderCheckout(container, { cart, total }) {
       state.loading = false;
       console.log('[konbini-2b] 対話終了 - turns:', state.turnCount, 'history:', state.history);
       refreshHintsAndInput();
+      // 2d: farewell 完, 延迟 2.5 秒显示お会計完了按钮
+      setTimeout(() => {
+        if ($completeWrap) {
+          $completeWrap.hidden = false;
+          $completeWrap.classList.add('kb-complete-fade-in');
+        }
+      }, 2500);
       return;
     }
 
@@ -516,6 +531,27 @@ export function renderCheckout(container, { cart, total }) {
       $ttsToggle.textContent = tts.enabled ? '🔊' : '🔇';
       if (!tts.enabled) stopClerkTTS();
       console.log('[konbini-2c] TTS toggled:', tts.enabled);
+    });
+  }
+
+  // Complete button → go to summary
+  if ($completeBtn) {
+    $completeBtn.addEventListener('click', () => {
+      console.log('[konbini-2d] Complete button clicked, transitioning to summary');
+      stopClerkTTS();
+      const pageEl = document.getElementById('pg-konbini');
+      if (pageEl) {
+        pageEl.dataset.transition = 'to-summary';
+        setTimeout(() => {
+          pageEl.dispatchEvent(new CustomEvent('konbini-go-to-summary', {
+            bubbles: true,
+            detail: { cart, total, history: state.history },
+          }));
+          setTimeout(() => {
+            delete pageEl.dataset.transition;
+          }, 100);
+        }, 300);
+      }
     });
   }
 

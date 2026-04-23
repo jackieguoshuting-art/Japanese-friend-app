@@ -1521,3 +1521,257 @@
 .kb-tts-toggle:active {
   transform: scale(0.92);
 }
+
+/* ============================== */
+/* konbini-2d: Summary 页全套样式 */
+/* ============================== */
+
+/* ===== お会計完了 按钮 ===== */
+.kb-checkout-complete-wrap {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+.kb-checkout-complete-btn {
+  padding: 18px 40px;
+  background: linear-gradient(135deg, var(--kb-primary), var(--kb-primary-2, #0041d4));
+  color: #fff;
+  border: none;
+  border-radius: var(--kb-radius-pill);
+  font-family: var(--kb-font-body);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 47, 167, 0.3);
+  transition: transform 0.15s, box-shadow 0.2s;
+  text-transform: uppercase;
+}
+.kb-checkout-complete-btn:hover {
+  box-shadow: 0 10px 24px rgba(0, 47, 167, 0.4);
+  transform: translateY(-1px);
+}
+.kb-checkout-complete-btn:active { transform: scale(0.96); }
+.kb-complete-fade-in {
+  animation: kb-complete-fade-in-anim 0.6s ease-out;
+}
+@keyframes kb-complete-fade-in-anim {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== 切 summary 章滑动画 ===== */
+#pg-konbini[data-transition="to-summary"] .kb-stage-checkout {
+  animation: kb-slide-out-left 0.3s ease-in forwards;
+}
+#pg-konbini[data-transition="to-summary"] .kb-stage-summary {
+  animation: kb-slide-in-right 0.3s ease-out 0.1s both;
+}
+@keyframes kb-slide-in-right {
+  from { transform: translateX(40%); opacity: 0; }
+  to   { transform: translateX(0);   opacity: 1; }
+}
+
+/* ===== Summary 整体 ===== */
+.kb-summary {
+  padding: 24px 20px 120px;
+  position: relative;
+  min-height: 100%;
+  overflow-y: auto;
+  background:
+    radial-gradient(rgba(0, 47, 167, 0.13) 1px, transparent 1px) 0 0 / 20px 20px,
+    var(--kb-bg);
+  font-family: var(--kb-font-body);
+}
+
+/* ===== Hero ===== */
+.kb-summary-hero {
+  text-align: center;
+  margin: 20px 0 40px;
+  position: relative;
+}
+.kb-summary-title {
+  font-family: var(--kb-font-head);
+  font-size: 42px;
+  font-weight: 900;
+  color: var(--kb-text);
+  letter-spacing: -0.03em;
+  transform: rotate(-1.5deg);
+  display: inline-block;
+  margin: 0 0 8px;
+  line-height: 1;
+}
+.kb-summary-subtitle {
+  font-family: var(--kb-font-label);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--kb-primary);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0;
+}
+.kb-hero-confetti {
+  position: absolute;
+  border-radius: 50%;
+}
+.kb-hero-confetti-1 { top: -10px; left: 10%;  width: 16px; height: 16px; background: #fd8d9a; opacity: 0.6; }
+.kb-hero-confetti-2 { top: 0;    right: 15%; width: 10px; height: 10px; background: var(--kb-primary); opacity: 0.4; }
+.kb-hero-confetti-3 { top: 30px; left: 25%;  width: 6px;  height: 22px; background: #b1efd8; transform: rotate(45deg); }
+
+/* ===== Collage 布局 ===== */
+.kb-summary-collage {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 440px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ===== Receipt 卡片 ===== */
+.kb-receipt-card {
+  background: #fff;
+  border: 1.5px solid rgba(0, 47, 167, 0.2);
+  border-radius: 24px;
+  padding: 20px;
+  transform: rotate(-1.5deg);
+  box-shadow: 4px 4px 0 rgba(0, 47, 167, 0.1);
+  position: relative;
+}
+.kb-receipt-header {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+  border-bottom: 2px dotted rgba(0, 47, 167, 0.3);
+  font-family: var(--kb-font-label);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.kb-receipt-items { display: flex; flex-direction: column; gap: 12px; }
+.kb-receipt-item  { display: flex; justify-content: space-between; align-items: center; }
+.kb-receipt-item-left { display: flex; align-items: center; gap: 10px; }
+.kb-receipt-item-icon-wrap {
+  width: 40px; height: 40px;
+  background: var(--kb-surface);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+.kb-receipt-item-emoji { font-size: 22px; }
+.kb-receipt-item-img  { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+.kb-receipt-item-name { font-weight: 600; font-size: 14px; }
+.kb-receipt-item-price { font-family: var(--kb-font-label); font-size: 14px; font-weight: 500; }
+.kb-receipt-total {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1.5px dashed var(--kb-primary);
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.kb-receipt-total-label { font-family: var(--kb-font-head); font-size: 18px; font-weight: 800; }
+.kb-receipt-total-value { font-family: var(--kb-font-head); font-size: 28px; font-weight: 900; color: var(--kb-primary); }
+.kb-sticker-good {
+  position: absolute; top: -16px; right: -10px;
+  background: #fd8d9a; color: #772332;
+  padding: 8px 16px; border-radius: 999px;
+  font-family: var(--kb-font-head); font-weight: 900; font-size: 11px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  transform: rotate(6deg);
+  border: 2px solid #fff;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+/* ===== Reward 卡片 ===== */
+.kb-reward-card {
+  background: #e9e8e7; border-radius: 24px; padding: 20px;
+  transform: rotate(1deg); position: relative;
+  box-shadow: 0 4px 40px rgba(26,28,28,0.05);
+}
+.kb-reward-main { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.kb-reward-icon {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: var(--kb-primary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: #fff;
+}
+.kb-reward-label {
+  margin: 0;
+  font-family: var(--kb-font-label); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.6;
+}
+.kb-reward-value {
+  margin: 2px 0 0;
+  font-family: var(--kb-font-head); font-size: 36px; font-weight: 900;
+  color: var(--kb-primary); line-height: 1;
+}
+.kb-reward-pts { font-size: 16px; font-weight: 700; }
+.kb-reward-balance {
+  background: rgba(255,255,255,0.5); padding: 12px; border-radius: 12px;
+  border: 1.5px solid rgba(0,47,167,0.1);
+  display: flex; justify-content: space-between;
+  font-family: var(--kb-font-label); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.kb-reward-spark { position: absolute; bottom: -8px; right: -8px; font-size: 36px; }
+
+/* ===== Today's Expressions 便利贴 ===== */
+.kb-expr-card {
+  background: #b1efd8; padding: 24px 20px; border-radius: 8px;
+  transform: rotate(-1.5deg); position: relative;
+  margin-left: auto; max-width: 320px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+.kb-expr-tape {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  width: 64px; height: 20px;
+  background: rgba(253,141,154,0.6);
+}
+.kb-expr-title {
+  margin: 0 0 14px;
+  font-family: var(--kb-font-head); font-size: 16px; font-weight: 800; color: #002118;
+  text-decoration: underline; text-decoration-color: #2f6b59;
+  text-decoration-thickness: 2px; text-underline-offset: 4px;
+}
+.kb-expr-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
+.kb-expr-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #002118; }
+.kb-expr-dot  { color: #2f6b59; margin-top: 2px; }
+.kb-expr-ja   { margin: 0; font-weight: 700; }
+.kb-expr-en   { margin: 2px 0 0; font-size: 11px; opacity: 0.7; }
+
+/* ===== GREAT! 贴纸 ===== */
+.kb-sticker-great {
+  position: absolute; top: 45%; left: 10px;
+  background: #115241; color: #fff;
+  padding: 4px 14px; border-radius: 999px;
+  font-family: var(--kb-font-head); font-weight: 900; font-size: 10px;
+  letter-spacing: 0.15em; transform: rotate(-8deg);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  pointer-events: none; z-index: 0;
+}
+
+/* ===== 底部按钮 ===== */
+.kb-summary-actions {
+  max-width: 440px; margin: 40px auto 0;
+  display: flex; flex-direction: column; gap: 12px;
+  position: relative; z-index: 2;
+}
+.kb-summary-btn {
+  padding: 18px; border-radius: var(--kb-radius-pill);
+  font-family: var(--kb-font-head); font-weight: 900; font-size: 14px;
+  letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer;
+  transition: transform 0.1s, opacity 0.15s, box-shadow 0.15s;
+}
+.kb-summary-btn-primary {
+  background: linear-gradient(135deg, var(--kb-primary), var(--kb-primary-2, #0041d4));
+  color: #fff; border: none;
+  box-shadow: 0 6px 16px rgba(0,47,167,0.25);
+}
+.kb-summary-btn-primary:hover { box-shadow: 0 8px 20px rgba(0,47,167,0.35); }
+.kb-summary-btn-primary:active { transform: scale(0.96); }
+.kb-summary-btn-ghost {
+  background: transparent; color: #fd8d9a; border: 1.5px solid #fd8d9a;
+}
+.kb-summary-btn-ghost:hover  { background: rgba(253,141,154,0.08); }
+.kb-summary-btn-ghost:active { transform: scale(0.96); }

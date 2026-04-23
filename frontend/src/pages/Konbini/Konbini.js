@@ -1,6 +1,7 @@
 import { TABS, FOOD_ITEMS, DRINK_ITEMS, SNACK_ITEMS, TASK_ITEM_IDS, ALL_ITEMS } from './data.js';
 import { go } from '../../core/router.js';
 import { renderCheckout } from './checkout.js';
+import { renderSummary } from './summary.js';
 
 const STAGES = ['shopping', 'checkout', 'summary'];
 let _state = null;
@@ -581,6 +582,7 @@ function renderShopping() {
     </div>
 
     <div class="kb-stage kb-stage-checkout"></div>
+    <div class="kb-stage kb-stage-summary"></div>
   `;
 }
 
@@ -611,6 +613,7 @@ function initKonbini() {
 
   if (!pg.dataset.returnListenerAdded) {
     pg.dataset.returnListenerAdded = 'true';
+
     pg.addEventListener('konbini-return-to-shopping', () => {
       if (_state.stage !== 'checkout') return;
       _state.stage = 'shopping';
@@ -624,6 +627,29 @@ function initKonbini() {
         checkoutEl.classList.remove('kb-checkout-slide-out');
         checkoutEl.innerHTML = '';
       }
+    });
+
+    pg.addEventListener('konbini-go-to-summary', (ev) => {
+      console.log('[konbini-2d] Event: go-to-summary');
+      const { cart, total, history } = ev.detail || {};
+      _state.stage = 'summary';
+      pg.dataset.stage = 'summary';
+      const stepText = pg.querySelector('.kb-step-text');
+      const stepFill = pg.querySelector('.kb-step-bar-fill');
+      if (stepText) stepText.textContent = 'STEP 3/3';
+      if (stepFill) stepFill.style.width = '100%';
+      const summaryEl = pg.querySelector('.kb-stage-summary');
+      if (summaryEl && cart) renderSummary(summaryEl, { cart, total, history });
+    });
+
+    pg.addEventListener('konbini-try-again', () => {
+      console.log('[konbini-2d] Event: try-again, resetting');
+      initKonbini();  // resets state + re-renders; dedup guard prevents duplicate pg listeners
+    });
+
+    pg.addEventListener('konbini-return-to-scene', () => {
+      console.log('[konbini-2d] Event: return-to-scene');
+      go('scene');
     });
   }
 
