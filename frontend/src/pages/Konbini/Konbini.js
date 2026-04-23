@@ -73,6 +73,81 @@ function renderTaskItems() {
   }).join('');
 }
 
+function renderCartSheet() {
+  const pg = document.getElementById('pg-konbini');
+  if (!pg) return;
+  const listEl = pg.querySelector('.kb-cart-sheet-list');
+  const countEl = pg.querySelector('.kb-cart-sheet-count');
+  const totalEl = pg.querySelector('.kb-cart-sheet-total');
+  if (!listEl || !countEl || !totalEl) return;
+
+  const cart = _state.cart;
+
+  if (cart.length === 0) {
+    listEl.innerHTML = '<div class="kb-cart-sheet-empty">カートは空です</div>';
+    countEl.textContent = '';
+    totalEl.textContent = '';
+    return;
+  }
+
+  listEl.innerHTML = cart.map(id => {
+    const item = findItemById(id);
+    if (!item) return '';
+    const isTask = TASK_ITEM_IDS.includes(id);
+    return `
+      <div class="kb-cart-row" data-id="${id}">
+        ${isTask ? '<span class="kb-cart-row-star">★</span>' : ''}
+        <span class="kb-cart-row-emoji">${item.emoji}</span>
+        <div class="kb-cart-row-info">
+          <span class="kb-cart-row-ja">${item.ja}</span>
+          <span class="kb-cart-row-kana">${item.kana}</span>
+        </div>
+        <span class="kb-cart-row-price">¥${item.price}</span>
+        <button class="kb-cart-row-delete" type="button" data-id="${id}" aria-label="Remove">🗑️</button>
+      </div>
+    `;
+  }).join('');
+
+  countEl.innerHTML = `<span class="kb-cart-sheet-count-num">${cart.length}</span> 点`;
+  totalEl.innerHTML = `小計 <span class="kb-cart-sheet-total-num">¥${calcCartTotal()}</span>`;
+}
+
+function openCartSheet() {
+  const pg = document.getElementById('pg-konbini');
+  if (!pg) return;
+  const sheet = pg.querySelector('.kb-cart-sheet');
+  if (!sheet) return;
+  renderCartSheet();
+  sheet.dataset.open = 'true';
+}
+
+function closeCartSheet() {
+  const pg = document.getElementById('pg-konbini');
+  if (!pg) return;
+  const sheet = pg.querySelector('.kb-cart-sheet');
+  if (!sheet) return;
+  sheet.dataset.open = 'false';
+}
+
+function removeFromCart(id) {
+  const idx = _state.cart.indexOf(id);
+  if (idx < 0) return;
+  _state.cart.splice(idx, 1);
+
+  const pg = document.getElementById('pg-konbini');
+  if (pg) {
+    const card = pg.querySelector(`.kb-card[data-id="${id}"]`);
+    if (card) {
+      card.classList.remove('kb-card-selected');
+      const check = card.querySelector('.kb-card-check');
+      if (check) check.remove();
+    }
+  }
+
+  updateCartUI();
+  renderCartSheet();
+}
+
 function setupGridSwipe() {
   const pg = document.getElementById('pg-konbini');
   if (!pg) return;
@@ -476,6 +551,22 @@ function renderShopping() {
       <div class="kb-tasklist-ready-badge">準備OK!</div>
     </div>
 
+    <!-- 购物车浮层 -->
+    <div class="kb-cart-sheet" data-open="false">
+      <div class="kb-cart-sheet-backdrop"></div>
+      <div class="kb-cart-sheet-panel">
+        <div class="kb-cart-sheet-header">
+          <h3 class="kb-cart-sheet-title">🛒 買い物かご</h3>
+          <button class="kb-cart-sheet-close" type="button">✕</button>
+        </div>
+        <div class="kb-cart-sheet-list"></div>
+        <div class="kb-cart-sheet-footer">
+          <div class="kb-cart-sheet-count"></div>
+          <div class="kb-cart-sheet-total"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="kb-checkout-bar">
       <div class="kb-checkout-info">
         <span class="kb-checkout-count">📋 0 ITEMS</span>
@@ -521,6 +612,54 @@ function initKonbini() {
   // 拖动
   setupTasklistDrag();
   setupGridSwipe();
+
+  // 🛒 图标打开购物车
+  const cartIcon = pg.querySelector('.kb-cart-icon');
+  if (cartIcon) {
+    cartIcon.addEventListener('click', () => {
+      if (_state.cart.length === 0) {
+        showToast('カートは空です');
+        return;
+      }
+      openCartSheet();
+    });
+  }
+
+  // 底部 Bar "N ITEMS" 区域打开购物车
+  const checkoutCount = pg.querySelector('.kb-checkout-count');
+  if (checkoutCount) {
+    checkoutCount.style.cursor = 'pointer';
+    checkoutCount.addEventListener('click', () => {
+      if (_state.cart.length === 0) {
+        showToast('カートは空です');
+        return;
+      }
+      openCartSheet();
+    });
+  }
+
+  // 关闭按钮
+  const closeBtn = pg.querySelector('.kb-cart-sheet-close');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeCartSheet);
+  }
+
+  // 遮罩点击关闭
+  const backdrop = pg.querySelector('.kb-cart-sheet-backdrop');
+  if (backdrop) {
+    backdrop.addEventListener('click', closeCartSheet);
+  }
+
+  // 浮层内的删除按钮(事件委托)
+  const sheetList = pg.querySelector('.kb-cart-sheet-list');
+  if (sheetList) {
+    sheetList.addEventListener('click', (e) => {
+      const delBtn = e.target.closest('.kb-cart-row-delete');
+      if (!delBtn) return;
+      const id = delBtn.dataset.id;
+      if (id) removeFromCart(id);
+    });
+  }
 
   // 点击 emoji 弹气泡
   const taskItemEls = pg.querySelectorAll('.kb-task-item');
