@@ -25,7 +25,9 @@ function ensureTabInitialized(tabKey) {
     const source = sourceMap[tabKey] || [];
     _state.shuffledByTab[tabKey] = shuffle(source);
     const soldOutCount = Math.random() < 0.5 ? 1 : 2;
-    _state.soldOutIdsByTab[tabKey] = pickRandomIds(source, soldOutCount);
+    // 品切れ 不包括任务商品(否则用户无法完成任务)
+    const eligible = source.filter(it => !TASK_ITEM_IDS.includes(it.id));
+    _state.soldOutIdsByTab[tabKey] = pickRandomIds(eligible, soldOutCount);
   }
 }
 
@@ -62,14 +64,108 @@ function renderTaskItems() {
     const item = findItemById(id);
     if (!item) return '';
     const inCart = _state.cart.includes(id);
-    const tooltip = `${item.kana} / ${item.en}`;
     return `
-      <div class="kb-task-item ${inCart ? 'kb-task-item-done' : ''}" title="${tooltip}" data-id="${id}">
+      <div class="kb-task-item ${inCart ? 'kb-task-item-done' : ''}" data-id="${id}" role="button" tabindex="0">
         <span class="kb-task-emoji">${item.emoji}</span>
         <span class="kb-task-dot">${inCart ? '✓' : '○'}</span>
       </div>
     `;
   }).join('');
+}
+
+function setupTasklistDrag() {
+  const pg = document.getElementById('pg-konbini');
+  if (!pg) return;
+  const list = pg.querySelector('.kb-tasklist');
+  const header = pg.querySelector('.kb-tasklist-header');
+  if (!list || !header) return;
+
+  let isDragging = false;
+  let startX = 0, startY = 0;
+  let origX = 0, origY = 0;
+
+  function onDown(e) {
+    if (e.target.closest('.kb-tasklist-toggle')) return;
+    isDragging = true;
+    const pt = e.touches ? e.touches[0] : e;
+    startX = pt.clientX;
+    startY = pt.clientY;
+    const rect = list.getBoundingClientRect();
+    const pgRect = pg.getBoundingClientRect();
+    origX = rect.left - pgRect.left;
+    origY = rect.top - pgRect.top;
+    list.style.right = 'auto';
+    list.style.left = origX + 'px';
+    list.style.top = origY + 'px';
+    list.classList.add('kb-tasklist-dragging');
+    e.preventDefault();
+  }
+
+  function onMove(e) {
+    if (!isDragging) return;
+    const pt = e.touches ? e.touches[0] : e;
+    const dx = pt.clientX - startX;
+    const dy = pt.clientY - startY;
+    const pgRect = pg.getBoundingClientRect();
+    const listRect = list.getBoundingClientRect();
+
+    let newX = origX + dx;
+    let newY = origY + dy;
+
+    const maxX = pgRect.width - listRect.width;
+    const maxY = pgRect.height - listRect.height;
+    newX = Math.max(0, Math.min(newX, maxX));
+    newY = Math.max(0, Math.min(newY, maxY));
+
+    list.style.left = newX + 'px';
+    list.style.top = newY + 'px';
+  }
+
+  function onUp() {
+    if (!isDragging) return;
+    isDragging = false;
+    list.classList.remove('kb-tasklist-dragging');
+
+    const pgRect = pg.getBoundingClientRect();
+    const listRect = list.getBoundingClientRect();
+    const leftDist = listRect.left - pgRect.left;
+    const rightDist = pgRect.right - listRect.right;
+    const SNAP = 30;
+
+    if (leftDist < SNAP) {
+      list.style.left = '0px';
+    } else if (rightDist < SNAP) {
+      list.style.left = (pgRect.width - listRect.width) + 'px';
+    }
+  }
+
+  header.addEventListener('mousedown', onDown);
+  header.addEventListener('touchstart', onDown, { passive: false });
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('touchmove', onMove, { passive: false });
+  document.addEventListener('mouseup', onUp);
+  document.addEventListener('touchend', onUp);
+}
+
+function showTaskBubble(taskEl, item) {
+  const pg = document.getElementById('pg-konbini');
+  if (!pg) return;
+  const existing = pg.querySelector('.kb-task-bubble');
+  if (existing) existing.remove();
+
+  const bubble = document.createElement('div');
+  bubble.className = 'kb-task-bubble';
+  bubble.innerHTML = `<span class="kb-task-bubble-kana">${item.kana}</span><span class="kb-task-bubble-en">${item.en}</span>`;
+  taskEl.appendChild(bubble);
+
+  requestAnimationFrame(() => {
+    bubble.classList.add('kb-task-bubble-show');
+  });
+
+  setTimeout(() => {
+    bubble.classList.remove('kb-task-bubble-show');
+    setTimeout(() => bubble.remove(), 250);
+  }, 1500);
 }
 
 function subtagClass(subtag) {
@@ -341,6 +437,19 @@ function initKonbini() {
       toggle.textContent = collapsed ? '⊖' : '⊕';
     });
   }
+
+  // 拖动
+  setupTasklistDrag();
+
+  // 点击 emoji 弹气泡
+  const taskItemEls = pg.querySelectorAll('.kb-task-item');
+  taskItemEls.forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.id;
+      const item = findItemById(id);
+      if (item) showTaskBubble(el, item);
+    });
+  });
 }
 
 function setStage(newStage) {
