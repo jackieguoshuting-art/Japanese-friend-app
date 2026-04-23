@@ -1083,6 +1083,10 @@
 }
 #pg-konbini[data-stage="summary"] .kb-stage-summary {
   display: block;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
 }
 
 /* ===== Checkout 整体容器 ===== */
@@ -1274,27 +1278,28 @@
 }
 
 .kb-mic-btn {
-  width: 72px;
-  height: 72px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   border: none;
   background: var(--kb-primary);
   color: #fff;
-  font-size: 30px;
+  font-size: 40px;
   cursor: pointer;
   flex-shrink: 0;
-  box-shadow: 0 8px 24px rgba(0, 47, 167, 0.25);
+  box-shadow: 0 6px 20px rgba(0, 47, 167, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.1s ease, opacity 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .kb-mic-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-.kb-mic-btn:not(:disabled):active {
-  transform: scale(0.92);
+.kb-mic-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 3px 12px rgba(0, 47, 167, 0.5);
 }
 
 /* ===== 输入框 ===== */

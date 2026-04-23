@@ -1,4 +1,5 @@
 import { buildTurns } from './checkout-data.js';
+import { initVoiceButton } from '../../features/voiceUI.js';
 
 // Module-level handle so Konbini.js can stop TTS when leaving the page.
 // stopped=true blocks all future playClerkTTS calls until next renderCheckout resets it.
@@ -171,7 +172,7 @@ export function renderCheckout(container, { cart, total }) {
       <section class="kb-checkout-input-hub">
         <div class="kb-hint-row" data-role="hint-row">
           <button class="kb-hint-pill" type="button" data-hint-index="0" disabled></button>
-          <button class="kb-mic-btn" type="button" disabled aria-label="語音入力(後続で有効化)">🎤</button>
+          <button class="kb-mic-btn" type="button" id="kb-mic-btn" aria-label="長押しで語音入力">🎤</button>
           <button class="kb-hint-pill" type="button" data-hint-index="1" disabled></button>
         </div>
 
@@ -543,6 +544,19 @@ export function renderCheckout(container, { cart, total }) {
     if (!txt) return;
     $input.value = '';
     advanceTurn(txt);
+  });
+
+  // konbini-voice-1: 长按语音输入
+  initVoiceButton({
+    voiceBtnId: 'kb-mic-btn',
+    onSend: (text) => {
+      console.log('[konbini-voice-1] Voice onSend:', text);
+      if (!text || state.loading || state.done) return;
+      advanceTurn(text);
+    },
+    onCancel: () => {
+      console.log('[konbini-voice-1] Voice cancelled');
+    },
   });
 
   // TTS toggle button
