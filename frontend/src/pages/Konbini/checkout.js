@@ -20,21 +20,29 @@ const CLERK_SYSTEM_PROMPT_TEMPLATE = `
 - 新しい話題を始めない。
 - 個人的な話(名前、趣味、天気など)に触れない。
 - ユーザーの日本語を褒めたり評価したりしない。
-- 単語マークアップ記号 [[...]] は絶対に使わないでください。純粋な日本語テキストのみで返答してください。
-`.trim();
+- 単語マークアップ記号 [[...]] は絶対に使わないでください。
+- 必ず以下の JSON 形式のみで返答し、他の文字を含めない:
+  {"replyJa":"日本語の返答","replyEn":"English translation"__PROCEED_FIELD__}
+__PROCEED_INSTRUCTION__`.trim();
 
 function buildClerkSystemPrompt(turn, current, cart, total) {
   const cartSummary = cart.map(i => `${i.ja} ¥${i.price}`).join('、');
   const instructionText = typeof current.instruction === 'function'
     ? current.instruction(cart, total)
     : String(current.instruction).replace('${total}', total);
+  const proceedField = current.id === 'review' ? ',"proceed":true' : '';
+  const proceedInstruction = current.id === 'review'
+    ? 'proceedフィールド: ユーザーが「はい」など確認したら true、「他にもあります」など否定・追加なら false。'
+    : '';
   return CLERK_SYSTEM_PROMPT_TEMPLATE
     .replace('__CART__', cartSummary)
     .replace('__TOTAL__', total)
     .replace('__TURN__', String(turn.index + 1))
     .replace('__TURN_COUNT__', String(turn.total))
     .replace('__TURN_ID__', current.id)
-    .replace('__INSTRUCTION__', instructionText);
+    .replace('__INSTRUCTION__', instructionText)
+    .replace('__PROCEED_FIELD__', proceedField)
+    .replace('__PROCEED_INSTRUCTION__', proceedInstruction);
 }
 
 // 剥离 [[word|reading|gloss]] 或 [[word]] 格式的 vocab 标记
@@ -187,6 +195,7 @@ export function renderCheckout(container, { cart, total }) {
     return {
       replyJa: stripVocabMarkup(data.replyJa || ''),
       replyEn: data.replyEn || '',
+      proceed: data.proceed !== false,
       emotion: 'idle',
       memoryCandidate: '',
     };
@@ -196,6 +205,8 @@ export function renderCheckout(container, { cart, total }) {
   async function advanceTurn(userText) {
     if (state.loading || state.done) return;
     state.loading = true;
+
+    const currentTurnId = turns[state.turnIndex]?.id;
 
     if (userText) {
       appendStream('user', userText, '');
@@ -210,7 +221,7 @@ export function renderCheckout(container, { cart, total }) {
       parsed = await callClerkAPI(userText);
     } catch (e) {
       console.error('[konbini-2b] API error:', e);
-      parsed = { replyJa: 'すみません、もう一度お願いします', replyEn: 'Sorry, please try again', emotion: 'idle', memoryCandidate: '' };
+      parsed = { replyJa: 'すみません、もう一度お願いします', replyEn: 'Sorry, please try again', proceed: true, emotion: 'idle', memoryCandidate: '' };
     }
 
     console.log('[konbini-2b] turn', state.turnIndex + 1, '/', state.turnCount, 'reply:', parsed);
@@ -218,6 +229,14 @@ export function renderCheckout(container, { cart, total }) {
     showBubble(parsed.replyJa, parsed.replyEn);
     appendStream('clerk', parsed.replyJa, parsed.replyEn);
     state.history.push({ role: 'clerk', ja: parsed.replyJa, en: parsed.replyEn });
+
+    // Review branch: user wants to add more items
+    if (currentTurnId === 'review' && !parsed.proceed) {
+      state.loading = false;
+      refreshHintsAndInput();
+      showReviewCancelModal();
+      return;
+    }
 
     if (state.turnIndex >= state.turnCount - 1) {
       state.done = true;
@@ -239,6 +258,52 @@ export function renderCheckout(container, { cart, total }) {
     if (next?.auto) {
       await advanceTurn(null);
     }
+  }
+
+  // ── Review modal helpers ─────────────────────
+  function showReviewCancelModal() {
+    const existing = container.querySelector('.kb-review-modal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.className = 'kb-review-modal';
+    modal.innerHTML = `
+      <div class="kb-review-modal-box">
+        <p class="kb-review-modal-text">カートに戻りますか?</p>
+        <div class="kb-review-modal-actions">
+          <button class="kb-review-modal-btn kb-review-modal-back" type="button">戻る</button>
+          <button class="kb-review-modal-btn kb-review-modal-cancel" type="button">キャンセル</button>
+        </div>
+      </div>
+    `;
+
+    modal.querySelector('.kb-review-modal-back').addEventListener('click', () => {
+      modal.remove();
+      triggerReturnToShopping();
+    });
+
+    modal.querySelector('.kb-review-modal-cancel').addEventListener('click', () => {
+      modal.remove();
+      // Treat as confirmation — advance past review into next turns
+      state.turnIndex += 1;
+      const next = turns[state.turnIndex];
+      if (next?.auto) {
+        advanceTurn(null);
+      } else {
+        refreshHintsAndInput();
+      }
+    });
+
+    container.querySelector('.kb-checkout').appendChild(modal);
+  }
+
+  function triggerReturnToShopping() {
+    const pg = document.getElementById('pg-konbini');
+    if (!pg) return;
+    container.classList.add('kb-checkout-slide-out');
+    setTimeout(() => {
+      pg.dispatchEvent(new CustomEvent('konbini-return-to-shopping'));
+    }, 350);
   }
 
   // ── Events ───────────────────────────────────

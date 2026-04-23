@@ -1091,6 +1091,7 @@
   flex-direction: column;
   font-family: var(--kb-font-body);
   background: var(--kb-bg);
+  position: relative;
 }
 
 /* ===== 葵插画场景 ===== */
@@ -1396,4 +1397,73 @@
   font-size: 12px;
   padding: 14px 10px;
   line-height: 1.2;
+}
+
+/* ===== review-branch: 返回购物车 modal ===== */
+.kb-review-modal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 200;
+}
+
+.kb-review-modal-box {
+  background: var(--kb-surface);
+  border: 1.5px solid var(--kb-border);
+  border-radius: var(--kb-radius-md);
+  padding: 24px 20px 20px;
+  width: 240px;
+  font-family: var(--kb-font-body);
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.kb-review-modal-text {
+  font-size: 15px;
+  color: var(--kb-text);
+  margin: 0 0 18px;
+  font-weight: 500;
+}
+
+.kb-review-modal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.kb-review-modal-btn {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: var(--kb-radius-sm);
+  font-family: var(--kb-font-body);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1.5px solid var(--kb-border);
+  transition: opacity 0.15s;
+}
+.kb-review-modal-btn:active { opacity: 0.75; }
+
+.kb-review-modal-back {
+  background: var(--kb-accent);
+  color: #fff;
+  border-color: transparent;
+}
+
+.kb-review-modal-cancel {
+  background: transparent;
+  color: var(--kb-text);
+}
+
+/* ===== review-branch: checkout slide-out 动画 ===== */
+@keyframes kb-slide-out-left {
+  from { transform: translateX(0);    opacity: 1; }
+  to   { transform: translateX(-60px); opacity: 0; }
+}
+
+.kb-checkout-slide-out {
+  animation: kb-slide-out-left 0.35s ease-in forwards;
+  pointer-events: none;
 }

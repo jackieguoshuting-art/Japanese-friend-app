@@ -609,6 +609,24 @@ function initKonbini() {
   pg.dataset.stage = _state.stage;
   pg.innerHTML = renderShopping();
 
+  if (!pg.dataset.returnListenerAdded) {
+    pg.dataset.returnListenerAdded = 'true';
+    pg.addEventListener('konbini-return-to-shopping', () => {
+      if (_state.stage !== 'checkout') return;
+      _state.stage = 'shopping';
+      pg.dataset.stage = 'shopping';
+      const stepText = pg.querySelector('.kb-step-text');
+      const stepFill = pg.querySelector('.kb-step-bar-fill');
+      if (stepText) stepText.textContent = 'STEP 1/3';
+      if (stepFill) stepFill.style.width = '33%';
+      const checkoutEl = pg.querySelector('.kb-stage-checkout');
+      if (checkoutEl) {
+        checkoutEl.classList.remove('kb-checkout-slide-out');
+        checkoutEl.innerHTML = '';
+      }
+    });
+  }
+
   const backBtn = pg.querySelector('.kb-back');
   if (backBtn) backBtn.addEventListener('click', () => {
     if (_state.stage === 'checkout') {
