@@ -1,5 +1,14 @@
 import { buildTurns } from './checkout-data.js';
 
+// Module-level handle so Konbini.js can stop TTS when leaving the page
+export const _checkoutTTSHandle = { currentAudio: null };
+export function stopCheckoutTTS() {
+  if (_checkoutTTSHandle.currentAudio) {
+    try { _checkoutTTSHandle.currentAudio.pause(); _checkoutTTSHandle.currentAudio.src = ''; } catch (e) {}
+    _checkoutTTSHandle.currentAudio = null;
+  }
+}
+
 // ============================================
 // 店员 葵 的 System Prompt(Checkout 专用)
 // ============================================
@@ -126,9 +135,11 @@ export function renderCheckout(container, { cart, total }) {
 
   // TTS 配置(2c 新增)
   const CLERK_VOICE_ID = 'rerT9Cnl89WMx94e9WDH';
+  // tts.currentAudio is mirrored into _checkoutTTSHandle so stopCheckoutTTS() can reach it
   const tts = {
     enabled: true,
-    currentAudio: null,
+    get currentAudio() { return _checkoutTTSHandle.currentAudio; },
+    set currentAudio(v) { _checkoutTTSHandle.currentAudio = v; },
   };
 
   container.innerHTML = `

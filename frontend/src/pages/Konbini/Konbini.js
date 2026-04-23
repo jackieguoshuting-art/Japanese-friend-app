@@ -1,6 +1,6 @@
 import { TABS, FOOD_ITEMS, DRINK_ITEMS, SNACK_ITEMS, TASK_ITEM_IDS, ALL_ITEMS } from './data.js';
 import { go } from '../../core/router.js';
-import { renderCheckout } from './checkout.js';
+import { renderCheckout, stopCheckoutTTS } from './checkout.js';
 import { renderSummary } from './summary.js';
 
 const STAGES = ['shopping', 'checkout', 'summary'];
@@ -614,6 +614,11 @@ function initKonbini() {
   if (!pg.dataset.returnListenerAdded) {
     pg.dataset.returnListenerAdded = 'true';
 
+    // fix1: 切 tab 时立即停 TTS
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopCheckoutTTS();
+    });
+
     pg.addEventListener('konbini-return-to-shopping', () => {
       if (_state.stage !== 'checkout') return;
       _state.stage = 'shopping';
@@ -644,17 +649,20 @@ function initKonbini() {
 
     pg.addEventListener('konbini-try-again', () => {
       console.log('[konbini-2d] Event: try-again, resetting');
+      stopCheckoutTTS();
       initKonbini();  // resets state + re-renders; dedup guard prevents duplicate pg listeners
     });
 
     pg.addEventListener('konbini-return-to-scene', () => {
       console.log('[konbini-2d] Event: return-to-scene');
+      stopCheckoutTTS();
       go('scene');
     });
   }
 
   const backBtn = pg.querySelector('.kb-back');
   if (backBtn) backBtn.addEventListener('click', () => {
+    stopCheckoutTTS();
     if (_state.stage === 'checkout') {
       _state.stage = 'shopping';
       pg.dataset.stage = 'shopping';
@@ -772,6 +780,8 @@ function getState() {
 window.addEventListener('page:enter', (e) => {
   if (e.detail?.pageName === 'konbini') {
     initKonbini();
+  } else {
+    stopCheckoutTTS();
   }
 });
 
