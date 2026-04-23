@@ -589,6 +589,12 @@ function goToCheckout() {
   if (!pg) return;
   pg.dataset.stage = 'checkout';
   _state.stage = 'checkout';
+
+  const stepText = pg.querySelector('.kb-step-text');
+  const stepFill = pg.querySelector('.kb-step-bar-fill');
+  if (stepText) stepText.textContent = 'STEP 2/3';
+  if (stepFill) stepFill.style.width = '66%';
+
   const checkoutEl = pg.querySelector('.kb-stage-checkout');
   if (!checkoutEl) return;
   const cartItems = _state.cart.map(id => findItemById(id)).filter(Boolean);
@@ -608,6 +614,10 @@ function initKonbini() {
     if (_state.stage === 'checkout') {
       _state.stage = 'shopping';
       pg.dataset.stage = 'shopping';
+      const stepText = pg.querySelector('.kb-step-text');
+      const stepFill = pg.querySelector('.kb-step-bar-fill');
+      if (stepText) stepText.textContent = 'STEP 1/3';
+      if (stepFill) stepFill.style.width = '33%';
     } else {
       go('scene');
     }

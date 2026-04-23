@@ -1067,125 +1067,289 @@
   margin-left: 4px;
 }
 
-/* ── Stage switching ─────────────────────────────────────── */
+/* ===== Stage 切换 ===== */
 #pg-konbini .kb-stage {
   display: none;
 }
-
 #pg-konbini[data-stage="shopping"] .kb-stage-shopping {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
-  position: relative;
+  display: block;
 }
-
 #pg-konbini[data-stage="checkout"] .kb-stage-checkout {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow-y: auto;
+  display: block;
+}
+#pg-konbini[data-stage="summary"] .kb-stage-summary {
+  display: block;
 }
 
-/* ── Checkout UI ─────────────────────────────────────────── */
+/* ===== Checkout 整体容器 ===== */
 .kb-checkout {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 24px 16px 32px;
+  font-family: var(--kb-font-body);
+  background: var(--kb-bg);
+  padding-bottom: 32px;
+}
+
+/* ===== 葵插画场景 ===== */
+.kb-checkout-scene {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--kb-surface);
+  border-bottom: 1.5px solid var(--kb-border);
+}
+.kb-checkout-clerk-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left center;
+}
+
+/* 右上角气泡 */
+.kb-checkout-bubble {
+  position: absolute;
+  top: 20px;
+  right: 16px;
+  width: 45%;
+  max-width: 220px;
+  background: #fff;
+  border: 1.5px solid var(--kb-border);
+  border-radius: 20px;
+  padding: 14px 16px 16px;
+  transform: rotate(-2deg);
+  box-shadow: 4px 4px 0 rgba(0, 47, 167, 0.12);
+  z-index: 2;
+}
+.kb-bubble-ja {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--kb-text);
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+}
+.kb-bubble-en {
+  margin: 4px 0 0;
+  font-size: 11px;
+  color: var(--kb-muted);
+  line-height: 1.3;
+}
+.kb-bubble-tail {
+  position: absolute;
+  bottom: -8px;
+  left: 24px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-right: 1.5px solid var(--kb-border);
+  border-bottom: 1.5px solid var(--kb-border);
+  transform: rotate(45deg);
+}
+
+/* 底部标签 */
+.kb-checkout-clerk-tag {
+  position: absolute;
+  left: 16px;
+  bottom: 16px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1.5px solid var(--kb-primary);
+  border-radius: var(--kb-radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--kb-primary);
+  z-index: 2;
+}
+
+/* ===== 对话流(手账拼贴风) ===== */
+.kb-checkout-stream {
+  padding: 24px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background:
+    radial-gradient(circle at 1px 1px, rgba(0, 47, 167, 0.08) 1px, transparent 0) 0 0 / 22px 22px,
+    var(--kb-bg);
+}
+.kb-msg {
+  position: relative;
+  max-width: 82%;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1.5px solid var(--kb-border);
+  box-shadow: 3px 3px 0 rgba(0, 47, 167, 0.08);
+}
+.kb-msg-clerk {
+  align-self: flex-start;
+  transform: rotate(0.8deg);
+}
+.kb-msg-user {
+  align-self: flex-end;
+  background: var(--kb-primary);
+  color: #fff;
+  border-color: var(--kb-primary);
+  transform: rotate(-0.8deg);
+  border-radius: 16px;
+}
+.kb-msg-tape {
+  position: absolute;
+  top: -8px;
+  left: 18px;
+  width: 52px;
+  height: 16px;
+  background: rgba(255, 112, 98, 0.35);
+  transform: rotate(-4deg);
+  z-index: 1;
+}
+.kb-msg-meta {
+  margin: 0 0 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--kb-primary);
+  opacity: 0.6;
+}
+.kb-msg-user .kb-msg-meta {
+  color: #fff;
+  opacity: 0.7;
+  text-align: right;
+}
+.kb-msg-text {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+/* ===== 底部交互区 ===== */
+.kb-checkout-input-hub {
+  padding: 20px 20px 12px;
+  background: var(--kb-bg);
+  border-top: 1px solid rgba(0, 47, 167, 0.1);
+  display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 
-.kb-checkout-clerk {
+.kb-hint-row {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 6px;
-}
-
-.kb-clerk-avatar {
-  font-size: 56px;
-  line-height: 1;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,.15));
-}
-
-.kb-clerk-label {
-  font-family: var(--kb-font-label);
-  font-size: 12px;
-  color: var(--kb-text);
-  opacity: .7;
-  letter-spacing: .05em;
-}
-
-.kb-checkout-subtitle {
-  text-align: center;
-}
-
-.kb-sub-ja {
-  font-family: var(--kb-font-label);
-  font-size: 22px;
-  font-weight: 900;
-  color: var(--kb-text);
-  letter-spacing: .05em;
-}
-
-.kb-sub-en {
-  font-size: 12px;
-  color: var(--kb-text);
-  opacity: .55;
-  margin-top: 2px;
-}
-
-.kb-checkout-hints {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
+  gap: 10px;
+  max-width: 440px;
+  margin: 0 auto;
   width: 100%;
 }
 
 .kb-hint-pill {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border: 2px solid var(--kb-primary);
-  border-radius: 999px;
+  flex: 1;
+  padding: 14px 10px;
   background: #fff;
-  font-family: var(--kb-font-label);
-  font-size: 13px;
+  border: 1.5px solid var(--kb-primary);
+  border-radius: var(--kb-radius-pill);
+  font-family: var(--kb-font-body);
+  font-size: 12px;
+  font-weight: 700;
   color: var(--kb-primary);
+  letter-spacing: -0.01em;
   cursor: pointer;
-  transition: background .15s, color .15s;
+  transition: transform 0.1s ease, background 0.15s ease, color 0.15s ease;
+  line-height: 1.2;
 }
-
-.kb-hint-pill:active {
+.kb-hint-pill:hover {
   background: var(--kb-primary);
   color: #fff;
 }
-
-.kb-hint-icon {
-  font-size: 14px;
+.kb-hint-pill:active {
+  transform: scale(0.96);
 }
 
-.kb-checkout-input {
+.kb-mic-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: none;
+  background: var(--kb-primary);
+  color: #fff;
+  font-size: 30px;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 8px 24px rgba(0, 47, 167, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s ease, opacity 0.15s ease;
+}
+.kb-mic-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.kb-mic-btn:not(:disabled):active {
+  transform: scale(0.92);
+}
+
+/* ===== 输入框 ===== */
+.kb-input-wrap {
+  position: relative;
+  max-width: 440px;
   width: 100%;
+  margin: 0 auto;
+  padding-top: 8px;
 }
-
+.kb-input-label {
+  position: absolute;
+  top: -6px;
+  left: 0;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  color: var(--kb-primary);
+  text-transform: uppercase;
+}
+.kb-input-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1.5px solid rgba(0, 47, 167, 0.3);
+  transition: border-color 0.15s ease;
+}
+.kb-input-line:focus-within {
+  border-bottom-color: var(--kb-primary);
+}
 .kb-input-field {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px 14px;
-  border: 2px solid var(--kb-border, #e0d6f5);
-  border-radius: 12px;
-  font-family: var(--kb-font-label);
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--kb-font-body);
   font-size: 14px;
   color: var(--kb-text);
-  background: #fafafa;
-  outline: none;
 }
-
 .kb-input-field:disabled {
-  opacity: .45;
+  color: var(--kb-muted);
   cursor: not-allowed;
+}
+.kb-input-field::placeholder {
+  color: rgba(0, 47, 167, 0.3);
+}
+.kb-input-send {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: var(--kb-primary);
+  cursor: pointer;
+  padding: 4px 6px;
+  transition: transform 0.1s ease, opacity 0.15s ease;
+}
+.kb-input-send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.kb-input-send:not(:disabled):hover {
+  transform: scale(1.15);
 }
