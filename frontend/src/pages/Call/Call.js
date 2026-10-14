@@ -18,7 +18,43 @@ import {
 } from '../../core/conversationStore.js';
 
 const CALL_CAPTION_KEY = 'callCaptionMode';
+const CALL_MODE_KEY = 'call-mode';
 let sessionMemoryCandidate = null;
+
+function getCallMode() {
+  return localStorage.getItem(CALL_MODE_KEY) === 'teacher' ? 'teacher' : 'friend';
+}
+
+function applyCallMode() {
+  const mode = getCallMode();
+  const page = document.getElementById('pg-call');
+  const button = document.getElementById('call-mode-btn');
+  const title = document.getElementById('call-header-title');
+  page?.classList.toggle('vc-teacher-mode', mode === 'teacher');
+  if (button) {
+    button.textContent = mode === 'teacher' ? '切回朋友' : '切换到老师';
+    button.setAttribute('aria-pressed', mode === 'teacher' ? 'true' : 'false');
+    button.setAttribute('aria-label', mode === 'teacher' ? '切换到朋友模式' : '切换到老师模式');
+  }
+  if (title) title.textContent = mode === 'teacher' ? 'TEACHER MODE' : 'ARCHIVE_01';
+}
+
+function speakCallReply(reply) {
+  const ja = reply?.replyJa || '';
+  const explanation = reply?.replyEn || '';
+  speakJapanese(getCallMode() === 'teacher' && explanation ? `${ja}。${explanation}` : ja);
+}
+
+async function toggleCallMode() {
+  if (document.getElementById('call-mode-btn')?.disabled) return;
+  const next = getCallMode() === 'teacher' ? 'friend' : 'teacher';
+  localStorage.setItem(CALL_MODE_KEY, next);
+  applyCallMode();
+  resetCallHistory();
+  const list = document.getElementById('chat-list');
+  if (list) list.replaceChildren();
+  await triggerOpeningMessage();
+}
 
 function getCallCaptionMode() {
   return localStorage.getItem(CALL_CAPTION_KEY) || 'bilingual';
@@ -94,6 +130,14 @@ async function triggerOpeningMessage() {
   if (videoEl && characterId === 'yuki') initYukiAnimation(videoEl);
   const character = characterMap[characterId] || yukiConfig;
 
+  if (getCallMode() === 'teacher') {
+    const opening = { replyJa: 'N4の[[単語|たんご|vocabulary]]から始めましょう。', replyEn: '我们从 N4 单词开始，一次一道。请先用中文说说「約束（やくそく）」是什么意思，我等你回答后再讲解。' };
+    appendChatMessage('yuki', opening.replyJa, opening.replyEn);
+    speakCallReply(opening);
+    pushCallMessage('yuki', `${opening.replyJa} ${opening.replyEn}`);
+    return;
+  }
+
   if (characterId === 'yuki') {
     const yukiOpenings = [
       { ja: 'よ、ちょうど[[コーヒー|こーひー|coffee]]淹れてたとこ。どした？', en: 'Yo, just making coffee. What\'s up?' },
@@ -163,11 +207,12 @@ async function triggerOpeningMessage() {
       memory:  getCharacterMemory(characterId),
       history: getCallApiHistory().slice(-10),
       userText: '[START]',
+      mode: getCallMode(),
     });
     document.getElementById('chat-loading')?.remove();
     const replyJa = reply.replyJa || 'よ';
     appendChatMessage('yuki', replyJa, reply.replyEn || '');
-    speakJapanese(replyJa);
+    speakCallReply(reply);
     pushCallMessage('yuki', replyJa);
   } catch {
     document.getElementById('chat-loading')?.remove();
@@ -181,12 +226,20 @@ function initCallInput() {
   const input = document.getElementById('call-text-input');
   const btn   = document.getElementById('call-send-btn');
   if (!input || !btn) return;
+  applyCallMode();
+  const modeButton = document.getElementById('call-mode-btn');
+  if (modeButton && modeButton.dataset.bound !== '1') {
+    modeButton.dataset.bound = '1';
+    modeButton.addEventListener('click', toggleCallMode);
+  }
 
   async function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
     input.value = '';
     btn.disabled = true;
+    const modeButton = document.getElementById('call-mode-btn');
+    if (modeButton) modeButton.disabled = true;
     onUserSpeak();
     resetToIdle();
 
@@ -204,26 +257,30 @@ function initCallInput() {
         memory:   getCharacterMemory(characterId),
         history:  getCallApiHistory().slice(-10),
         userText: text,
+        mode: getCallMode(),
       });
       document.getElementById('chat-loading')?.remove();
       const replyJa = reply.replyJa || '……';
       appendChatMessage('yuki', replyJa, reply.replyEn || '');
-      speakJapanese(replyJa);
+      speakCallReply(reply);
       setEmotion(reply.emotion || 'idle');
-      pushCallMessage('yuki', replyJa);
-      if (reply.memoryCandidate && ((s) => { const jp = (s.match(/[\u3040-\u30ff\u4e00-\u9fff]/g)||[]).length; return jp >= 4 && jp/s.length > 0.3; })(reply.memoryCandidate)) {
+      pushCallMessage('yuki', getCallMode() === 'teacher' ? `${replyJa} ${reply.replyEn || ''}`.trim() : replyJa);
+      if (getCallMode() !== 'teacher' && reply.memoryCandidate && ((s) => { const jp = (s.match(/[\u3040-\u30ff\u4e00-\u9fff]/g)||[]).length; return jp >= 4 && jp/s.length > 0.3; })(reply.memoryCandidate)) {
         appendMemory(characterId, { factJa: reply.memoryCandidate, source: 'conversation' });
         sessionMemoryCandidate = reply.memoryCandidate;
       }
     } catch (e) {
       console.error('[Call] API error:', e);
       document.getElementById('chat-loading')?.remove();
-      const fallback = getRandomFallbackReply();
+      const fallback = getCallMode() === 'teacher'
+        ? { replyJa: '', replyEn: '刚才连接出了点问题，请再发一次。' }
+        : getRandomFallbackReply();
       appendChatMessage('yuki', fallback.replyJa, fallback.replyEn);
-      speakJapanese(fallback.replyJa);
-      pushCallMessage('yuki', fallback.replyJa);
+      speakCallReply(fallback);
+      pushCallMessage('yuki', `${fallback.replyJa} ${fallback.replyEn}`);
     } finally {
       btn.disabled = false;
+      if (modeButton) modeButton.disabled = false;
       input.focus();
     }
   }
@@ -236,6 +293,7 @@ function initCallInput() {
 
   initVoiceButton({
     voiceBtnId: 'call-voice-btn',
+    getLanguage: () => getCallMode() === 'teacher' ? 'zh-CN' : 'ja-JP',
     onSend: (text, asText) => {
       input.value = text;
       sendMessage();
@@ -257,7 +315,9 @@ function initCallInput() {
       }
       const characterId = appState.activeCharacter || 'yuki';
       const character = characterMap[characterId] || yukiConfig;
-      const caption = 'この画像どう思う？';
+      const caption = getCallMode() === 'teacher'
+        ? '请用中文讲解图片中的日语内容，按N4学习者的程度说明。'
+        : 'この画像どう思う？';
       pushCallMessage('user', caption);
       appendChatMessage('yuki', '……', '', 'chat-loading');
       try {
@@ -271,13 +331,19 @@ function initCallInput() {
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages: apiMessages, systemPrompt: character.systemPrompt })
+          body: JSON.stringify({
+            messages: apiMessages,
+            mode: getCallMode(),
+            systemPrompt: getCallMode() === 'teacher'
+              ? '你是一位耐心清晰的日语教师。用简体中文讲解图片中的日语，不要扮演朋友。'
+              : character.systemPrompt,
+          })
         });
         document.getElementById('chat-loading')?.remove();
         const data = await res.json();
         const replyJa = data.replyJa || '……';
         appendChatMessage('yuki', replyJa, data.replyEn || '');
-        speakJapanese(replyJa);
+        speakCallReply(data);
         pushCallMessage('yuki', replyJa);
       } catch {
         document.getElementById('chat-loading')?.remove();
@@ -294,6 +360,9 @@ export {
   applyCallCaptionMode,
   getCallCaptionMode,
   toggleCallCaptionMode,
+  getCallMode,
+  applyCallMode,
+  toggleCallMode,
 };
 
 window.stopSpeaking = stopSpeaking;
