@@ -1,7 +1,8 @@
 import { initVoiceInput } from './stt.js';
 import { stopSpeaking } from './tts.js';
 
-async function naturalizeVoiceText(text) {
+async function naturalizeVoiceText(text, mode) {
+  if (mode === 'teacher') return text;
   try {
     const res = await fetch('/api/voice-format', {
       method: 'POST',
@@ -16,7 +17,7 @@ async function naturalizeVoiceText(text) {
   }
 }
 
-export function initVoiceButton({ voiceBtnId, onSend, onCancel }) {
+export function initVoiceButton({ voiceBtnId, onSend, onCancel, getLanguage }) {
   const btn = document.getElementById(voiceBtnId);
   if (!btn) return;
   if (btn.dataset.voiceInit) return;
@@ -126,6 +127,7 @@ export function initVoiceButton({ voiceBtnId, onSend, onCancel }) {
     drawWave();
     startMicVisualizer();
     stopSpeaking();
+    if (recognition && getLanguage) recognition.lang = getLanguage();
     try { recognition?.start(); } catch {}
   }
 
@@ -144,7 +146,7 @@ export function initVoiceButton({ voiceBtnId, onSend, onCancel }) {
       const hint = overlay.querySelector('#voice-hint');
       if (hint) hint.textContent = '处理中…';
       overlay.style.display = 'flex'; // 短暂保留覆盖层显示进度
-      naturalizeVoiceText(lastTranscript).then(formatted => {
+      naturalizeVoiceText(lastTranscript, getLanguage?.() === 'zh-CN' ? 'teacher' : 'friend').then(formatted => {
         overlay.style.display = 'none';
         onSend(formatted, isText);
       });
