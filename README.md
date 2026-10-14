@@ -6,7 +6,7 @@
 AI 日语学习陪伴 App，用户通过与 AI 角色对话练习日语。
 - 位置：~/Desktop/japanese-friend-app
 - 启动：npm run dev → http://localhost:3000
-- 技术栈：Node.js/Express、原生 JS 前端、Anthropic Claude API、ElevenLabs TTS API、无框架
+- 技术栈：Node.js、原生 JS 前端、OpenAI Responses API、ElevenLabs TTS API、无前端框架
 
 ---
 
@@ -21,7 +21,7 @@ frontend/src/
 │   ├── router.js             # 页面路由 go()
 │   └── conversationStore.js  # 统一对话历史
 ├── services/
-│   └── claude.service.js     # Claude API 调用（含 529 自动重试）
+│   └── claude.service.js     # 对话 API 调用（旧文件名，当前由 OpenAI 提供）
 ├── features/
 │   ├── topics.js             # 每日话题
 │   ├── memory.js             # 角色记忆（按角色分桶，最多12条）
@@ -113,13 +113,14 @@ window.setYukiEmotion = setEmotion;
 
 | 端点 | 用途 |
 |------|------|
-| POST /api/chat | Claude 对话（含 529 自动重试） |
+| POST /api/chat | OpenAI 对话（JSON Schema 输出） |
 | POST /api/tts | ElevenLabs TTS 语音合成 |
-| POST /api/voice-format | 语音识别结果润色（Haiku） |
+| POST /api/voice-format | 语音识别结果润色（OpenAI） |
 
 环境变量（.env）：
 ```
-ANTHROPIC_API_KEY=
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-6-astra
 ELEVENLABS_API_KEY=
 YUKI_VOICE_ID=
 ```
