@@ -270,7 +270,7 @@ function initCallInput() {
         sessionMemoryCandidate = reply.memoryCandidate;
       }
     } catch (e) {
-      console.error('[Call] API error:', e);
+      console.error('[Call] OpenAI API error:', e);
       document.getElementById('chat-loading')?.remove();
       const fallback = getCallMode() === 'teacher'
         ? { replyJa: '', replyEn: '刚才连接出了点问题，请再发一次。' }
