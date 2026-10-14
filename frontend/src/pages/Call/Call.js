@@ -335,7 +335,7 @@ function initCallInput() {
             messages: apiMessages,
             mode: getCallMode(),
             systemPrompt: getCallMode() === 'teacher'
-              ? '你是一位耐心清晰的日语教师。用简体中文讲解图片中的日语，不要扮演朋友。'
+              ? `你是耐心清晰的日语教师，同时保留${character.jpName || character.name || 'Yuki'}的说话性格和情绪（${character.speakingStyle || '温和、自然、简洁'}）。用简体中文讲解图片中的日语，教学任务优先，不进行无关闲聊。`
               : character.systemPrompt,
           })
         });
