@@ -134,7 +134,7 @@ async function handleChat(req, res) {
   try {
     const { prompt, messages, systemPrompt, isProactive, mode } = JSON.parse(await readBody(req));
     const replyFormat = mode === 'teacher'
-      ? '\n\nTeacher mode JSON: replyJa is a concise Japanese example or prompt; replyEn is the learner-facing explanation in Simplified Chinese. Keep memoryCandidate empty. Return only JSON: {"replyJa":"...","replyEn":"...","emotion":"idle","memoryCandidate":""}. Do not add English translations unless requested.'
+      ? '\n\nTeacher mode JSON: replyJa is a concise Japanese example or prompt; replyEn is the learner-facing explanation in Simplified Chinese. Choose emotion from idle, happy, smile, surprised, lean-smile, shy based on the conversation; do not default to idle when another emotion fits. Keep memoryCandidate empty. Return only JSON: {"replyJa":"...","replyEn":"...","emotion":"idle","memoryCandidate":""}. Do not add English translations unless requested.'
       : "\n\nYou MUST reply in this exact JSON format with no extra text outside the JSON:\n{\"replyJa\": \"日本語の返事\", \"replyEn\": \"English translation\", \"emotion\": \"idle\", \"memoryCandidate\": \"ユーザーが明かした具体的な個人情報（趣味・仕事・住んでいる場所・好き嫌いなど）を短い日本語で。新情報がなければ空文字\"}\nemotion must be one of: idle, happy, smile, surprised, lean-smile.\nDo not add markdown, code blocks, or any text before or after the JSON.\n";
     const result = await callAnthropic({
       model:      'claude-sonnet-4-20250514',
