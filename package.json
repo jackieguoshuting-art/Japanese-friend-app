@@ -10,7 +10,5 @@
     "lint": "echo 'Add ESLint in next iteration'",
     "test": "echo 'Tests planned for next phase'"
   },
-  "dependencies": {
-    "@anthropic-ai/sdk": "^0.80.0"
-  }
+  "dependencies": {}
 }
