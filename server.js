@@ -19,7 +19,8 @@ function loadEnv() {
   } catch { return {}; }
 }
 const env = loadEnv();
-const API_KEY = env.ANTHROPIC_API_KEY || '';
+const OPENAI_API_KEY = env.OPENAI_API_KEY || '';
+const OPENAI_MODEL = env.OPENAI_MODEL || 'gpt-6-astra';
 
 // ── Static file serving ──
 const MIME = {
@@ -73,18 +74,56 @@ function serveStatic(res, urlPath, req) {
   }
 }
 
-// ── Proxy to Anthropic ──
-function callAnthropic(payload) {
+// ── Responses API proxy ──
+function toResponsesInput(messages = []) {
+  return messages.map(({ role, content }) => {
+    const safeRole = role === 'assistant' ? 'assistant' : 'user';
+    if (typeof content === 'string') return { role: safeRole, content };
+    if (!Array.isArray(content)) return { role: safeRole, content: String(content ?? '') };
+
+    const parts = content.flatMap((part) => {
+      if (part?.type === 'text') return [{ type: 'input_text', text: part.text || '' }];
+      if (part?.type === 'image' && part.source?.type === 'base64') {
+        return [{
+          type: 'input_image',
+          image_url: `data:${part.source.media_type};base64,${part.source.data}`,
+        }];
+      }
+      if (part?.type === 'image_url' && part.image_url?.url) {
+        return [{ type: 'input_image', image_url: part.image_url.url }];
+      }
+      return [];
+    });
+    return { role: safeRole, content: parts };
+  });
+}
+
+function callOpenAI({ instructions, messages, prompt, maxOutputTokens = 512, schemaName, schema }) {
   return new Promise((resolve, reject) => {
+    if (!OPENAI_API_KEY) {
+      resolve({ status: 503, raw: JSON.stringify({ error: { message: 'OPENAI_API_KEY is missing from .env' } }) });
+      return;
+    }
+    const payload = {
+      model: OPENAI_MODEL,
+      instructions,
+      input: messages ? toResponsesInput(messages) : prompt,
+      max_output_tokens: maxOutputTokens,
+      store: false,
+    };
+    if (schema) {
+      payload.text = {
+        format: { type: 'json_schema', name: schemaName, strict: true, schema },
+      };
+    }
     const body = JSON.stringify(payload);
-    const req  = https.request({
-      hostname: 'api.anthropic.com',
-      path:     '/v1/messages',
+    const req = https.request({
+      hostname: 'api.openai.com',
+      path: '/v1/responses',
       method:   'POST',
       headers: {
         'Content-Type':      'application/json',
-        'x-api-key':         API_KEY,
-        'anthropic-version': '2023-06-01',
+        'Authorization':     `Bearer ${OPENAI_API_KEY}`,
         'Content-Length':    Buffer.byteLength(body),
       },
     }, (res) => {
@@ -96,6 +135,17 @@ function callAnthropic(payload) {
     req.write(body);
     req.end();
   });
+}
+
+function getResponseText(raw) {
+  const response = JSON.parse(raw);
+  if (response.output_text) return response.output_text;
+  return (response.output || [])
+    .filter((item) => item.type === 'message')
+    .flatMap((item) => item.content || [])
+    .filter((item) => item.type === 'output_text')
+    .map((item) => item.text)
+    .join('');
 }
 
 // ── API route handlers ──
@@ -113,17 +163,16 @@ async function handleVoiceFormat(req, res) {
   try {
     const { text } = JSON.parse(await readBody(req));
     if (!text) { res.writeHead(200); res.end(JSON.stringify({ formatted: '' })); return; }
-    const result = await callAnthropic({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 200,
-      system: 'You are a Japanese casual text formatter. Output ONLY the reformatted Japanese text — no explanation, no quotes, no JSON.',
+    const result = await callOpenAI({
+      maxOutputTokens: 200,
+      instructions: 'You are a Japanese casual text formatter. Output ONLY the reformatted Japanese text — no explanation, no quotes, no JSON.',
       messages: [{
         role: 'user',
         content: `Reformat this speech recognition transcript as a natural casual Japanese text message.\n- Add punctuation (。！？…) where it fits naturally\n- Add emoji (😊😂👍✨🤔 etc.) when the emotion calls for it\n- Add casual tone markers (笑、ね〜、よ、な〜、えー) where natural\n- Keep the exact same meaning — do not invent new content\n- Output ONLY the reformatted text\n\nTranscript: ${text}`
       }]
     });
     raw = result.status === 200
-      ? (JSON.parse(result.raw).content?.[0]?.text?.trim() || text)
+      ? (getResponseText(result.raw).trim() || text)
       : text;
   } catch { raw = ''; }
   res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -133,13 +182,13 @@ async function handleVoiceFormat(req, res) {
 async function handleChat(req, res) {
   try {
     const { prompt, messages, systemPrompt, isProactive, mode } = JSON.parse(await readBody(req));
+    const emotionSchema = ['idle', 'happy', 'smile', 'surprised', 'lean-smile', 'shy'];
     const replyFormat = mode === 'teacher'
       ? '\n\nTeacher mode JSON: replyJa is a concise Japanese example or prompt; replyEn is the learner-facing explanation in Simplified Chinese. Choose emotion from idle, happy, smile, surprised, lean-smile, shy based on the conversation; do not default to idle when another emotion fits. Keep memoryCandidate empty. Return only JSON: {"replyJa":"...","replyEn":"...","emotion":"idle","memoryCandidate":""}. Do not add English translations unless requested.'
       : "\n\nYou MUST reply in this exact JSON format with no extra text outside the JSON:\n{\"replyJa\": \"日本語の返事\", \"replyEn\": \"English translation\", \"emotion\": \"idle\", \"memoryCandidate\": \"ユーザーが明かした具体的な個人情報（趣味・仕事・住んでいる場所・好き嫌いなど）を短い日本語で。新情報がなければ空文字\"}\nemotion must be one of: idle, happy, smile, surprised, lean-smile.\nDo not add markdown, code blocks, or any text before or after the JSON.\n";
-    const result = await callAnthropic({
-      model:      'claude-sonnet-4-20250514',
-      max_tokens: 512,
-      system:     (systemPrompt || 'You are a friendly Japanese AI friend.') +
+    const result = await callOpenAI({
+      maxOutputTokens: 512,
+      instructions:    (systemPrompt || 'You are a friendly Japanese AI friend.') +
         (isProactive ? '\n\n今から友達に自分から一言送る。挨拶じゃなく、自分の生活の一コマを自然にシェアする感じで。50文字以内。30%の確率で [image: 画像の説明] を含めること。' : '') +
         replyFormat +
         "VOCAB_MARKUP in replyJa (required, dense): wrap almost EVERY noun and EVERY lexical verb in [[surface as written|ひらがな reading|concise English gloss]]. Also wrap meaningful い-adjectives and な-adjectives used as predicates. No spaces inside [[ ]]. Inside JSON strings escape any double-quote as \\\". " +
@@ -147,22 +196,33 @@ async function handleChat(req, res) {
         "Mark inflected verbs (た てる ない られる etc.) as one span covering the whole spoken form when one lemma. Merge compound nouns as one span when natural. " +
         "Goal: at least ~80% of all nouns and verbs in the sentence should appear inside [[|]], not just one or two words.",
       messages:   messages && Array.isArray(messages) ? messages : [{ role: 'user', content: prompt }],
+      schemaName: 'japanese_friend_reply',
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          replyJa: { type: 'string' },
+          replyEn: { type: 'string' },
+          emotion: { type: 'string', enum: emotionSchema },
+          memoryCandidate: { type: 'string' },
+        },
+        required: ['replyJa', 'replyEn', 'emotion', 'memoryCandidate'],
+      },
     });
 
     if (result.status !== 200) {
       res.writeHead(result.status, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Anthropic error', detail: result.raw }));
+      res.end(JSON.stringify({ error: 'OpenAI API error', detail: result.raw }));
       return;
     }
 
-    const text = JSON.parse(result.raw).content?.[0]?.text || '';
-    console.log('[DEBUG] Claude raw text:', text);
+    const text = getResponseText(result.raw) || '';
+    console.log('[DEBUG] OpenAI raw text:', text);
     const cleanText = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
     let parsed;
     try { parsed = JSON.parse(cleanText); }
     catch {
-      // Claude sometimes prepends text before the JSON block (common with image inputs).
-      // Try to extract the first {...} object from the raw text.
+      // Keep a tolerant fallback for models that return extra text around JSON.
       const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         try { parsed = JSON.parse(jsonMatch[0]); }
@@ -240,10 +300,9 @@ async function handleTTS(req, res) {
 async function handleSceneChat(req, res) {
   try {
     const { messages, systemPrompt } = JSON.parse(await readBody(req));
-    const result = await callAnthropic({
-      model:      'claude-sonnet-4-20250514',
-      max_tokens: 256,
-      system:     (systemPrompt || '') +
+    const result = await callOpenAI({
+      maxOutputTokens: 256,
+      instructions:    (systemPrompt || '') +
         "\n\nYou MUST reply in this exact JSON format with no extra text outside the JSON:\n" +
         "{\"replyJa\": \"日本語の返事\", \"replyEn\": \"English translation\"}\n" +
         "Do not add markdown, code blocks, or any text before or after the JSON.\n" +
@@ -251,15 +310,22 @@ async function handleSceneChat(req, res) {
         "Skip ONLY: particles (は を に が の と も や か ね よ さ へ で から まで より って), interjections, and bare です／ます／だ when they add no new lemma. " +
         "No spaces inside [[ ]]. Inside JSON strings escape any double-quote as \\\".",
       messages,
+      schemaName: 'japanese_scene_reply',
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: { replyJa: { type: 'string' }, replyEn: { type: 'string' } },
+        required: ['replyJa', 'replyEn'],
+      },
     });
 
     if (result.status !== 200) {
       res.writeHead(result.status, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Anthropic error', detail: result.raw }));
+      res.end(JSON.stringify({ error: 'OpenAI API error', detail: result.raw }));
       return;
     }
 
-    const text = JSON.parse(result.raw).content?.[0]?.text || '';
+    const text = getResponseText(result.raw) || '';
     const cleanText = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
     let parsed;
     try {
