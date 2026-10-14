@@ -150,6 +150,14 @@ button.caption-btn {
 .chat-en { font-size: 11px; color: rgba(255,255,255,0.38); margin-top: 3px; line-height: 1.4; }
 
 /* Video call caption mode: default bilingual; ja-only hides English lines */
+#pg-call.vc-teacher-mode .chat-en { display: block !important; }
+#pg-call.vc-teacher-mode .vc-hdr-title { font-size: 15px; letter-spacing: 0.2px; }
+#pg-call.vc-teacher-mode .chat-en {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  line-height: 1.65;
+  margin-top: 6px;
+}
 .chat-list.caption-mode-ja-only .chat-en {
   display: none !important;
 }
@@ -287,6 +295,26 @@ button.caption-btn {
   letter-spacing: -1px;
   text-transform: uppercase;
 }
+.vc-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.vc-mode-toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid rgba(0, 71, 255, 0.45);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.75);
+  color: #0047ff;
+  cursor: pointer;
+  font: 600 11px 'Be Vietnam Pro', sans-serif;
+  letter-spacing: 0.2px;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+.vc-mode-toggle[aria-pressed="true"] { color: #fff; background: #0047ff; }
+.vc-mode-toggle:disabled { opacity: 0.55; cursor: wait; }
 
 /* Caption toggle pill button (right of header) */
 .vc-caption-toggle {
