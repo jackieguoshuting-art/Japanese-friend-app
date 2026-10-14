@@ -404,12 +404,15 @@
       <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='12' viewBox='0 0 18 12'%3E%3Cpath d='M0 1h18M0 6h18M0 11h18' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E"
            alt="" width="18" height="12">
     </button>
-    <div class="vc-hdr-title">ARCHIVE_01</div>
+    <div class="vc-hdr-title" id="call-header-title">ARCHIVE_01</div>
+    <div class="vc-header-actions">
+    <button type="button" class="vc-mode-toggle" id="call-mode-btn" aria-pressed="false">切换到老师</button>
     <button class="vc-hdr-btn vc-caption-toggle" id="caption-toggle-btn" data-caption="off"
       onclick="(function(b){var m=['off','ja','bilingual'],l=['字幕 OFF','日本語','双語'],i=(m.indexOf(b.dataset.caption)+1)%3;b.dataset.caption=m[i];b.querySelector('.vc-cap-lbl').textContent=l[i];var a=document.getElementById('call-caption-area');if(a)a.dataset.caption=m[i]})(this)"
       aria-label="Toggle captions">
       <span class="vc-cap-lbl">字幕 OFF</span>
     </button>
+    </div>
   </header>
 
   <!-- Character: full-bleed behind all UI -->
